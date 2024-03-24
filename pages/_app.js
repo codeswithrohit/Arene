@@ -9,6 +9,7 @@ import "../styles/globals.css";
 import Header1 from "../src/layouts/headers/Header1";
 import Footer from "../src/layouts/Footer";
 import MobileMenu from "../src/layouts/MobileMenu";
+import 'tailwindcss/tailwind.css'; 
 const MyApp = ({ Component, pageProps }) => {
  
 
