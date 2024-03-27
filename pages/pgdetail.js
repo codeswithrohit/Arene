@@ -108,7 +108,7 @@ console.log(pgdetaildata)
                             <li>
                               <span>
                                 <i className="ti-location-pin" />
-                                {item.location.split(',')[item.location.split(',').length - 4]},{item.location.split(',')[item.location.split(',').length - 3]}, {item.location.split(',')[item.location.split(',').length - 2]}, {item.location.split(',')[item.location.split(',').length - 1]}
+                                {pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 4]},{pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 3]}, {pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 2]}, {pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 1]}
                               </span>
                             </li>
                             <li>
@@ -306,7 +306,7 @@ console.log(pgdetaildata)
           <div className="contact-info-widget-wrap">
             <div className="contact-map">
             <iframe
-  src={`https://www.google.com/maps/embed/v1/place?q=${encodeURIComponent(item.location.split(',')[item.location.split(',').length - 4] + ',' + item.location.split(',')[item.location.split(',').length - 3] + ',' + item.location.split(',')[item.location.split(',').length - 2] + ',' + item.location.split(',')[item.location.split(',').length - 1])}&key=AIzaSyB6gEq59Ly20DUl7dEhHW9KgnaZy4HrkqQ`}
+  src={`https://www.google.com/maps/embed/v1/place?q=${encodeURIComponent(pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 4] + ',' + pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 3] + ',' + pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 2] + ',' + pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 1])}&key=AIzaSyB6gEq59Ly20DUl7dEhHW9KgnaZy4HrkqQ`}
   width="600"
   height="450"
   style={{ border: 0 }}
@@ -327,7 +327,7 @@ console.log(pgdetaildata)
                 </p>
                 <p>
                   <i className="ti-location-pin" />
-                  {item.location.split(',')[item.location.split(',').length - 4]},{item.location.split(',')[item.location.split(',').length - 3]}, {item.location.split(',')[item.location.split(',').length - 2]}, {item.location.split(',')[item.location.split(',').length - 1]}
+                  {pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 4]},{pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 3]}, {pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 2]}, {pgdetaildata.location.split(',')[pgdetaildata.location.split(',').length - 1]}
                 </p>
                 <p>
                   <i className="ti-email" />
