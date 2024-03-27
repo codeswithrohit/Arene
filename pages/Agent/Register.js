@@ -36,7 +36,7 @@ const Register = () => {
       } else {
         setUser(null);
         setUserData(null);
-        router.push('/Agent/Register.html'); // Redirect to the login page if the user is not authenticated
+        router.push('/Agent/Register'); // Redirect to the login page if the user is not authenticated
       }
     });
 
@@ -53,9 +53,9 @@ const Register = () => {
         const userData = userDocSnap.data();
         if (userData.isVendor) {
           setUserData(userData);
-          router.push('/Agent/dashboard.html');
+          router.push('/Agent/dashboard');
         } else {
-          router.push('/Agent/Register.html'); // Redirect to the login page if the user is not an admin
+          router.push('/Agent/Register'); // Redirect to the login page if the user is not an admin
         }
       } else {
         // Handle case where user data doesn't exist in Firestore
@@ -222,7 +222,7 @@ const Register = () => {
               toast.success('Login successful.', {
                 position: toast.POSITION.TOP_RIGHT,
               });
-              router.push('/Agent/dashboard.html')
+              router.push('/Agent/dashboard')
             } else {
               toast.error('You do not have Agent permission.', {
                 position: toast.POSITION.TOP_RIGHT,

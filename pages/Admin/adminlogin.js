@@ -37,7 +37,7 @@ const Login = () => {
           localStorage.setItem("isAdmin", true);
           // Redirect to the admin home page after successful login
           // Replace '/admin/home' with your desired admin home page route
-          router.push("/Admin/dashboard.html");
+          router.push("/Admin/dashboard");
         } else {
           // If the user is not an admin, show an error message
           toast.error("You are not authorized to access the admin dashboard.");

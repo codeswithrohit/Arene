@@ -22,9 +22,9 @@ const ListingDetails2 = () => {
   };
   const handleBookNow = (selectedProperty) => {
     setSelectedRoom(selectedProperty); // Update selected room
-    // Redirect to Booking.html with query parameters
+    // Redirect to Booking with query parameters
     router.push({
-      pathname: '/booking.html',
+      pathname: '/booking',
       query: {
         Name: rentdetaildata.Propertyname,
         Agentid:rentdetaildata.AgentId,

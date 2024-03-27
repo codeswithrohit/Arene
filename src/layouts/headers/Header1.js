@@ -202,7 +202,7 @@ const Header1 = () => {
 
                         <div class="py-1" role="none">
                           <a
-                            href="/Our-history.html"
+                            href="/Our-history"
                             class="flex px-4 py-2 text-sm text-black border-l-2 border-transparent dark:hover:border-red-600 rounded-bl-md hover:border-red-600 dark:text-black dark:hover:text-black hover:text-red-600"
                           >
                             <span class="mr-2">
@@ -302,7 +302,7 @@ const Header1 = () => {
                       </Link>
                     </li> */}
                     <li className="hero-nav-btn">
-                      <Link href="/Agent/Register.html">
+                      <Link href="/Agent/Register">
                         <a className="main-btn icon-btn">Add Listing</a>
                       </Link>
                     </li>

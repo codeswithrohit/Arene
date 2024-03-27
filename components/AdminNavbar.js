@@ -171,8 +171,8 @@ export default function AdminNavbar() {
             <ul class="flex flex-col py-4 space-y-1">
               <li>
                 <a
-                  href="/Admin/dashboard.html"
-                  className={router.pathname === "/Admin/dashboard.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/dashboard"
+                  className={router.pathname === "/Admin/dashboard" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -197,8 +197,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/Users.html"
-                  className={router.pathname === "/Admin/Users.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/Users"
+                  className={router.pathname === "/Admin/Users" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -221,8 +221,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/Agents.html"
-                  className={router.pathname === "/Admin/Agents.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/Agents"
+                  className={router.pathname === "/Admin/Agents" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -247,8 +247,8 @@ export default function AdminNavbar() {
               
               <li>
                 <a
-                  href="/Admin/Order.html"
-                  className={router.pathname === "/Admin/Order.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/Order"
+                  className={router.pathname === "/Admin/Order" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -273,8 +273,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/PGData.html"
-                  className={router.pathname === "/Admin/PGData.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/PGData"
+                  className={router.pathname === "/Admin/PGData" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -299,8 +299,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/BuyData.html"
-                  className={router.pathname === "/Admin/BuyData.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/BuyData"
+                  className={router.pathname === "/Admin/BuyData" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -325,8 +325,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/RentData.html"
-                  className={router.pathname === "/Admin/RentData.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/RentData"
+                  className={router.pathname === "/Admin/RentData" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -351,8 +351,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/HotelData.html"
-                  className={router.pathname === "/Admin/HotelData.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/HotelData"
+                  className={router.pathname === "/Admin/HotelData" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -377,8 +377,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/Banqueethall.html"
-                  className={router.pathname === "/Admin/Banqueethall.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/Banqueethall"
+                  className={router.pathname === "/Admin/Banqueethall" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -403,8 +403,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/Resort.html"
-                  className={router.pathname === "/Admin/Resort.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/Resort"
+                  className={router.pathname === "/Admin/Resort" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -429,8 +429,8 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
-                  href="/Admin/CloudKitchen.html"
-                  className={router.pathname === "/Admin/CloudKitchen.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/CloudKitchen"
+                  className={router.pathname === "/Admin/CloudKitchen" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg
@@ -456,8 +456,8 @@ export default function AdminNavbar() {
               
               <li>
                 <a
-                  href="/Admin/Enquiry.html"
-                  className={router.pathname === "/Admin/Enquiry.html" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                  href="/Admin/Enquiry"
+                  className={router.pathname === "/Admin/Enquiry" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
                   <span class="inline-flex justify-center items-center ml-4">
                     <svg

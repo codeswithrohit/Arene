@@ -58,7 +58,7 @@ const AgentNav = () => {
       const auth = getAuth();
       try {
         await signOut(auth);
-        router.push('/Admin/Register.html');
+        router.push('/Admin/Register');
       } catch (error) {
         console.error('Error signing out:', error);
       }
@@ -114,15 +114,15 @@ const AgentNav = () => {
           </div>
           <div class="overflow-x-auto">
           <div className="flex items-center space-x-3 sm:mt-7 mt-4">
-        <a href="/Agent/dashboard.html" className={`px-3 border-b-2 ${activePage === '/Agent/dashboard.html' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Dashboard</a>
-        <a href="/Agent/Orders.html" className={`px-3 border-b-2 ${activePage === '/Agent/Order.html' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Order</a>
-        <a href="/Agent/addbuydata.html" className={`px-3 border-b-2 ${activePage === '/Agent/addbuydata.html' ? 'border-emerald-600 text-emerald-600 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Buy</a>
-        <a href="/Agent/addrent.html" className={`px-3 border-b-2 ${activePage === '/Agent/addrent.html' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Rent</a>
-        <a href="/Agent/addpg.html" className={`px-3 border-b-2 ${activePage === '/Agent/addpg.html' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>PG</a>
-        <a href="/Agent/addhotel.html" className={`px-3 border-b-2 ${activePage === '/Agent/addhotel.html' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Hotel</a>
-        <a href="/Agent/addbanqueethall.html" className={`px-3 border-b-2 ${activePage === '/Agent/addbanqueethall.html' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Banqueet Hall</a>
-        <a href="/Agent/addresort.html" className={`px-3 border-b-2 ${activePage === '/Agent/addresort.html' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Resort</a>
-        <a href="/Agent/Laundry.html" className={`px-3 border-b-2 ${activePage === '/Agent/Laundry.html' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Laundry</a>
+        <a href="/Agent/dashboard" className={`px-3 border-b-2 ${activePage === '/Agent/dashboard' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Dashboard</a>
+        <a href="/Agent/Orders" className={`px-3 border-b-2 ${activePage === '/Agent/Order' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Order</a>
+        <a href="/Agent/addbuydata" className={`px-3 border-b-2 ${activePage === '/Agent/addbuydata' ? 'border-emerald-600 text-emerald-600 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Buy</a>
+        <a href="/Agent/addrent" className={`px-3 border-b-2 ${activePage === '/Agent/addrent' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Rent</a>
+        <a href="/Agent/addpg" className={`px-3 border-b-2 ${activePage === '/Agent/addpg' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>PG</a>
+        <a href="/Agent/addhotel" className={`px-3 border-b-2 ${activePage === '/Agent/addhotel' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Hotel</a>
+        <a href="/Agent/addbanqueethall" className={`px-3 border-b-2 ${activePage === '/Agent/addbanqueethall' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Banqueet Hall</a>
+        <a href="/Agent/addresort" className={`px-3 border-b-2 ${activePage === '/Agent/addresort' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Resort</a>
+        <a href="/Agent/Laundry" className={`px-3 border-b-2 ${activePage === '/Agent/Laundry' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Laundry</a>
       </div>
 </div>
 

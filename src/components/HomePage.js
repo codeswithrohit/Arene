@@ -556,7 +556,7 @@ const HomePage = () => {
 </section>
 </div>
 </main>
-<h1 className="text-xl lg:text-xl lg:text-xl text-center font-extrabold py-2.5 text-[#10b981]  ">Your location {locations}</h1>
+<h1 className="text-xl lg:text-xl lg:text-xl text-center font-extrabold py-2.5 text-[#10b981]  ">Your location found in  {locations}</h1>
 </section>
     </div>
   )

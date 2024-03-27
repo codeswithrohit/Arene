@@ -96,7 +96,7 @@ const MobileMenu = () => {
                       </li>
                       <Contact />
                       <li className="nav-btn">
-                        <Link href="/Admin/Register.html">
+                        <Link href="/Admin/Register">
                           <a className="main-btn icon-btn">Add Listing</a>
                         </Link>
                       </li>
@@ -115,7 +115,7 @@ const MobileMenu = () => {
                       </Link>
                     </li>
                     <li className="hero-nav-btn">
-                      <Link href="/Admin/Register.html">
+                      <Link href="/Admin/Register">
                         <a className="main-btn icon-btn">Add Listing</a>
                       </Link>
                     </li>

@@ -19,7 +19,7 @@ const AgentProfile = () => {
         } else {
           setUser(null);
           setUserData(null);
-          router.push('/Admin/Register.html'); // Redirect to the login page if the user is not authenticated
+          router.push('/Admin/Register'); // Redirect to the login page if the user is not authenticated
         }
       });
   
@@ -37,7 +37,7 @@ const AgentProfile = () => {
           if (userData.isVendor) {
             setUserData(userData);
           } else {
-            router.push('/Admin/Register.html'); // Redirect to the login page if the user is not an admin
+            router.push('/Admin/Register'); // Redirect to the login page if the user is not an admin
           }
         } else {
           // Handle case where user data doesn't exist in Firestore
@@ -54,7 +54,7 @@ const AgentProfile = () => {
       const auth = getAuth();
       try {
         await signOut(auth);
-        router.push('/Admin/Register.html');
+        router.push('/Admin/Register');
       } catch (error) {
         console.error('Error signing out:', error);
       }

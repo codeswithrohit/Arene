@@ -169,7 +169,7 @@ const Resort = () => {
 ))}
 
                 </div>
-                <Link href={`/resortdetail.html?id=${item.id}`} passHref>
+                <Link href={`/resortdetail?id=${item.id}`} passHref>
   <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-full transition duration-300 ease-in-out">
     View Details
   </button>

@@ -47,8 +47,6 @@ const Filter1 = () => {
       const roomTypePrices = item.roomTypes.map((roomType) => parseFloat(roomType.price));
       const isPriceInRange = roomTypePrices.some((roomPrice) => roomPrice >= minPrice && roomPrice <= price);
   
-      // Filter based on subcategory
-      const subCategoryFilter = (Boys && item.subcat === "Boys") || (Girls && item.subcat === "Girls");
   
       // Filter based on room types
       const roomTypeFilter = item.roomTypes.some((roomType) => {
@@ -61,7 +59,7 @@ const Filter1 = () => {
         return false;
       });
   
-      return isWithinDistance && isPriceInRange && subCategoryFilter && roomTypeFilter;
+      return isWithinDistance && isPriceInRange &&  roomTypeFilter;
     });
   
     setFilteredData(filteredData);
@@ -145,7 +143,7 @@ const Filter1 = () => {
       const fetchData = async () => {
         try {
           // Replace 'yourCollectionName' with the actual collection name
-          const collectionRef = firebase.firestore().collection('pgdetail').where('Verfied', '==', 'true');
+          const collectionRef = firebase.firestore().collection('pgdetail').where('Verfied', '==', 'true').where('subcat', '==', 'Boys');
     
           // Get all documents from the collection
           const querySnapshot = await collectionRef.get();
@@ -335,39 +333,6 @@ const Filter1 = () => {
 
                 <hr className=" bg-gray-200 lg:w-12/12 w-full md:my-10 my-8" />
 
-                {/* Material Section */}
-                <div>
-                    <div className=" flex space-x-2">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9.5 16C13.0899 16 16 13.0899 16 9.5C16 5.91015 13.0899 3 9.5 3C5.91015 3 3 5.91015 3 9.5C3 13.0899 5.91015 16 9.5 16Z" stroke="#1F2937" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M19 10H12C10.8954 10 10 10.8954 10 12V19C10 20.1046 10.8954 21 12 21H19C20.1046 21 21 20.1046 21 19V12C21 10.8954 20.1046 10 19 10Z" stroke="#1F2937" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <p className=" lg:text-2xl text-xl lg:leading-6 leading-5 font-medium text-gray-800 ">SubCategory</p>
-                    </div>
-                    <div className=" md:flex md:space-x-6 mt-8 grid grid-cols-3 gap-y-8 flex-wrap">
-                        <div className=" flex space-x-2 md:justify-center md:items-center items-center justify-start">
-                            <input className="w-4 h-4 mr-2" type="checkbox" id="Boys" name="Boys" value="Boys" checked={Boys} onChange={changeHandler} />
-                            <div className=" inline-block">
-                                <div className=" flex space-x-6 justify-center items-center">
-                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Boys">
-                                        Boys
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div className=" flex justify-center items-center">
-                            <input className="w-4 h-4 mr-2" type="checkbox" id="Girls" name="Girls" value="Girls" checked={Girls} onChange={changeHandler} />
-                            <div className=" inline-block">
-                                <div className=" flex space-x-6 justify-center items-center">
-                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Girls">
-                                        Girls
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                      
-                    </div>
-                </div>
 
                 <hr className=" bg-gray-200 lg:w-12/12 w-full md:my-10 my-8" />
 

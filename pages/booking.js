@@ -245,7 +245,7 @@ const handleDateChange = (date) => {
             </div>
             <div class="w-full px-4 mb-4 md:w-1/2">
                 <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Location:</p>
-                <p class="text-base leading-6 text-gray-800 dark:text-gray-400">{location}</p>
+                <p class="text-base leading-6 text-gray-800 dark:text-gray-400">{location.split(',')[location.split(',').length - 4]},{location.split(',')[location.split(',').length - 3]}, {location.split(',')[location.split(',').length - 2]}, {location.split(',')[location.split(',').length - 1]} </p>
             </div>
             <div class="w-full px-4 mb-4 md:w-1/2">
                 <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Type:</p>

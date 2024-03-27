@@ -1,6 +1,15 @@
 import React from 'react'
+import { useRouter } from 'next/router';
 
 const Footer = () => {
+  const router = useRouter();
+
+  const handleLocationClick = (location) => {
+    router.push({
+      pathname: '/PGbylocation',
+      query: { location: location }
+    });
+  };
   return (
     <div>
       <footer class="font-[sans-serif] bg-white p-10">
@@ -58,21 +67,21 @@ const Footer = () => {
           </svg>
           </h4>
           <ul class="mt-4 space-y-5">
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Delhi</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Lucknow</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Patna</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Allahabad</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Varanasi</a>
-            </li>
+          <li>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Delhi</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Lucknow')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Lucknow</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Patna')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Patna</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Allahabad')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Allahabad</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Varanasi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Varanasi</a>
+              </li>
           </ul>
         </div>
         <div>

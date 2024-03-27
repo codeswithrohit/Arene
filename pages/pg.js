@@ -157,7 +157,7 @@ const Buy = () => {
                 <div className="flex items-center  justify-between min-w-0">
                   <h2 className="mr-auto text-red-600  text-base capitalize font-medium truncate">{item.PGName}</h2>
                 </div>
-                <p className="flex capitalize items-center text-xs text-gray-400">{item.location}. {item.distance} <span className="relative inline-flex rounded-md shadow-sm ml-2"><span className="flex absolute h-2 w-2 top-0 right-0 -mt-1 -mr-1"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span></span></p>
+                <p className="flex capitalize items-center text-xs text-gray-400">{item.location.split(',')[item.location.split(',').length - 4]},{item.location.split(',')[item.location.split(',').length - 3]}, {item.location.split(',')[item.location.split(',').length - 2]}, {item.location.split(',')[item.location.split(',').length - 1]} . {item.distance} <span className="relative inline-flex rounded-md shadow-sm ml-2"><span className="flex absolute h-2 w-2 top-0 right-0 -mt-1 -mr-1"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span></span></p>
               </div>
               
               <div className="flex my-3 border-t border-gray-300 dark:border-gray-600 "></div>
@@ -170,7 +170,7 @@ const Buy = () => {
 ))}
 
                 </div>
-                <Link href={`/pgdetail.html?id=${item.id}`} passHref>
+                <Link href={`/pgdetail?id=${item.id}`} passHref>
   <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-full transition duration-300 ease-in-out">
     View Details
   </button>

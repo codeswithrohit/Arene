@@ -12,6 +12,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Head from 'next/head';
 const Filter1 = () => {
+   
   const [showFilters, setShowfilters] = useState(false);
   const [check, setCheck] = useState({
     Boys: false,
@@ -89,54 +90,7 @@ const Filter1 = () => {
     // Extracting the parameters from the URL query
     const [buydata, setBuyData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-  
-    const [latitude, setLatitude] = useState(null);
-    const [longitude, setLongitude] = useState(null);
-    const [location, setLocation] = useState(null);
-  
-    useEffect(() => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setLatitude(position.coords.latitude);
-            setLongitude(position.coords.longitude);
-  
-            // Fetch location name using reverse geocoding
-            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=AIzaSyB6gEq59Ly20DUl7dEhHW9KgnaZy4HrkqQ`)
-              .then(response => response.json())
-              .then(data => {
-                if (data.results && data.results.length > 0) {
-                  // Extracting more specific address components
-                  const addressComponents = data.results[0].address_components;
-                  const cityName = addressComponents.find(component => component.types.includes('locality'));
-                  const stateName = addressComponents.find(component => component.types.includes('administrative_area_level_1'));
-                  const countryName = addressComponents.find(component => component.types.includes('country'));
-  
-                  // Constructing a more detailed location name
-                  const detailedLocation = [cityName, stateName, countryName]
-                    .filter(component => component !== undefined)
-                    .map(component => component.long_name)
-                    .join(', ');
-  
-                  setLocation(detailedLocation);
-                } else {
-                  setLocation("Location not found");
-                }
-              })
-              .catch(error => {
-                console.error('Error fetching location:', error);
-                setLocation("Error fetching location");
-              });
-          },
-          (error) => {
-            console.error('Error getting geolocation:', error);
-          }
-        );
-      } else {
-        console.error('Geolocation is not supported by this browser.');
-      }
-    }, []);
-
+    const { location } = router.query;
 
   
 
@@ -257,7 +211,7 @@ const Filter1 = () => {
             <div className=" md:mt-16 lg:px-20 md:px-6 mt-9 px-4">
                 <p className=" text-sm leading-3 text-gray-600 font-normal mb-2">Home - <p>PG</p></p>
                 <div className=" flex justify-between items-center mb-4">
-                <h2 className=" lg:text-2xl text-xl lg:leading-9 leading-7 text-gray-800 font-semibold">Searching You PG Nearest from {location}</h2>
+                    <h2 className=" lg:text-2xl text-xl lg:leading-9 leading-7 text-gray-800 font-semibold">Searching You PG Nearest from {location}</h2>
 
                     {/*  filters Button (md and plus Screen) */}
                     <button onClick={() => setShowfilters(!showFilters)} className=" cursor-pointer sm:flex hidden hover:bg-gray-700 focus:ring focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 py-4 px-6 bg-gray-800 flex text-base leading-4 font-normal text-white justify-center items-center ">

@@ -82,7 +82,7 @@ console.log(userData)
         const auth = getAuth();
         try {
             await signOut(auth);
-            router.push('/Admin/Register.html');
+            router.push('/Admin/Register');
         } catch (error) {
             console.error('Error signing out:', error);
         }

@@ -82,7 +82,7 @@ const AdminSignup = () => {
               </h3>
               <p className="">
                 Already have an account?{' '}
-                <Link href="/adminlogin.html">
+                <Link href="/adminlogin">
                   <div className="font-medium text-indigo-600 hover:text-indigo-500">
                     Log in
                   </div>

@@ -19,10 +19,10 @@ export const About = () => (
 export const Listing = () => (
   <Fragment>
     <li className="menu-item">
-      <Link href="/listing-list">Boys</Link>
+      <Link href="/PGboy">Boys</Link>
     </li>
     <li className="menu-item">
-      <Link href="/listing-grid">Girls</Link>
+      <Link href="/PGgirl">Girls</Link>
     </li>
   
   </Fragment>

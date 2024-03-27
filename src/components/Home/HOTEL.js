@@ -214,7 +214,7 @@ const HOTEL = () => {
                 </div>
                 <div className="listing-content">
                   <h3 className="title">
-                    <Link href={`/hoteldetail.html?id=${item.id}`}>
+                    <Link href={`/hoteldetail?id=${item.id}`}>
                       <a>{item.HotelName}</a>
                     </Link>
                   </h3>

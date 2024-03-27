@@ -505,7 +505,7 @@ const Index = () => {
             .map((item, index) => (
               <div key={item.id} className="relative mx-auto w-full">
                 <Link
-                   href={`/pgdetail.html?id=${item.id}`}
+                   href={`/pgdetail?id=${item.id}`}
                   className="relative inline-block w-full transform transition-transform duration-300 ease-in-out hover:-translate-y-2"
                 >
                   <div className="rounded-lg bg-white p-4 shadow">
