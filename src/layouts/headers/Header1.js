@@ -132,7 +132,7 @@ const Header1 = () => {
                         </ul>
                       </li>
                       <li className="menu-item ">
-                        <a href="#">Hotel</a>
+                        <a href="/hotelall">Hotel</a>
                         
                       </li>
                      

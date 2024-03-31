@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router';
-
+import Link from 'next/link';
 const Footer = () => {
   const router = useRouter();
 
@@ -13,6 +13,18 @@ const Footer = () => {
   const handleBUyLocationClick = (location) => {
     router.push({
       pathname: '/BUybylocation',
+      query: { location: location }
+    });
+  };
+  const handleRentLocationClick = (location) => {
+    router.push({
+      pathname: '/rentbylocation',
+      query: { location: location }
+    });
+  };
+  const handleHotelLocationClick = (location) => {
+    router.push({
+      pathname: '/hotelbylocation',
       query: { location: location }
     });
   };
@@ -127,21 +139,21 @@ const Footer = () => {
           </svg>
           </h4>
           <ul class="space-y-5 mt-4 max-sm:hidden">
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in Delhi</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in lucknow</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property Mumbai</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in Patna</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property Varanasi</a>
-            </li>
+          <li>
+                <a href='javascript:void(0)' onClick={() => handleRentLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in Delhi</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleRentLocationClick('Lucknow')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in Lucknow</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleRentLocationClick('Patna')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in Patna</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleRentLocationClick('Allahabad')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in Allahabad</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleRentLocationClick('Varanasi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in Varanasi</a>
+              </li>
           </ul>
         </div>
         <div>
@@ -154,23 +166,43 @@ const Footer = () => {
           </svg>
           </h4>
           <ul class="space-y-5 mt-4 max-sm:hidden">
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Delhi</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Mumbai</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in lucknow</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Patna</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Allahabad</a>
-            </li>
+          <li>
+                <a href='javascript:void(0)' onClick={() => handleHotelLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Delhi</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleHotelLocationClick('Lucknow')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Lucknow</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleHotelLocationClick('Patna')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Patna</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleHotelLocationClick('Allahabad')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Allahabad</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleHotelLocationClick('Varanasi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Varanasi</a>
+              </li>
           </ul>
         </div>
+        <Link href='/banquethallall' >
+          <h4 class="text-black font-semibold text-lg relative cursor-pointer">BanQueet Hall<svg
+            xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+            class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
+            <path
+              d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z"
+              data-name="16" data-original="#000000"></path>
+          </svg>
+          </h4>
+        </Link>
+        <Link href='/resortall'>
+          <h4 class="text-black font-semibold text-lg relative cursor-pointer">Resort<svg
+            xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+            class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
+            <path
+              d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z"
+              data-name="16" data-original="#000000"></path>
+          </svg>
+          </h4>
+        </Link>
       
       </div>
       <hr class="mt-8 border-black" />
