@@ -261,6 +261,7 @@ const Allrentsubcat = () => {
       <div className="2xl:container 2xl:mx-auto">
           <div className=" md:mt-16 lg:px-20 md:px-6 mt-9 px-4">
               <p className=" text-sm leading-3 text-gray-600 font-normal mb-2">Home - <p>Rent Property</p></p>
+              <p className=" text-xs leading-4 text-gray-600 font-normal  ">Arene Services redefines the rental experience with a commitment to excellence and a focus on customer satisfaction. Our rent services stand out for their efficiency, transparency, and dedication to providing top-notch properties for our clients.</p>
               <div className=" flex justify-between items-center mb-4">
               <h2 className=" lg:text-2xl text-xl lg:leading-9 leading-7 text-gray-800 font-semibold">Searching You Property Nearest from {location}</h2>
 

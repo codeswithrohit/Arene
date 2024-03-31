@@ -123,6 +123,8 @@ const Buy = () => {
         defer
       ></script>
     </Head>
+    <p className=" text-xs leading-4 text-gray-600 font-normal mt-32 md:mt-16 ">Experience luxury and comfort like never before with Arene Services' exceptional hotel services in collaboration with top-tier hotels. We pride ourselves on delivering superior customer satisfaction and unmatched quality to ensure a memorable stay for our guests.
+Arene Services partners with renowned hotels known for their exquisite amenities, impeccable service, and stunning locations. Whether you are traveling for business or leisure, our curated selection of hotels caters to every need and preference, promising a stay that exceeds expectations.</p>
   
     {loading ? ( // Show spinner while loading
       <div class="flex min-h-screen justify-center items-center">
@@ -130,7 +132,7 @@ const Buy = () => {
   </div>
     ) : (
       filteredData.map((item, index) => (
-        <div key={item.id} className="w-full mt-32 md:mt-16 p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
+        <div key={item.id} className="w-full  p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
           <div className="flex-none lg:flex">
             <div className="h-48 w-full lg:h-32 lg:w-32 rounded-md lg:mb-0 mb-3">
               <img

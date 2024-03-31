@@ -123,7 +123,11 @@ const Buy = () => {
         defer
       ></script>
     </Head>
-  <div className='mt-12' >
+  <div className='mt-32 md:mt-16' >
+  <p className=" text-xs leading-4 text-gray-600 font-normal">Arene Services revolutionizes the PG experience for boys and girls across India by offering a no-brokerage solution with exceptional properties and high-quality services. Our PG accommodations are designed to provide a seamless living experience, ensuring comfort, convenience, and a sense of community.
+With Arene Services, residents can enjoy a range of amenities including water purifiers for clean drinking water, convenient locations for easy access, parking facilities for added convenience, high-speed Wi-Fi connectivity, laundry services for hassle-free living, and delicious food options to cater to diverse tastes.
+Our commitment to excellence extends beyond just providing accommodation; we strive to create a welcoming environment where residents feel at home. Whether you are a student, working professional, or someone seeking a comfortable living space, Arene Services offers premium PG services that prioritize your comfort and well-being.
+Experience the difference with Arene Services - where quality meets convenience, and your satisfaction is our priority. Join us today and discover the perfect PG solution tailored to meet your needs across India.</p>
     {loading ? ( // Show spinner while loading
     <div class="flex min-h-screen justify-center items-center">
     <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
@@ -131,7 +135,7 @@ const Buy = () => {
 
     ) : (
       filteredData.map((item, index) => (
-        <div key={item.id} className="w-full mt-32 md:mt-16 p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
+        <div key={item.id} className="w-full  px-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
           <div className="flex-none lg:flex">
             <div className="h-48 w-full lg:h-32 lg:w-32 rounded-md lg:mb-0 mb-3">
               <img
@@ -164,10 +168,11 @@ const Buy = () => {
               <div className="flex space-x-3 text-sm font-medium">
                 <div className=" items-center bg-white p-2 rounded-lg justify-center flex gap-1 font-medium text-[#10b981] dark:text-[#10b981]">
                 {item.roomTypes && item.roomTypes.map((property, i) => (
-  <div key={i}>
-    <p className='text-emerald-500'>{property.type}-{property.price}/Month |</p>
-  </div>
-))}
+                    <div key={i}>
+                      <span className="price text-xs">{i + 1}. {property.type} - {property.price}/Month</span>
+                    </div>
+                  ))}
+
 
                 </div>
                 <Link href={`/pgdetail?id=${item.id}`} passHref>

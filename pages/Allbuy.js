@@ -261,6 +261,10 @@ const Filter1 = () => {
         <div className="2xl:container 2xl:mx-auto">
             <div className=" md:mt-16 lg:px-20 md:px-6 mt-9 px-4">
                 <p className=" text-sm leading-3 text-gray-600 font-normal mb-2">Home - <p>Buy Property</p></p>
+                <p className=" text-xs leading-4 text-gray-600 font-normal ">Arene Services offers a comprehensive buy and sell service that simplifies the process of property transactions for our clients. Whether you are looking to buy your dream home or sell a property, Arene Services is your trusted partner in the real estate market.
+Our dedicated team of professionals is committed to providing a seamless and transparent experience for buyers and sellers alike. With Arene Services, you can expect personalized assistance, expert guidance, and access to a wide range of properties to suit your preferences and budget.
+When you choose Arene Services for your buy or sell needs, you benefit from our extensive network, market knowledge, and negotiation skills that ensure a successful and satisfactory transaction. We handle all aspects of the buying and selling process, from property valuation and listing to showcasing properties and facilitating negotiations.
+Whether you are a first-time buyer or a seasoned investor, Arene Services is here to make your property buying or selling journey smooth, efficient, and rewarding. Trust Arene Services for all your real estate needs and let us help you achieve your property goals with confidence.</p>
                 <div className=" flex justify-between items-center mb-4">
                 <h2 className=" lg:text-2xl text-xl lg:leading-9 leading-7 text-gray-800 font-semibold">Searching You Property Nearest from {location}</h2>
 

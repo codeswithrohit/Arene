@@ -156,6 +156,10 @@ console.log(userData)
         defer
       ></script>
     </Head>
+    <p className=" text-xs leading-4 text-gray-600 font-normal mt-32 md:mt-16">Arene Services offers a comprehensive buy and sell service that simplifies the process of property transactions for our clients. Whether you are looking to buy your dream home or sell a property, Arene Services is your trusted partner in the real estate market.
+Our dedicated team of professionals is committed to providing a seamless and transparent experience for buyers and sellers alike. With Arene Services, you can expect personalized assistance, expert guidance, and access to a wide range of properties to suit your preferences and budget.
+When you choose Arene Services for your buy or sell needs, you benefit from our extensive network, market knowledge, and negotiation skills that ensure a successful and satisfactory transaction. We handle all aspects of the buying and selling process, from property valuation and listing to showcasing properties and facilitating negotiations.
+Whether you are a first-time buyer or a seasoned investor, Arene Services is here to make your property buying or selling journey smooth, efficient, and rewarding. Trust Arene Services for all your real estate needs and let us help you achieve your property goals with confidence.</p>
   
     {loading ? ( // Show spinner while loading
      <div class="flex min-h-screen justify-center items-center">
@@ -164,7 +168,7 @@ console.log(userData)
  
     ) : (
       filteredData.map((item, index) => (
-        <div key={item.id} className="w-full mt-32 md:mt-16 p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
+        <div key={item.id} className="w-full  p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
           <div className="flex-none lg:flex">
             <div className="h-48 w-full lg:h-32 lg:w-32 rounded-md lg:mb-0 mb-3">
               <img

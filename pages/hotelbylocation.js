@@ -213,6 +213,8 @@ const Filter1 = () => {
           <div className="2xl:container 2xl:mx-auto">
               <div className=" md:mt-16 lg:px-20 md:px-6 mt-9 px-4">
                   <p className=" text-sm leading-3 text-gray-600 font-normal mb-2">Home - <p>Hotel Property</p></p>
+                  <p className=" text-xs leading-4 text-gray-600 font-normal ">Experience luxury and comfort like never before with Arene Services' exceptional hotel services in collaboration with top-tier hotels. We pride ourselves on delivering superior customer satisfaction and unmatched quality to ensure a memorable stay for our guests.
+Arene Services partners with renowned hotels known for their exquisite amenities, impeccable service, and stunning locations. Whether you are traveling for business or leisure, our curated selection of hotels caters to every need and preference, promising a stay that exceeds expectations.</p>
                   <div className=" flex justify-between items-center mb-4">
                   <h2 className=" lg:text-2xl text-xl lg:leading-9 leading-7 text-gray-800 font-semibold">Searching You Property Nearest from {location}</h2>
   

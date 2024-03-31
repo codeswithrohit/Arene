@@ -109,7 +109,6 @@ const Buy = () => {
   // Filter fetchedData based on distances less than 15 km
   const filteredData = fetchedData.filter(item => parseFloat(item.distance) < parseFloat(nearestLocation));
 
- console.log(filteredData)
   
   
   return (
@@ -121,14 +120,14 @@ const Buy = () => {
         defer
       ></script>
     </Head>
-  
+    <p className=" text-xs leading-4 text-gray-600 font-normal mt-32 md:mt-16 ">Arene Services redefines the rental experience with a commitment to excellence and a focus on customer satisfaction. Our rent services stand out for their efficiency, transparency, and dedication to providing top-notch properties for our clients.</p>
     {loading ? ( // Show spinner while loading
      <div class="flex min-h-screen justify-center items-center">
      <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
  </div>
     ) : (
       filteredData.map((item, index) => (
-        <div key={item.id} className="w-full mt-32 md:mt-16 p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
+        <div key={item.id} className="w-full  p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
           <div className="flex-none lg:flex">
             <div className="h-48 w-full lg:h-32 lg:w-32 rounded-md lg:mb-0 mb-3">
               <img

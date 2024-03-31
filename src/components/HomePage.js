@@ -217,7 +217,7 @@ const HomePage = () => {
             <img src={imageList[currentImageIndex].imageUrl} className="h-full w-full object-cover rounded-xl" alt={`Slider Image ${currentImageIndex + 1}`} />
           </div>
         </div>
-        <div className="flex justify-center -mt-8 lg:-mt-8">
+        <div className="flex justify-center -mt-8 lg:-mt-16">
           {imageList.map((_, index) => (
             <div
               key={index}
@@ -227,7 +227,7 @@ const HomePage = () => {
           ))}
         </div>
       </div>
-      <section className="relative w-full h-full bg-neutral-50 mt-12 pb-10">
+      <section className="relative w-full h-full bg-neutral-50 mt-12">
 
       <div className="w-full h-32 rounded-5xl  ">
       <div className="h-8 grid grid-cols-8 w-full">
@@ -265,12 +265,12 @@ const HomePage = () => {
            Hotel
         </button>
         <button
-          className={`flex  items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-xs ${
             activeTab === 'BanqueetHall' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('BanqueetHall')}
         >
-           Banqueet Hall
+           Banquet Hall
         </button>
         <button
           className={`flex  items-center gap-2 justify-center text-sm ${
@@ -289,12 +289,12 @@ const HomePage = () => {
            Laundry
         </button>
         <button
-          className={`flex  items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-xs ${
             activeTab === 'CloudKitchen' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('CloudKitchen')}
         >
-           Cloud Kitchen
+           Arene Safe
         </button>
        
       </div>
@@ -422,7 +422,7 @@ const HomePage = () => {
               </select>
             </div>
             <div className="h-full w-full" >
-            <button  onClick={handleHotelSearch} className="text-white  bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
+            <button  onClick={handleHotelSearch} className="text-white md:w-full  bg-emerald-500 font-bold text-xs  px-5 py-1 h-8 col-span-3">Search</button>
             </div>
 
           </>
@@ -450,7 +450,7 @@ const HomePage = () => {
               </select>
             </div>
             <div className="h-full w-full" >
-            <button  onClick={handleBanqueetHallSearch} className="text-white bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
+            <button  onClick={handleBanqueetHallSearch} className="text-white bg-emerald-500 md:w-full font-bold text-xs  px-4 py-1 h-8 col-span-3">Search</button>
             </div>
 
           </>
@@ -478,7 +478,7 @@ const HomePage = () => {
               </select>
             </div>
             <div className="h-full w-full" >
-            <button  onClick={handleResortSearch} className="text-white bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
+            <button  onClick={handleResortSearch} className="text-white bg-emerald-500 md:w-full font-bold text-xs  px-4 py-1 h-8 col-span-3">Search</button>
             </div>
 
           </>
@@ -514,7 +514,7 @@ const HomePage = () => {
             </Autocomplete>
           </div>
           <div className="h-full w-full">
-          <button  onClick={handleLaundrySearch} className="text-white bg-emerald-500 font-bold text-xs  px-4 py-1 h-10 col-span-3">Search</button>
+          <button  onClick={handleLaundrySearch} className="text-white bg-emerald-500 md:w-full font-bold text-xs  px-4 py-1 h-8 col-span-3">Search</button>
           </div>
         </>
         )}
@@ -543,7 +543,7 @@ const HomePage = () => {
             </Autocomplete>
           </div>
           <div className="h-full w-full">
-          <button  onClick={handleCloudKitchenSearch} className="text-white bg-emerald-500 font-bold text-xs  px-4 py-1 h-10 col-span-3">Search</button>
+          <button  onClick={handleCloudKitchenSearch} className="text-white md:w-full bg-emerald-500 font-bold text-xs  px-4 py-1 h-8 col-span-3">Search</button>
           </div>
         </>
         )}

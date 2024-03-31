@@ -90,7 +90,7 @@ const Contact = () => {
                   </div>
                   <div class="flex flex-col items-center justify-center rounded w-full h-44 p-4 text-center bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)]">
                     <a
-                      href="tel:+917355405296"
+                      href="tel:+919871713129"
                       class="flex flex-col items-center justify-center"
                     >
                       <svg
@@ -106,8 +106,8 @@ const Contact = () => {
                       <h4 class="text-[#333] text-base font-extrabold mt-4">
                         Call
                       </h4>
-                      <p class="text-sm tect-gray-400 mt-2">+91-73558555296</p>
-                      <p class="text-sm tect-gray-400 mt-2">+91-6393552441599</p>
+                      <p class="text-sm tect-gray-400 mt-2">+91 9871713129</p>
+                      <p class="text-sm tect-gray-400 mt-2">+91 9999789352</p>
                     </a>
                   </div>
 
@@ -122,7 +122,7 @@ const Contact = () => {
                   </div>
                   <div class="flex flex-col items-center justify-center rounded w-full h-44 p-4 text-center bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)]">
                     <a
-                      href="https://wa.me/918808502599"
+                      href="https://wa.me/919871713129"
                       target="_blank"
                       rel="noopener noreferrer"
                       class="flex flex-col items-center justify-center"
@@ -131,12 +131,12 @@ const Contact = () => {
                       <h4 class="text-[#333] text-base font-extrabold mt-4">
                         WhatsApp
                       </h4>
-                      <p class="text-sm tect-gray-400 mt-2">+91-88085552599</p>
-                      <p class="text-sm tect-gray-400 mt-2">+91-6393552552299</p>
+                      <p class="text-sm tect-gray-400 mt-2">+91 9871713129</p>
+                      <p class="text-sm tect-gray-400 mt-2">+91 9999789352</p>
                     </a>
                   </div>
                 </div>
-                <div style={{ backgroundColor: "#FF5733" }} class="lg:col-span-2  rounded sm:p-10 p-4 z-10">
+                <div style={{ backgroundColor: "#10b981" }} class="lg:col-span-2  rounded sm:p-10 p-4 z-10">
                   <h2 class="text-3xl uppercase text-white text-center font-extrabold mb-6">
                     Please write to us
                   </h2>

@@ -209,13 +209,13 @@ const Footer = () => {
       <div class="md:flex md:item-center mt-8">
         <ul class="md:flex md:space-x-6 max-md:space-y-2">
           <li>
-            <a href='javascript:void(0)' class='hover:text-[#10b981] hover:font-bold text-black text-sm'>About Us</a>
+            <a href='/about' class='hover:text-[#10b981] hover:font-bold text-black text-sm'>About Us</a>
           </li>
           <li>
-            <a href='javascript:void(0)' class='hover:text-[#10b981] hover:font-bold text-black text-sm'>Terms of Service</a>
+            <a href='/tandc' class='hover:text-[#10b981] hover:font-bold text-black text-sm'>Terms & Condition</a>
           </li>
           <li>
-            <a href='javascript:void(0)' class='hover:text-[#10b981] hover:font-bold text-black text-sm'>Privacy Policy</a>
+            <a href='/privacypolicy' class='hover:text-[#10b981] hover:font-bold text-black text-sm'>Privacy Policy</a>
           </li>
           {/* <li>
             <a href='javascript:void(0)' class='hover:text-[#10b981] text-black text-sm'>Security</a>
