@@ -25,7 +25,7 @@ const BuyProperty = () => {
    const [city, setCity] = useState();
    const [category, setCategory] = useState('');
 
-  const categoryRentData = ['Select Category', 'Appartment', 'Builder Floor','Villas',,'Land','Shop/Showroom','Office Space','Other Properties'];
+  const categoryRentData = ['Select Category', 'Appartment', 'Builder Floor','Villas','Land','Shop/Showroom','Office Space','Other Properties'];
 
   // Handle change event for the category selector
   const handleCategoryChange = (event) => {

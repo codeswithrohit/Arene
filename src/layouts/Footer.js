@@ -10,6 +10,12 @@ const Footer = () => {
       query: { location: location }
     });
   };
+  const handleBUyLocationClick = (location) => {
+    router.push({
+      pathname: '/BUybylocation',
+      query: { location: location }
+    });
+  };
   return (
     <div>
       <footer class="font-[sans-serif] bg-white p-10">
@@ -94,18 +100,21 @@ const Footer = () => {
           </svg>
           </h4>
           <ul class="space-y-5 mt-4 max-sm:hidden">
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] hover:font-bold uppercase text-black text-sm'>Buy Property in Delhi</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] hover:font-bold uppercase text-black text-sm'>Buy Property in Mumbai</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] hover:font-bold uppercase text-black text-sm'>Buy Property in Lucknow</a>
-            </li>
-            <li>
-              <a href='javascript:void(0)' class='hover:text-[#10b981] hover:font-bold uppercase text-black text-sm'>Buy Property in Patna</a>
-            </li>
+          <li>
+                <a href='javascript:void(0)' onClick={() => handleBUyLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Buy Property in Delhi</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleBUyLocationClick('Lucknow')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Buy Property in Lucknow</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleBUyLocationClick('Patna')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Buy Property in Patna</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleBUyLocationClick('Allahabad')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Buy Property in Allahabad</a>
+              </li>
+              <li>
+                <a href='javascript:void(0)' onClick={() => handleBUyLocationClick('Varanasi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Buy Property in Varanasi</a>
+              </li>
           </ul>
         </div>
         <div>

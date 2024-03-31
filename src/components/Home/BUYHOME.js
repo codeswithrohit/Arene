@@ -286,7 +286,7 @@ const BUYHOME = () => {
       </section>
       <div
     class="fter:h-px  flex items-center before:h-px before:flex-1  before:bg-gray-300 before:content-[''] after:h-px after:flex-1 after:bg-gray-300  after:content-['']">
-    <button type="button"
+   <a href="/Allbuy"
         class="flex items-center rounded-full border border-gray-300 bg-secondary-50 px-3 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mr-1 h-4 w-4">
             <path fill-rule="evenodd"
@@ -294,7 +294,7 @@ const BUYHOME = () => {
                 clip-rule="evenodd" />
         </svg>
         View More Buy Property
-    </button>
+    </a>
 </div>
   
   </div>

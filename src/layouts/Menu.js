@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React, { Fragment } from "react";
-
+import { useRouter } from 'next/router';
 export const Home = () => (
   <Fragment>
     <li className="menu-item">
@@ -27,31 +27,45 @@ export const Listing = () => (
   
   </Fragment>
 );
-export const Pages = () => (
-  <Fragment>
-    <li className="menu-item">
-      <Link href="/add-listing">Appartment</Link>
-    </li>
-    <li>
-      <Link href="/products">Builder Floor</Link>
-    </li>
-    <li>
-      <Link href="/product-details">Bunglow</Link>
-    </li>
-    <li className="menu-item">
-      <Link href="/how-work">Office Space</Link>
-    </li>
-    <li className="menu-item">
-      <Link href="/pricing">Go Down</Link>
-    </li>
-    <li className="menu-item">
-      <Link href="/pricing">Land</Link>
-    </li>
-    <li className="menu-item">
-      <Link href="/pricing">Villas</Link>
-    </li>
-  </Fragment>
-);
+export const Pages = () => {
+  const router = useRouter();
+
+  const handleClick = (subcategory) => {
+    router.push({
+      pathname: '/Allbuysubcat',
+      query: { subcategory: subcategory }
+    });
+  };
+
+  return (
+    <Fragment>
+      <li className="menu-item" onClick={() => handleClick('Appartment')}>
+        <Link href="" >Appartment</Link>
+      </li>
+      <li className="menu-item" onClick={() => handleClick('Builder Floor')}>
+        <Link href="">Builder Floor</Link>
+      </li>
+      <li className="menu-item" onClick={() => handleClick('Bunglow')}>
+        <Link href="">Bunglow</Link>
+      </li>
+      <li className="menu-item" onClick={() => handleClick('Shop/Showroom')}>
+        <Link href="">Shop/Showroom</Link>
+      </li>
+      <li className="menu-item" onClick={() => handleClick('Office Space')}>
+        <Link href="">Office Space</Link>
+      </li>
+      <li className="menu-item" onClick={() => handleClick('Go Down')}>
+        <Link href="">Go Down</Link>
+      </li>
+      <li className="menu-item" onClick={() => handleClick('Land')}>
+        <Link href="">Land</Link>
+      </li>
+      <li className="menu-item" onClick={() => handleClick('Villas')}>
+        <Link href="">Villas</Link>
+      </li>
+    </Fragment>
+  );
+};
 export const Blog = () => (
   <Fragment>
      <li className="menu-item">

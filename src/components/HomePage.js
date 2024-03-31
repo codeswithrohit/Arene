@@ -9,7 +9,46 @@ const HomePage = () => {
   const [category, setCategory] = useState('');
   const handleTabClick = (tab) => {
     setActiveTab(tab);
+
+
+    
   };
+
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const imageList = [
+   
+    {
+      id: 1,
+      imageUrl: "slider1.png",
+    },
+    {
+      id: 2,
+      imageUrl: "slider2.png",
+    },
+    {
+      id: 3,
+      imageUrl: "slider3.png",
+    },
+  ];
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === imageList.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 4000); // Change the interval as needed
+
+    return () => clearInterval(intervalId);
+  }, [currentImageIndex]);
+
+ 
+ 
+  const handleDotClick = (index) => {
+    setCurrentImageIndex(index);
+  };
+
 
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -170,25 +209,31 @@ const HomePage = () => {
 
   
   return (
-    <div className='min-h-screen' >
-      <section className="relative w-full h-full min-h-screen bg-neutral-50 pb-10">
+    <div  >
+         <div  className=" px-4 md:mt-12 mt-32">
+        {/* Left Column - Image Slider */}
+        <div  >
+          <div className="lg:pr-1   lg:py-4 ">
+            <img src={imageList[currentImageIndex].imageUrl} className="h-full w-full object-cover rounded-xl" alt={`Slider Image ${currentImageIndex + 1}`} />
+          </div>
+        </div>
+        <div className="flex justify-center -mt-8 lg:-mt-8">
+          {imageList.map((_, index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 lg:w-4 lg:h-4 mx-1 rounded-full cursor-pointer ${index === currentImageIndex ? 'bg-white' : 'bg-gray-300'}`}
+              onClick={() => handleDotClick(index)}
+            />
+          ))}
+        </div>
+      </div>
+      <section className="relative w-full h-full bg-neutral-50 mt-12 pb-10">
 
-
-<main className=" w-full h-full relative dark:bg-slate-950  ">
-<div className="flex flex-col-reverse lg:flex-row">
-
-<section className="w-full lg:w-[60%] flex flex-col lg:translate-x-10 @md:px-2 lg:px-0 ">
-<div className="w-full h-auto  lg:pt-16 ">
-
-<h1 className="text-3xl lg:text-4xl lg:text-5xl font-extrabold py-1.5 text-[#10b981]  ">PERIMIUM SERVICES!</h1>
-<h1 className="text-3xl lg:text-4xl lg:text-5xl font-extrabold py-1.5 text-[#10b981]   ">IN<span className="text-black font-bold text-xs"></span> YOUR AREA</h1>
-<h1 className="text-3xl lg:text-4xl lg:text-5xl font-extrabold py-1.5 text-[#10b981]   ">WAITING FOR YOU</h1>
-{/* <p className="max-w-sm py-5 text-gray-600 lg:text-lg">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi dolorem magnam quod sunt doloremque odit deserun</p> */}
-<div className="w-full h-32 rounded-5xl  ">
+      <div className="w-full h-32 rounded-5xl  ">
       <div className="h-8 grid grid-cols-8 w-full">
         
         <button
-          className={`flex rounded-lg items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-1 justify-center text-sm ${
             activeTab === 'pg' ? 'bg-emerald-500  text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('pg')}
@@ -196,7 +241,7 @@ const HomePage = () => {
            PG
         </button>
         <button
-          className={`flex rounded-lg items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-sm ${
             activeTab === 'buy' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('buy')}
@@ -204,7 +249,7 @@ const HomePage = () => {
            Buy
         </button>
         <button
-          className={`flex rounded-lg items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-sm ${
             activeTab === 'rent' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('rent')}
@@ -212,7 +257,7 @@ const HomePage = () => {
            Rent
         </button>
         <button
-          className={`flex rounded-lg items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-sm ${
             activeTab === 'hotel' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('hotel')}
@@ -220,7 +265,7 @@ const HomePage = () => {
            Hotel
         </button>
         <button
-          className={`flex rounded-lg items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-sm ${
             activeTab === 'BanqueetHall' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('BanqueetHall')}
@@ -228,7 +273,7 @@ const HomePage = () => {
            Banqueet Hall
         </button>
         <button
-          className={`flex rounded-lg items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-sm ${
             activeTab === 'Resort' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('Resort')}
@@ -236,7 +281,7 @@ const HomePage = () => {
            Resort
         </button>
         <button
-          className={`flex rounded-lg items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-sm ${
             activeTab === 'Laundry' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('Laundry')}
@@ -244,7 +289,7 @@ const HomePage = () => {
            Laundry
         </button>
         <button
-          className={`flex rounded-lg items-center gap-2 justify-center text-sm ${
+          className={`flex  items-center gap-2 justify-center text-sm ${
             activeTab === 'CloudKitchen' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
           }`}
           onClick={() => handleTabClick('CloudKitchen')}
@@ -285,7 +330,7 @@ const HomePage = () => {
        <option value="10">Nearest 10 Km</option>
            </select>
          </div>
-         <button  onClick={handlePGSearch} className="text-white bg-emerald-500 font-bold text-xs rounded-lg px-5 py-1 h-10 col-span-3">Search</button>
+         <button  onClick={handlePGSearch} className="text-white bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
        </>
         )}
         {activeTab === 'buy' && (
@@ -318,7 +363,7 @@ const HomePage = () => {
           <option value="10">Nearest 10 Km</option>
               </select>
             </div>
-            <button  onClick={handleBuySearch} className="text-white  bg-emerald-500 font-bold text-xs rounded-lg px-5 py-1 h-10 col-span-3">Search</button>
+            <button  onClick={handleBuySearch} className="text-white  bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
           </>
         )}
         {activeTab === 'rent' && (
@@ -351,7 +396,7 @@ const HomePage = () => {
         <option value="10">Nearest 10 Km</option>
             </select>
           </div>
-          <button  onClick={handleRentSearch} className="text-white  bg-emerald-500 font-bold text-xs rounded-lg px-5 py-1 h-10 col-span-3">Search</button>
+          <button  onClick={handleRentSearch} className="text-white  bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
         </>
         )}
         {activeTab === 'hotel' && (
@@ -377,7 +422,7 @@ const HomePage = () => {
               </select>
             </div>
             <div className="h-full w-full" >
-            <button  onClick={handleHotelSearch} className="text-white  bg-emerald-500 font-bold text-xs rounded-lg px-5 py-1 h-10 col-span-3">Search</button>
+            <button  onClick={handleHotelSearch} className="text-white  bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
             </div>
 
           </>
@@ -405,7 +450,7 @@ const HomePage = () => {
               </select>
             </div>
             <div className="h-full w-full" >
-            <button  onClick={handleBanqueetHallSearch} className="text-white bg-emerald-500 font-bold text-xs rounded-lg px-5 py-1 h-10 col-span-3">Search</button>
+            <button  onClick={handleBanqueetHallSearch} className="text-white bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
             </div>
 
           </>
@@ -433,7 +478,7 @@ const HomePage = () => {
               </select>
             </div>
             <div className="h-full w-full" >
-            <button  onClick={handleResortSearch} className="text-white bg-emerald-500 font-bold text-xs rounded-lg px-5 py-1 h-10 col-span-3">Search</button>
+            <button  onClick={handleResortSearch} className="text-white bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
             </div>
 
           </>
@@ -469,7 +514,7 @@ const HomePage = () => {
             </Autocomplete>
           </div>
           <div className="h-full w-full">
-          <button  onClick={handleLaundrySearch} className="text-white bg-emerald-500 font-bold text-xs rounded-lg px-4 py-1 h-10 col-span-3">Search</button>
+          <button  onClick={handleLaundrySearch} className="text-white bg-emerald-500 font-bold text-xs  px-4 py-1 h-10 col-span-3">Search</button>
           </div>
         </>
         )}
@@ -498,65 +543,14 @@ const HomePage = () => {
             </Autocomplete>
           </div>
           <div className="h-full w-full">
-          <button  onClick={handleCloudKitchenSearch} className="text-white bg-emerald-500 font-bold text-xs rounded-lg px-4 py-1 h-10 col-span-3">Search</button>
+          <button  onClick={handleCloudKitchenSearch} className="text-white bg-emerald-500 font-bold text-xs  px-4 py-1 h-10 col-span-3">Search</button>
           </div>
         </>
         )}
 
       </div>
     </div>
-</div>
-</section>
-<section className="relative md:mt-0 mt-20 w-full lg:w-[70%] flex ju items-center ">
-              <img src={images[currentIndex]} alt="Hero Image" className="h-full w-full object-contain" />
-<div className="hidden lg:absolute top-32 left-10 h-12 w-40 p-2 lg:flex items-center justify-center bg-white rounded-md shadow-lg text-black font-bold text-xs gap-2 text-sm">
-<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-<path d="M560 64c8.84 0 16-7.16 16-16V16c0-8.84-7.16-16-16-16H16C7.16 0 0 7.16 0 16v32c0 8.84 7.16 16 16 16h15.98v384H16c-8.84 0-16 7.16-16 16v32c0 8.84 7.16 16 16 16h240v-80c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v80h240c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16h-16V64h16zm-304 44.8c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm0 96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm-128-96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zM179.2 256h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8zM192 384c0-53.02 42.98-96 96-96s96 42.98 96 96H192zm256-140.8c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm0-96c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4z">
-</path>
-</svg>
-<p className="text-gray-500">Hotel Booking</p>
-</div>
-<div className="hidden lg:absolute bottom-20 left-16 h-12 w-40 p-2 lg:flex items-center justify-center bg-white rounded-md shadow-lg text-black font-bold text-xs gap-2 text-sm">
-<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-<path d="M560 64c8.84 0 16-7.16 16-16V16c0-8.84-7.16-16-16-16H16C7.16 0 0 7.16 0 16v32c0 8.84 7.16 16 16 16h15.98v384H16c-8.84 0-16 7.16-16 16v32c0 8.84 7.16 16 16 16h240v-80c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v80h240c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16h-16V64h16zm-304 44.8c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm0 96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm-128-96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zM179.2 256h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8zM192 384c0-53.02 42.98-96 96-96s96 42.98 96 96H192zm256-140.8c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm0-96c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4z">
-</path>
-</svg>
-<p className="text-gray-500">PG Booking</p>
-</div>
-<div className="hidden lg:absolute top-28 right-10 h-12 w-40 p-2 lg:flex items-center justify-center bg-white rounded-md shadow-lg text-black font-bold text-xs gap-2 text-sm">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-map">
-<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21">
-</polygon>
-<line x1="9" x2="9" y1="3" y2="18">
-</line>
-<line x1="15" x2="15" y1="6" y2="21">
-</line>
-</svg>
-<p className="text-gray-500">Laundry Booking</p>
-</div>
-<div className="hidden lg:absolute bottom-28 right-5 h-12 w-40 p-2 lg:flex items-center justify-center bg-white rounded-md shadow-lg text-black font-bold text-xs gap-2 text-sm">
-<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-<path d="M560 64c8.84 0 16-7.16 16-16V16c0-8.84-7.16-16-16-16H16C7.16 0 0 7.16 0 16v32c0 8.84 7.16 16 16 16h15.98v384H16c-8.84 0-16 7.16-16 16v32c0 8.84 7.16 16 16 16h240v-80c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v80h240c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16h-16V64h16zm-304 44.8c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm0 96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm-128-96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zM179.2 256h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8zM192 384c0-53.02 42.98-96 96-96s96 42.98 96 96H192zm256-140.8c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm0-96c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4z">
-</path>
-</svg>
-<p className="text-gray-500">Banqueet Hall Booking</p>
-</div>
-<div className="hidden lg:absolute -bottom-5 left-52 h-16 w-48 p-2 lg:flex items-center justify-center bg-white rounded-md shadow-lg text-black font-bold text-xs gap-2 text-sm">
-<p className="h-10 w-10 bg-black font-bold text-xs rounded-full flex items-center justify-center text-white">
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-phone">
-<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-</path>
-</svg>
-</p>
-<div>
-<p className="text-sm text-gray-500">Customer Service</p>
-<p className="text-sm text-gray-500">+12-12345 12345</p>
-</div>
-</div>
-</section>
-</div>
-</main>
-<h1 className="text-xl lg:text-xl lg:text-xl text-center font-extrabold py-2.5 text-[#10b981]  ">Your location found in  {locations}</h1>
+<h1 className="text-xl lg:text-xl lg:text-xl text-center font-extrabold py-2.5 text-[#10b981]  ">Your location {locations}</h1>
 </section>
     </div>
   )
