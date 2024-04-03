@@ -76,7 +76,7 @@ const Footer = () => {
           </ul>
         </div>
         <div>
-          <h4 class="text-black font-semibold text-lg relative max-sm:cursor-pointer">PG <svg
+          <h4 class="text-black font-semibold text-lg relative max-sm:cursor-pointer">ARENE PG <svg
             xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
             class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
             <path
@@ -86,19 +86,19 @@ const Footer = () => {
           </h4>
           <ul class="mt-4 space-y-5">
           <li>
-                <a href='javascript:void(0)' onClick={() => handleLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Delhi</a>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>ARENE PG in Delhi</a>
               </li>
               <li>
-                <a href='javascript:void(0)' onClick={() => handleLocationClick('Lucknow')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Lucknow</a>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Lucknow')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>ARENE PG in Lucknow</a>
               </li>
               <li>
-                <a href='javascript:void(0)' onClick={() => handleLocationClick('Patna')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Patna</a>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Patna')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>ARENE PG in Patna</a>
               </li>
               <li>
-                <a href='javascript:void(0)' onClick={() => handleLocationClick('Allahabad')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Allahabad</a>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Allahabad')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>ARENE PG in Allahabad</a>
               </li>
               <li>
-                <a href='javascript:void(0)' onClick={() => handleLocationClick('Varanasi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>PG in Varanasi</a>
+                <a href='javascript:void(0)' onClick={() => handleLocationClick('Varanasi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>ARENE PG in Varanasi</a>
               </li>
           </ul>
         </div>
@@ -195,6 +195,36 @@ const Footer = () => {
         </Link>
         <Link href='/resortall'>
           <h4 class="text-black font-semibold text-lg relative cursor-pointer">Resort<svg
+            xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+            class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
+            <path
+              d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z"
+              data-name="16" data-original="#000000"></path>
+          </svg>
+          </h4>
+        </Link>
+        <Link href='/hotelall'>
+          <h4 class="text-black font-semibold text-lg relative cursor-pointer">Hotel<svg
+            xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+            class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
+            <path
+              d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z"
+              data-name="16" data-original="#000000"></path>
+          </svg>
+          </h4>
+        </Link>
+        <Link href='/'>
+          <h4 class="text-black font-semibold text-lg relative cursor-pointer">Arene laundry<svg
+            xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+            class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
+            <path
+              d="M12 16a1 1 0 0 1-.71-.29l-6-6a1 1 0 0 1 1.42-1.42l5.29 5.3 5.29-5.29a1 1 0 0 1 1.41 1.41l-6 6a1 1 0 0 1-.7.29z"
+              data-name="16" data-original="#000000"></path>
+          </svg>
+          </h4>
+        </Link>
+        <Link href='/'>
+          <h4 class="text-black font-semibold text-lg relative cursor-pointer">Arene chef<svg
             xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
             class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
             <path

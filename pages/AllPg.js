@@ -255,7 +255,7 @@ const Filter1 = () => {
       </Head>
         <div className="2xl:container 2xl:mx-auto">
             <div className=" md:mt-16 lg:px-20 md:px-6 mt-9 px-4">
-                <p className=" text-sm leading-3 text-gray-600 font-normal mb-2">Home - <p>PG</p></p>
+                <p className=" text-sm leading-3 text-gray-600 font-normal mb-2">Home - <p>ARENE PG</p></p>
                 <p className=" text-xs leading-4 text-gray-600 font-normal mb-2">Arene Services revolutionizes the PG experience for boys and girls across India by offering a no-brokerage solution with exceptional properties and high-quality services. Our PG accommodations are designed to provide a seamless living experience, ensuring comfort, convenience, and a sense of community.
 With Arene Services, residents can enjoy a range of amenities including water purifiers for clean drinking water, convenient locations for easy access, parking facilities for added convenience, high-speed Wi-Fi connectivity, laundry services for hassle-free living, and delicious food options to cater to diverse tastes.
 Our commitment to excellence extends beyond just providing accommodation; we strive to create a welcoming environment where residents feel at home. Whether you are a student, working professional, or someone seeking a comfortable living space, Arene Services offers premium PG services that prioritize your comfort and well-being.
@@ -279,7 +279,7 @@ Experience the difference with Arene Services - where quality meets convenience,
                         Filters
                     </button>
                 </div>
-                <p className=" text-xl leading-5 text-gray-600 font-medium">{TotalData} PG</p>
+                <p className=" text-xl leading-5 text-gray-600 font-medium">{TotalData} ARENE PG</p>
 
                 {/* Filters Button (Small Screen)  */}
 

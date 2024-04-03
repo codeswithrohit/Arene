@@ -18,7 +18,7 @@ const User = () => {
 
   useEffect(() => {
     const db = firebase.firestore();
-    const RegistrationRef = db.collection("users");
+    const RegistrationRef = db.collection("AgentOwner");
 
     RegistrationRef.get()
       .then((RegistrationSnapshot) => {
@@ -48,7 +48,7 @@ const User = () => {
 
     const deleteFirestoreUser = async () => {
       try {
-        return await db.collection("users").doc(userId).delete();
+        return await db.collection("AgentOwner").doc(userId).delete();
       } catch (error) {
         throw new Error(`Error deleting user from Firestore: ${error}`);
       }
@@ -100,7 +100,7 @@ const User = () => {
 
   const handleVerify = (userId) => {
     const db = firebase.firestore();
-    const userRef = db.collection("users").doc(userId);
+    const userRef = db.collection("AgentOwner").doc(userId);
 
     userRef
       .update({
@@ -118,7 +118,7 @@ const User = () => {
 
   const handleUnverify = (userId) => {
     const db = firebase.firestore();
-    const userRef = db.collection("users").doc(userId);
+    const userRef = db.collection("AgentOwner").doc(userId);
 
     userRef
       .update({

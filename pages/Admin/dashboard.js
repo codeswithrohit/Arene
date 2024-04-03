@@ -24,7 +24,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userRef = firebase.firestore().collection("users");
+        const userRef = firebase.firestore().collection("AgentOwner");
         const querySnapshot = await userRef.get();
 
         const fetchedUserData = [];
@@ -71,7 +71,7 @@ const Dashboard = () => {
 
   const handleStatusChange = async (userId, status) => {
     try {
-      const userRef = firebase.firestore().collection("users").doc(userId);
+      const userRef = firebase.firestore().collection("AgentOwner").doc(userId);
       await userRef.update({ status }); // Update the status in Firestore
       // Refresh the data after updating
       const updatedUserData = [...userData];

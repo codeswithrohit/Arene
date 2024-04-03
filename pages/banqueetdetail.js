@@ -333,7 +333,7 @@ const handleSubmit = async (e) => {
           <i className="ti-mobile" />
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '5vh',padding:10,borderRadius:20 }}>
-  <button type="submit" style={{ backgroundColor: '#10b981', fontSize: 24, color: 'white',padding:10,borderRadius:20 }} disabled={isLoading}>
+  <button type="submit" style={{ backgroundColor: '#10b981', fontSize: 24, color: 'white',padding:10,borderRadius:2,marginTop:8 }} disabled={isLoading}>
     {isLoading ? 'Enquiry...' : 'Enquire Now'}
   </button>
 </div>

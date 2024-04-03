@@ -123,7 +123,8 @@ const Buy = () => {
         defer
       ></script>
     </Head>
-  
+    <p className=" text-xs leading-4 text-gray-600 font-normal mt-36 md:mt-16">Elevate your special events to extraordinary heights with Arene Services' exceptional banquet hall services in collaboration with top-notch venues. We are dedicated to delivering superior customer satisfaction and unparalleled quality to ensure that your celebrations are truly unforgettable.
+Arene Services partners with exquisite banquet halls known for their elegant ambiance, impeccable service, and attention to detail. Whether you are planning a wedding, corporate event, or any special occasion, our curated selection of banquet halls offers the perfect setting for your festivities.</p>
     {loading ? ( // Show spinner while loading
      <div class="flex min-h-screen justify-center items-center">
      <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>

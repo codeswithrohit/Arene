@@ -238,7 +238,7 @@ const HomePage = () => {
           }`}
           onClick={() => handleTabClick('pg')}
         >
-           PG
+           ARENE PG
         </button>
         <button
           className={`flex  items-center gap-2 justify-center text-sm ${
@@ -286,7 +286,7 @@ const HomePage = () => {
           }`}
           onClick={() => handleTabClick('Laundry')}
         >
-           Laundry
+          Arene Laundry
         </button>
         <button
           className={`flex  items-center gap-2 justify-center text-xs ${
@@ -294,7 +294,7 @@ const HomePage = () => {
           }`}
           onClick={() => handleTabClick('CloudKitchen')}
         >
-           Arene Safe
+           Arene Chef
         </button>
        
       </div>

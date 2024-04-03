@@ -26,7 +26,7 @@ const ListingDetails2 = () => {
     setSelectedRoom(selectedProperty); // Update selected room
     // Redirect to Booking with query parameters
     router.push({
-      pathname: '/booking',
+      pathname: '/bookings',
       query: {
         Name: pgdetaildata.ResortName,
         // State: pgdetaildata.state,

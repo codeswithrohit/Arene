@@ -148,14 +148,12 @@ const Register = () => {
       };
   
       if (userType === 'Agent') {
-        userData.selectedPgType = selectedPgType;
-        userData.selectedRentType = selectedRentType;
         userData.selectedBuyOption = selectedBuyOption;
         userData.Verified = false; // Assuming 'Verified' should be a boolean, not a string
   
       }
   
-      await firebase.firestore().collection('users').doc(user.uid).set(userData);
+      await firebase.firestore().collection('AgentOwner').doc(user.uid).set(userData);
       setisLoadinglogin(false);
   
       if (userType === 'Agent') {
@@ -163,7 +161,7 @@ const Register = () => {
           position: toast.POSITION.TOP_RIGHT,
         });
       } else if (userType === 'Individual') {
-        toast.success('Individual account has been created.', {
+        toast.success('Owner account has been created.', {
           position: toast.POSITION.TOP_RIGHT,
         });
       }
@@ -213,7 +211,7 @@ const Register = () => {
         const user = userCredential.user;
         firebase
           .firestore()
-          .collection('users')
+          .collection('AgentOwner')
           .doc(user.uid)
           .get()
           .then((doc) => {
@@ -259,7 +257,7 @@ const Register = () => {
         <input className="peer hidden" type="radio" name="radio" id="radio3" checked />
         <label className="peer-checked:border-blue-600 peer-checked:bg-blue-200 absolute top-0 h-full w-full cursor-pointer rounded-xl border" for="radio3"> </label>
         <div className="peer-checked:border-transparent peer-checked:bg-blue-600 peer-checked:ring-2 absolute left-4 h-5 w-5 rounded-full border-2 border-emerald-500 border-2 bg-gray-200 ring-blue-600 ring-offset-2"></div>
-        <span className="pointer-events-none z-10">Individual</span>
+        <span className="pointer-events-none z-10">Owner</span>
       </div>
     </div>
     <p className="mb-1 font-medium text-gray-500">Name</p>
@@ -315,7 +313,7 @@ const Register = () => {
       </div>
     {userType === 'Agent' && (
       <>
-   <div className="mb-4 flex flex-col">
+   {/* <div className="mb-4 flex flex-col">
   <label htmlFor="select-pg-type" className="mb-1 font-medium text-gray-500 uppercase">Select PG Type</label>
   <div className="relative">
     <select
@@ -348,11 +346,11 @@ const Register = () => {
     </select>
    
   </div>
-</div>
+</div> */}
 
 
 <div className="mb-4 flex flex-col">
-  <label htmlFor="select-buy-option" className="mb-1 font-medium text-gray-500 uppercase">Select Buy Option</label>
+  <label htmlFor="select-buy-option" className="mb-1 font-medium text-gray-500 uppercase">Select Sell Property Type</label>
   <div className="relative">
     <select
       className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-600 rounded-md"

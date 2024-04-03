@@ -12,7 +12,7 @@ export const Home = () => (
 export const About = () => (
   <Fragment>
     <li className="menu-item">
-      <Link href="/about">About us</Link>
+      <Link href="/about">About</Link>
     </li>
   </Fragment>
 );
@@ -112,7 +112,7 @@ export const BanQueetHall = () => (
 export const CloudKitchen = () => (
   <Fragment>
     <li className="menu-item">
-      <Link href="/contact">Arene Safe</Link>
+      <Link href="/contact">Arene Chef</Link>
     </li>
   </Fragment>
 );

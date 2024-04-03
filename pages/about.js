@@ -27,7 +27,7 @@ const About = () => {
                 >
                 
                   <div className="content">
-                    <h3 className="title">PG</h3>
+                    <h3 className="title">ARENE PG</h3>
                     
                     <Link href="/AllPg">
                       <a className="btn-link icon-btn">More Details</a>

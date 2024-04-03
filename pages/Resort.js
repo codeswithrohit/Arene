@@ -109,7 +109,6 @@ const Resort = () => {
   // Filter fetchedData based on distances less than 15 km
   const filteredData = fetchedData.filter(item => parseFloat(item.distance) < parseFloat(nearestLocation));
 
- console.log(filteredData)
   
  const onViewMapClick = (location) => {
   window.open(`https://www.google.com/maps/search/?api=1&query=${location}`, '_blank');
@@ -123,7 +122,8 @@ const Resort = () => {
         defer
       ></script>
     </Head>
-  
+    <p className=" text-xs leading-4 text-gray-600 font-normal mt-36 md:mt-16">Escape to a world of luxury and relaxation with Arene Services' exceptional resort services in collaboration with stunning resorts renowned for their superior customer satisfaction and unmatched quality. We are dedicated to curating unforgettable experiences that exceed expectations and create lasting memories for our guests.
+Arene Services partners with exquisite resorts known for their breathtaking locations, world-class amenities, and exceptional service. Whether you seek a tranquil retreat, an adventurous getaway, or a romantic escape, our curated selection of resorts offers the perfect setting for your dream vacation.</p>
     {loading ? ( // Show spinner while loading
       <div class="flex min-h-screen justify-center items-center">
       <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>

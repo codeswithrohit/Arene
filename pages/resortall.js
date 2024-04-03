@@ -265,6 +265,8 @@ const Filter1 = () => {
         <div className="2xl:container 2xl:mx-auto">
             <div className=" md:mt-16 lg:px-20 md:px-6 mt-9 px-4">
                 <p className=" text-sm leading-3 text-gray-600 font-normal mb-2">Home - <p>Resort Property</p></p>
+                <p className=" text-xs leading-4 text-gray-600 font-normal mb-2">Escape to a world of luxury and relaxation with Arene Services' exceptional resort services in collaboration with stunning resorts renowned for their superior customer satisfaction and unmatched quality. We are dedicated to curating unforgettable experiences that exceed expectations and create lasting memories for our guests.
+Arene Services partners with exquisite resorts known for their breathtaking locations, world-class amenities, and exceptional service. Whether you seek a tranquil retreat, an adventurous getaway, or a romantic escape, our curated selection of resorts offers the perfect setting for your dream vacation.</p>
                 <div className=" flex justify-between items-center mb-4">
                 <h2 className=" lg:text-2xl text-xl lg:leading-9 leading-7 text-gray-800 font-semibold">Searching You Property Nearest from {location}</h2>
 
@@ -443,6 +445,7 @@ const Filter1 = () => {
          
         <div className="flex justify-center items-center min-h-screen">
   <div className="row">
+
     {loading ? ( // Show spinner while loading
       <div className="flex justify-center items-center">
         <img className="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>

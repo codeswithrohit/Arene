@@ -40,7 +40,7 @@ const AddResort = ({handleCloseAllInputFormats}) => {
       const fetchUserData = async (user) => {
         try {
           const db = getFirestore();
-          const userDocRef = doc(db, 'users', user.uid); // Update the path to the user document
+          const userDocRef = doc(db, 'AgentOwner', user.uid); // Update the path to the user document
           const userDocSnap = await getDoc(userDocRef);
     
           if (userDocSnap.exists()) {

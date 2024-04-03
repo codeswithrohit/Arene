@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { firebase } from '../Firebase/config';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs'; // Import dayjs
 const Billing = () => {
   const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +32,7 @@ const Billing = () => {
 
     fetchBookingDetails();
   }, [orderId]);
+  console.log(bookingData)
   const handlePrint = () => {
     window.print();
   };
@@ -45,7 +47,11 @@ const Billing = () => {
   }
 
   // Render booking details using bookingData
-  const duePayment = bookingData.roomprice - bookingData.Payment;
+  const duePayment = bookingData.totalpayment - bookingData.Payment;
+  const start = dayjs(bookingData.checkIn);
+  const end = dayjs(bookingData.checkOut);
+  const totalDays = end.diff(start, 'days') || 1; // Set default value to 1 if totalDays is 0
+  const subtotal = bookingData.totalDays * bookingData.roomprice;
   return (
     <div className='min-h-screen py-12' >
         <div className="max-w-[85rem] px-4 sm:px-6 lg:px-8 mx-auto my-4 sm:my-10">
@@ -144,14 +150,17 @@ const Billing = () => {
         {bookingData.OrderDate}
         </dd>
       </dl>
-      {/* <dl className="grid sm:flex gap-x-3 text-sm">
-        <dt className="min-w-36 max-w-[200px] text-gray-500">
-          Check In date:
-        </dt>
-        <dd className="font-medium text-gray-800 dark:text-gray-200">
-          10 Jan 2023
-        </dd>
-      </dl> */}
+      <dl className="grid sm:flex gap-x-3 text-sm">
+  <dt className="min-w-36 max-w-[200px] text-gray-500">Check In date:</dt>
+  <dd className="font-medium text-gray-800 dark:text-gray-200">{bookingData.bookingDate.checkIn}</dd>
+</dl>
+{bookingData.bookingDate.checkOut ? (
+<dl className="grid sm:flex gap-x-3 text-sm">
+  <dt className="min-w-36 max-w-[200px] text-gray-500">Check Out date:</dt>
+  <dd className="font-medium text-gray-800 dark:text-gray-200">{bookingData.bookingDate.checkOut}</dd>
+</dl>
+  ) : null}
+
 
       {/* <dl className="grid sm:flex gap-x-3 text-sm">
         <dt className="min-w-36 max-w-[200px] text-gray-500">
@@ -171,7 +180,7 @@ const Billing = () => {
         <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
         <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Room</th>
         <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-        <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+        <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Room Price</th>
         <th scope="col" class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Amount Paid</th>
       </tr>
     </thead>
@@ -191,10 +200,26 @@ const Billing = () => {
 <div class="w-full max-w-2xl sm:text-end space-y-2">
 
 <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
+
+{bookingData.totalDays ? (
   <dl class="grid sm:grid-cols-5 gap-x-3 text-sm">
-    <dt class="col-span-3 text-gray-500">Subotal:</dt>
-    <dd class="col-span-2 font-medium text-gray-800 dark:text-gray-200">₹{bookingData.roomprice}</dd>
-  </dl>
+  <dt class="col-span-3 text-gray-500">Subtotal:</dt>
+  <dd class="col-span-2 font-medium text-gray-800 dark:text-gray-200">
+          Total Days * Room Price: {bookingData.totalDays} * {bookingData.roomprice} = ₹{subtotal}
+        </dd>
+</dl>
+
+  ) :    <dl class="grid sm:grid-cols-5 gap-x-3 text-sm">
+  <dt class="col-span-3 text-gray-500">Subtotal:</dt>
+  <dd class="col-span-2 font-medium text-gray-800 dark:text-gray-200">
+          {bookingData.totalpayment}
+        </dd>
+</dl>}
+
+
+
+
+
 
   
 

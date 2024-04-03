@@ -249,9 +249,12 @@ const Filter1 = () => {
        
 
         <section className="listing-grid-area mt-35 pb-1">
+
         <div className="container">
-         
-        <div className="flex justify-center items-center min-h-screen">
+        <p className=" text-xs leading-4 text-gray-600 font-normal mt-36 md:mt-16 mb-2">Elevate your special events to extraordinary heights with Arene Services' exceptional banquet hall services in collaboration with top-notch venues. We are dedicated to delivering superior customer satisfaction and unparalleled quality to ensure that your celebrations are truly unforgettable.
+Arene Services partners with exquisite banquet halls known for their elegant ambiance, impeccable service, and attention to detail. Whether you are planning a wedding, corporate event, or any special occasion, our curated selection of banquet halls offers the perfect setting for your festivities.</p>
+        <div className="flex justify-center items-center ">
+          
   <div className="row">
     {loading ? ( // Show spinner while loading
       <div className="flex justify-center items-center">

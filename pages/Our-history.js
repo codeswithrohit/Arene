@@ -32,7 +32,7 @@ const Ourhistory = () => {
     
         fetchBookings();
     }, [user]);
-console.log(bookings)
+
     return (
         <div>
             <section className="container mx-auto px-6 lg:py-16 py-36 font-mono">
@@ -90,7 +90,19 @@ console.log(bookings)
         {booking.Payment}
         </td>
         <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.bookingDate}
+        {booking.bookingDate instanceof Object ? (
+    // If bookingDate is an object, extract checkIn or checkOut
+    <>
+        <p>Check In: {booking.bookingDate.checkIn}</p>
+        {booking.bookingDate.checkOut ? (
+            <p>Check Out: {booking.bookingDate.checkOut}</p>
+  ) : null}
+    </>
+) : (
+    // If bookingDate is a string, display it directly
+    <p>{booking.bookingDate}</p>
+)}
+
         </td>
         <td class="px-6 py-4 text-sm text-[#333]">
         {booking.GarmentTypes ? (

@@ -112,9 +112,9 @@ const Header1 = () => {
                         
                          
                     
-                     
+                    <About/>
                       <li className="menu-item has-children">
-                        <a href="#">PG</a>
+                        <a href="#">ARENE PG</a>
                         <ul className="sub-menu">
                           <Listing/>
                         </ul>
@@ -131,15 +131,16 @@ const Header1 = () => {
                           <Blog />
                         </ul>
                       </li>
-                      <li className="menu-item ">
+                      {/* <li className="menu-item ">
                         <a href="/hotelall">Hotel</a>
                         
-                      </li>
+                      </li> */}
                      
                     
                       <LaundryService/>
                       <CloudKitchen/>
                       <Contact />
+                     
                       <li className="nav-btn">
                         <Link href="/Admin/Register">
                           <a className="main-btn icon-btn">Add Listing</a>

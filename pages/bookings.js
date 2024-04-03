@@ -17,10 +17,12 @@ const test = () => {
   const [address, setAddress] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
   const [loading, setLoading] = useState(false);
+ 
   const [selectedDate, setSelectedDate] = useState({
     checkIn: null,
+    checkOut: null
   });
- 
+  const [totalDays, setTotalDays] = useState(1); // State to store total days
 
   // Handle check-in date change
   const handleCheckInChange = (date, dateString) => {
@@ -28,11 +30,29 @@ const test = () => {
       ...prevState,
       checkIn: dateString
     }));
-   
+    calculateTotalDays(dateString, selectedDate.checkOut);
   };
 
- 
+  // Handle check-out date change
+  const handleCheckOutChange = (date, dateString) => {
+    setSelectedDate((prevState) => ({
+      ...prevState,
+      checkOut: dateString
+    }));
+    calculateTotalDays(selectedDate.checkIn, dateString);
+  };
 
+  // Function to calculate total days between check-in and check-out dates
+  const calculateTotalDays = (checkInDate, checkOutDate) => {
+    if (checkInDate && checkOutDate) {
+      const start = dayjs(checkInDate);
+      const end = dayjs(checkOutDate);
+      let days = end.diff(start, 'days');
+      // Handle case when check-in and check-out dates are the same or totalDays is 0
+      days = days <= 0 ? 1 : days; // Set minimum days to 1
+      setTotalDays(days);
+    }
+  };
 
   const loadScript = async (src) => {
       try {
@@ -76,7 +96,7 @@ const test = () => {
   const submitBookingData = async (paymentAmount) => {
     try {
       // Get current date and time
-      const currentDate = new Date().toISOString().slice(0, 10);
+      const currentDate = dayjs().format('YYYY-MM-DD');
   
       // Prepare payment options based on selected option
       let oneday = paymentOption === 'oneday' ? true : false;
@@ -95,13 +115,14 @@ const test = () => {
         roomType: roomType,
         roomprice: roomprice,
         Agentid: Agentid,
+        totalpayment:totalpayment,
+        totalDays:totalDays,
         Userid: user,
         OrderDate: currentDate,
         Payment: paymentAmount,
         oneday: oneday,
         threeday: threeday,
         allday: allday,
-        totalpayment:roomprice,
         bookingDate:selectedDate,
       });
       router.push(`/bookingdetails?orderId=${orderId}`);
@@ -122,10 +143,10 @@ const test = () => {
       } else if (paymentOption === 'threeday') {
         paymentAmount = 1000;
       } else if (paymentOption === 'allday') {
-        paymentAmount = roomprice; // Set payment amount to roomprice for "All Day" option
+        paymentAmount = totalpayment; // Set payment amount to roomprice for "All Day" option
       } else {
         // Default to full payment if no option selected
-        paymentAmount = roomprice; // Update payment amount to roomprice
+        paymentAmount = totalpayment; // Update payment amount to roomprice
       }
   
       // Pass paymentAmount to submitBookingData function
@@ -137,7 +158,7 @@ const test = () => {
         return;
       }
 
-      const amountInPaise = paymentAmount * 100;
+      const amountInPaise = paymentAmount * 100 ;
 
       const options = {
         key: 'rzp_test_td8CxckGpxFssp',
@@ -149,12 +170,11 @@ const test = () => {
         handler: async function (response) {
           console.log('Payment Successful:', response);
          
-          await submitBookingData(paymentAmount);
          
           await axios.post('/api/sendEmail', {
             Name,
             roomType,
-            roomprice,
+            totalpayment,
             location,
             email,
             firstName,
@@ -163,12 +183,14 @@ const test = () => {
           await axios.post('/api/sendMessage', {
             Name,
             roomType,
-            roomprice,
+            totalpayment,
             location,
             email,
             firstName,
             lastName,phoneNumber
           });
+          
+          await submitBookingData(paymentAmount);
         },
         prefill: {
           name: `${firstName} ${lastName}`,
@@ -185,7 +207,7 @@ const test = () => {
       setLoading(false);
     }
   };
-
+const totalpayment = roomprice*totalDays
   return (
     <div>
       <div class="font-[sans-serif] bg-white mt-20 p-4">
@@ -230,18 +252,25 @@ const test = () => {
       placeholder="Phone number"
       class="px-4 py-3.5 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
     />
-  
-   <div className=" mb-2 flex items-center">
+     <div className="mb-2 flex items-center">
         <DatePicker
           value={selectedDate.checkIn ? dayjs(selectedDate.checkIn) : null}
           onChange={handleCheckInChange}
           format="YYYY-MM-DD"
           placeholder="Check-in Date"
           style={{ marginRight: "10px" }}
-          
         />
-       
+        <span>-</span>
+        <DatePicker
+          value={selectedDate.checkOut ? dayjs(selectedDate.checkOut) : null}
+          onChange={handleCheckOutChange}
+          format="YYYY-MM-DD"
+          placeholder="Check-out Date"
+          style={{ marginLeft: "10px" }}
+        />
       </div>
+    
+  
   </div>
   <textarea 
       value={address} 
@@ -303,7 +332,7 @@ const test = () => {
                 <div class="flex items-center">
                   <input type="radio" id="allday" name="paymentOption" value="allday" onChange={(e) => setPaymentOption(e.target.value)}  class="w-5 h-5 cursor-pointer"  />
                   <label for="paypal" class="ml-4 flex gap-2 cursor-pointer">
-                  Full Payment {roomprice}
+                  Full Payment {totalpayment}
                   </label>
                 </div>
               </div>
@@ -316,11 +345,12 @@ const test = () => {
 </button> */}
 
             <button onClick={initiatePayment} 
-              class="px-6 py-3.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Pay now ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : roomprice)) : roomprice}</button>
+              class="px-6 py-3.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Pay now ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : totalpayment)) : totalpayment}</button>
           </div>
         </div>
       </div>
     </div>
+    <ToastContainer/>
     </div>
   )
 }
