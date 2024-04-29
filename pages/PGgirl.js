@@ -143,7 +143,7 @@ const Filter1 = () => {
       const fetchData = async () => {
         try {
           // Replace 'yourCollectionName' with the actual collection name
-          const collectionRef = firebase.firestore().collection('pgdetail').where('Verfied', '==', 'true').where('subcat', '==', 'Girls');
+          const collectionRef = firebase.firestore().collection('pgdetail').where('Verified', '==', 'true').where('subcat', '==', 'Girls');
     
           // Get all documents from the collection
           const querySnapshot = await collectionRef.get();

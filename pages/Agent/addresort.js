@@ -435,12 +435,11 @@ const Index = () => {
   className="w-full p-2 border border-gray-300 rounded-md"
 >
   <option value="">Select Type</option>
-  <option value="Single Room">Single Room</option>
-  <option value="Double Sharing Room">Double Sharing Room</option>
-  <option value="Triple Sharing Room">Triple Sharing Room</option>
-  <option value="Single Ac Room">Single Ac Room</option>
-  <option value="Double Sharing Ac Room">Double Sharing Ac Room</option>
-  <option value="Triple Sharing Ac Room">Triple Sharing Ac Room</option>
+  <option value="Deluxe room king bed">Deluxe room king bed</option>
+  <option value="Deluxe room twin bed">Deluxe room twin bed</option>
+  <option value="Junior suite king bed">Junior suite king bed</option>
+  <option value="Premium villa king bed">Premium villa king bed</option>
+  <option value="Deluxe suite">Deluxe suite</option>
   {/* Add more options as needed */}
 </select>
             <input

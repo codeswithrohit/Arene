@@ -4,7 +4,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { firebase } from '../Firebase/config';
-
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 const test = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -14,11 +17,19 @@ const test = () => {
   const [address, setAddress] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState({
+    checkIn: null,
+  });
+ 
 
-const handleDateChange = (date) => {
-  setSelectedDate(date);
-};
+  // Handle check-in date change
+  const handleCheckInChange = (date, dateString) => {
+    setSelectedDate((prevState) => ({
+      ...prevState,
+      checkIn: dateString
+    }));
+   
+  };
 
   const loadScript = async (src) => {
       try {
@@ -52,6 +63,22 @@ const handleDateChange = (date) => {
 
   const router = useRouter();
   const { service, selectedTenure, GarmentTypes,Vendor,Location,DeliverLocation,Agentid } = router.query;
+  let GarmentTypesData = [];
+  let GarmentTypesPrice = 0;
+  let GarmentTypesNOofGarment = 0;
+
+  if (GarmentTypes) {
+    try {
+      GarmentTypesData = JSON.parse(GarmentTypes);
+      GarmentTypesPrice = GarmentTypesData[0].price;
+      GarmentTypesNOofGarment = GarmentTypesData[0].noofgarments;
+    } catch (error) {
+      console.error('Error parsing GarmentTypes:', error);
+    }
+  }
+
+  console.log('GarmentTypes price', GarmentTypesPrice);
+  console.log('noofgarments:', GarmentTypesNOofGarment);
   const generateOrderId = () => {
     const randomNumber = Math.floor(Math.random() * 1000000); // Generate a random number between 0 and 999999
     const orderId = `ORDER-${randomNumber}`; // Append the random number to a prefix
@@ -67,19 +94,21 @@ const handleDateChange = (date) => {
       let threeday = paymentOption === 'threeday' ? true : false;
       let allday = paymentOption === 'allday' ? true : false;
       const orderId = generateOrderId();
-      await firebase.firestore().collection('bookings').add({
+      await firebase.firestore().collection('laundryorders').add({
         firstName: firstName,
         orderId: orderId,
         lastName: lastName,
         address: DeliverLocation,
-        phoneNumber: phoneNumber,
+        phoneNumber: mobilenumber,
         email: email,
         Service: service,
         selectedTenure: selectedTenure,
         GarmentTypes: GarmentTypes,
+        Noofgarment:GarmentTypesNOofGarment,
         Vendor: Vendor,
         VendorLocation:Location,
         Agentid: Agentid,
+        totalpayment: GarmentTypes && JSON.parse(GarmentTypes)[0]?.price,
         Userid: user,
         OrderDate: currentDate,
         Payment: paymentAmount,
@@ -203,19 +232,25 @@ const handleDateChange = (date) => {
       placeholder="Phone number"
       class="px-4 py-3.5 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
     />
-    <textarea 
+ 
+     <div className=" mb-2 flex items-center">
+        <DatePicker
+          value={selectedDate.checkIn ? dayjs(selectedDate.checkIn) : null}
+          onChange={handleCheckInChange}
+          format="YYYY-MM-DD"
+          placeholder="Starting Date"
+          style={{ marginRight: "10px" }}
+          
+        />
+       
+      </div>
+  </div>
+  <textarea 
       value={address} 
       onChange={(e) => setAddress(e.target.value)} 
       placeholder="Address"
       class="px-4 py-3.5 bg-white text-[#333] w-full h-24 text-sm border-2 rounded-md focus:border-blue-500 outline-none resize-none"
     ></textarea>
-    <input 
-      type="date" 
-      onChange={(e) => handleDateChange(e.target.value)} 
-      placeholder="Select date"
-      class="px-4 py-3.5 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
-    />
-  </div>
 </form>
 
             </div>
@@ -233,7 +268,7 @@ const handleDateChange = (date) => {
             </div>
             <div class="w-full px-4 mb-4 md:w-1/2">
                 <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Location:</p>
-                <p class="text-base leading-6 text-gray-800 dark:text-gray-400">{address}</p>
+                <p class="text-base leading-6 text-gray-800 dark:text-gray-400">{Location}</p>
             </div>
             <div class="w-full px-4 mb-4 md:w-1/2">
                 <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Vendor:</p>
@@ -253,7 +288,7 @@ const handleDateChange = (date) => {
         </div>
     </div>
 </div>
-
+{/* 
           <div class="grid md:grid-cols-3 gap-6 mt-12">
             <div>
               <h3 class="text-xl font-bold text-[#333]">03</h3>
@@ -265,13 +300,13 @@ const handleDateChange = (date) => {
                 <div class="flex items-center">
                   <input class="w-5 h-5 cursor-pointer"  type="radio" id="oneday" name="paymentOption" value="oneday" onChange={(e) => setPaymentOption(e.target.value)} />
                   <label for="card" class="ml-4 flex gap-2 cursor-pointer">
-                  Pay only 500 for one day
+                  Pay only 100 for one day
                   </label>
                 </div>
                 <div class="flex items-center">
                   <input type="radio" id="threeday" name="paymentOption" value="threeday" onChange={(e) => setPaymentOption(e.target.value)}  class="w-5 h-5 cursor-pointer"  />
                   <label for="paypal" class="ml-4 flex gap-2 cursor-pointer">
-                  Pay only 1000 for three days
+                  Pay only 200 for three days
                   </label>
                 </div>
                 <div class="flex items-center">
@@ -283,14 +318,14 @@ const handleDateChange = (date) => {
               </div>
             
             </div>
-          </div>
+          </div> */}
           <div class="flex flex-wrap justify-end gap-4 mt-12">
           {/* <button type="button" class="px-6 py-3.5 text-sm bg-transparent border-2 text-[#333] rounded-md hover:bg-gray-100">
   Estimated Total : ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : roomprice)) : roomprice}
 </button> */}
 
             <button onClick={initiatePayment} 
-              class="px-6 py-3.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Pay now ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : GarmentTypes && JSON.parse(GarmentTypes)[0]?.price)) : GarmentTypes && JSON.parse(GarmentTypes)[0]?.price}</button>
+              class="px-6 py-3.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Pay now ₹ {paymentOption ? (paymentOption === 'oneday' ? 100 : (paymentOption === 'threeday' ? 1000 : GarmentTypes && JSON.parse(GarmentTypes)[0]?.price)) : GarmentTypes && JSON.parse(GarmentTypes)[0]?.price}</button>
           </div>
         </div>
       </div>

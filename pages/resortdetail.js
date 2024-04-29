@@ -139,11 +139,11 @@ console.log(pgdetaildata)
                     </div>
                   </div>
                 </div>
-                <div className="listing-thumbnail mb-30 wow fadeInUp">
+                <div className="listing-thumbnail mb-3 wow fadeInUp">
                 <Carousel showThumbs={false} autoPlay>
                   {pgdetaildata.imgSrc.map((image, index) => (
                     <div key={index}>
-                      <img  src={image} alt={`Image ${index}`} />
+                      <img className='h-96 w-96'  src={image} alt={`Image ${index}`} />
                     </div>
                   ))}
                 </Carousel>

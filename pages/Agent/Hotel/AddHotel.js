@@ -86,6 +86,7 @@ const AddHotel = ({handleCloseAllInputFormats}) => {
         Laundry: '',
         Food: '',
         roomTypes: [],
+        createdAt: new Date().toISOString(),
       });
       const handleImageChange = (e) => {
         const images = Array.from(e.target.files);
@@ -223,7 +224,7 @@ const AddHotel = ({handleCloseAllInputFormats}) => {
             // state: state?.name || '',
             // city: city?.name || '',
             location: Location,
-            Verfied:'false'
+            Verified:'false'
           };
       
           // Log the data just before Firestore submission
@@ -338,7 +339,7 @@ const AddHotel = ({handleCloseAllInputFormats}) => {
           name="Owner"
           value={formData.Owner}
           onChange={handleChange}
-          placeholder="Room Owner Name"
+          placeholder="Hotel Owner Name"
          className="w-full p-2 border border-gray-300 rounded-md"
         />
        {/* <input

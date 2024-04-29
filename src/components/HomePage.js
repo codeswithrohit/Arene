@@ -21,15 +21,27 @@ const HomePage = () => {
    
     {
       id: 1,
-      imageUrl: "slider1.png",
+      imageUrl: "slidera.gif",
     },
     {
       id: 2,
-      imageUrl: "slider2.png",
+      imageUrl: "sliderb.gif",
     },
     {
       id: 3,
-      imageUrl: "slider3.png",
+      imageUrl: "sliderc.gif",
+    },
+    {
+      id: 3,
+      imageUrl: "sliderd.gif",
+    },
+    {
+      id: 3,
+      imageUrl: "slidere.gif",
+    },
+    {
+      id: 3,
+      imageUrl: "sliderf.gif",
     },
   ];
 
@@ -529,10 +541,9 @@ const HomePage = () => {
         className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-xs"
       >
         <option value="">Select Service</option>
-        {/* Replace this with your list of services */}
-        <option value="Veg">Veg</option>
-                    <option value="Non-Veg">Non-Veg</option>
-        {/* Add more options as needed */}
+        <option value="chinese">Chinese</option>
+      <option value="veg-thali">Veg Thali</option>
+      <option value="non-veg-thali">Non-Veg Thali</option>
       </select>
           </div>
           

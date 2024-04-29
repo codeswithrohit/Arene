@@ -93,6 +93,7 @@ const AddBuy = ({handleCloseAllInputFormats}) => {
         kitchenaccessories: '',
         streetwidness: '',
         propertytypes: [],
+        createdAt: new Date().toISOString(),
       });
     
       const handleImageChange = (e) => {
@@ -224,7 +225,7 @@ const AddBuy = ({handleCloseAllInputFormats}) => {
         videoSrc: videoUrl,
         AgentId: user.uid,
         location: Location,
-        Verfied:'true'
+        Verified:'true'
         // state: state?.name || '',
         // city: city?.name || '',
       };
@@ -340,7 +341,7 @@ const AddBuy = ({handleCloseAllInputFormats}) => {
      name="Owner"
      value={formData.Owner}
      onChange={handleChange}
-     placeholder="Room Owner Name"
+     placeholder="Property Owner Name"
     className="w-full p-2 border border-gray-300 rounded-md"
    />
 

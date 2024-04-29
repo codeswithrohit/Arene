@@ -17,8 +17,8 @@ export default function AdminNavbar() {
                 
                 <Link legacyBehavior href="/">
                   <img
-                    src="https://ramkiayodhya-lswul.ondigitalocean.app/ramjilogo.png"
-                    className="w-56 h-14 ml-2  "
+                    src="https://www.areneservices.in/public/front/images/property-logo.png"
+                    className="w-8 h-8 ml-2  "
                     alt="Logo"
                   />
                 </Link>
@@ -108,8 +108,8 @@ export default function AdminNavbar() {
                 
                 <Link legacyBehavior href="/">
                   <img
-                    src="https://ramkiayodhya-lswul.ondigitalocean.app/ramjilogo.png"
-                    className="w-56 h-14 ml-2  "
+                    src="https://www.areneservices.in/public/front/images/property-logo.png"
+                    className="w-8 h-8 ml-2  "
                     alt="Logo"
                   />
                 </Link>
@@ -160,8 +160,8 @@ export default function AdminNavbar() {
                 
                 <Link legacyBehavior href="/">
                   <img
-                    src="https://ramkiayodhya-lswul.ondigitalocean.app/ramjilogo.png"
-                    className="w-56 h-14 ml-2  "
+                    src="https://www.areneservices.in/public/front/images/property-logo.png"
+                    className="w-8 h-8 ml-2  "
                     alt="Logo"
                   />
                 </Link>
@@ -241,6 +241,32 @@ export default function AdminNavbar() {
                     </svg>
                   </span>
                   <span class="ml-2 text-sm tracking-wide truncate">Agents</span>
+                </a>
+              </li>
+
+
+              <li>
+                <a
+                  href="/Admin/AreneChefVendor"
+                  className={router.pathname === "/Admin/AreneChefVendor" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                >
+                  <span class="inline-flex justify-center items-center ml-4">
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      ></path>
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm tracking-wide truncate">Arene Chef Vendor</span>
                 </a>
               </li>
            
@@ -429,6 +455,32 @@ export default function AdminNavbar() {
               </li>
               <li>
                 <a
+                  href="/Admin/laundry"
+                  className={router.pathname === "/Admin/laundry" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                >
+                  <span class="inline-flex justify-center items-center ml-4">
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      ></path>
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm tracking-wide truncate">
+                    Laundry
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
                   href="/Admin/CloudKitchen"
                   className={router.pathname === "/Admin/CloudKitchen" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
                 >
@@ -449,7 +501,59 @@ export default function AdminNavbar() {
                     </svg>
                   </span>
                   <span class="ml-2 text-sm tracking-wide truncate">
-                    Cloud Kitchen
+                    Arene Chef
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/Admin/arenecheforder"
+                  className={router.pathname === "/Admin/arenecheforder" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                >
+                  <span class="inline-flex justify-center items-center ml-4">
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      ></path>
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm tracking-wide truncate">
+                    Arene Chef Order
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/Admin/arenelaundryorder"
+                  className={router.pathname === "/Admin/arenelaundryorder" ? "text-red-600" : "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-black hover:text-black border-l-4 border-transparent hover:border-red-600 pr-6"}
+                >
+                  <span class="inline-flex justify-center items-center ml-4">
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      ></path>
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm tracking-wide truncate">
+                    Arene Laundry Order
                   </span>
                 </a>
               </li>

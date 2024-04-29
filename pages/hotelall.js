@@ -154,7 +154,7 @@ const Filter1 = () => {
       const fetchData = async () => {
         try {
           // Replace 'yourCollectionName' with the actual collection name
-          const collectionRef = firebase.firestore().collection('Hoteldetail').where('Verfied', '==', 'true');
+          const collectionRef = firebase.firestore().collection('Hoteldetail').where('Verified', '==', 'true');
     
           // Get all documents from the collection
           const querySnapshot = await collectionRef.get();

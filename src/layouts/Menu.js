@@ -119,7 +119,7 @@ export const CloudKitchen = () => (
 export const LaundryService = () => (
   <Fragment>
     <li className="menu-item">
-      <Link href="/contact">Laundry</Link>
+      <Link href="/allarenelaundry">Laundry</Link>
     </li>
   </Fragment>
 );

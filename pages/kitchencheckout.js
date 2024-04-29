@@ -4,21 +4,59 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { firebase } from '../Firebase/config';
-
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 const test = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [vendorData, setVendorData] = useState('null');
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [mobilenumber, setMobileNumber] = useState("");
+  const [pincode, setPincode] = useState("");
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState({
+    checkIn: null,
+  });
+ 
 
-const handleDateChange = (date) => {
-  setSelectedDate(date);
-};
+  const router = useRouter();
+  const { thaliname, selectedTenure, Foodcharge, Location, DeliverLocation, Ingredients, noofthalli } = router.query;
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const snapshot = await firebase.firestore().collection('AreneChefVendor').get();
+        const data = snapshot.docs.map(doc => {
+          const vendorData = doc.data();
+          // Convert foodTypes into the desired format
+          const foodTypesArray = Object.keys(vendorData.foodTypes).map(key => vendorData.foodTypes[key]);
+          // Replace the original foodTypes with the new array format
+          vendorData.foodTypes = foodTypesArray;
+          return { id: doc.id, ...vendorData };
+        });
+        // Filter vendorData based on thaliname
+        const filteredData = data.filter(vendor => vendor.foodTypes.includes(thaliname));
+        setVendorData(filteredData);
+      } catch (error) {
+        console.error('Error fetching vendors:', error);
+      }
+    };
+    fetchVendors();
+  }, [thaliname]);
+  
+
+console.log("kitchen checkout","thaliname",vendorData,thaliname)
+  // Handle check-in date change
+  const handleCheckInChange = (date, dateString) => {
+    setSelectedDate((prevState) => ({
+      ...prevState,
+      checkIn: dateString
+    }));
+   
+  };
 
   const loadScript = async (src) => {
       try {
@@ -50,8 +88,22 @@ const handleDateChange = (date) => {
     return () => unsubscribe();
   }, []);
 
-  const router = useRouter();
-  const { thaliname, selectedTenure, Foodcharge,Location,DeliverLocation,Ingredients} = router.query;
+  let foodChargeData = [];
+  let foodChargePrice = 0;
+  let foodChargeNoOfThalli = 0;
+
+  if (Foodcharge) {
+    try {
+      foodChargeData = JSON.parse(Foodcharge);
+      foodChargePrice = foodChargeData[0].price;
+      foodChargeNoOfThalli = foodChargeData[0].noofthalli;
+    } catch (error) {
+      console.error('Error parsing Foodcharge:', error);
+    }
+  }
+
+  console.log('Foodcharge price', foodChargePrice);
+  console.log('nooffthalli:', foodChargeNoOfThalli);
   const generateOrderId = () => {
     const randomNumber = Math.floor(Math.random() * 1000000); // Generate a random number between 0 and 999999
     const orderId = `ORDER-${randomNumber}`; // Append the random number to a prefix
@@ -59,35 +111,36 @@ const handleDateChange = (date) => {
   };
   const submitBookingData = async (paymentAmount) => {
     try {
-      // Get current date and time
-      const currentDate = new Date().toISOString().slice(0, 10);
+      const currentDate = dayjs().format('YYYY-MM-DD');
   
       // Prepare payment options based on selected option
       let oneday = paymentOption === 'oneday' ? true : false;
       let threeday = paymentOption === 'threeday' ? true : false;
       let allday = paymentOption === 'allday' ? true : false;
       const orderId = generateOrderId();
-      await firebase.firestore().collection('kichenorder').add({
+      await firebase.firestore().collection('kitchenorder').add({
         firstName: firstName,
         orderId: orderId,
         lastName: lastName,
         address: DeliverLocation,
-        phoneNumber: phoneNumber,
+        phoneNumber: mobilenumber,
         email: email,
+        confirmation:'false',
         thaliname: thaliname,
         selectedTenure: selectedTenure,
         Ingredients:Ingredients,
-        Foodcharge: Foodcharge,
+        Foodcharge: foodChargePrice,
         VendorLocation:Location,
+        totalpayment:foodChargePrice,
         Userid: user,
         OrderDate: currentDate,
         Payment: paymentAmount,
-        oneday: oneday,
-        threeday: threeday,
-        allday: allday,
         bookingDate:selectedDate,
+        noofthalli:foodChargeNoOfThalli,
+        pincode:pincode,
+       
       });
-      router.push(`/kitchenbookingdetails?orderId=${orderId}`);
+      router.push(`/arenechefdetails?orderId=${orderId}`);
       toast.success('Booking Successful!');
     } catch (error) {
       console.error('Error submitting booking data:', error);
@@ -139,7 +192,8 @@ const handleDateChange = (date) => {
             location,
             email,
             firstName,
-            lastName
+            lastName,
+            noofthalli
           });
         },
         prefill: {
@@ -157,6 +211,19 @@ const handleDateChange = (date) => {
       setLoading(false);
     }
   };
+
+
+  const checkAvailabilityAndInitiatePayment = async () => {
+    const matchedVendor = vendorData.find(vendor => vendor.pincode === pincode);
+    if (matchedVendor) {
+      // Pin code match found, proceed with payment initiation
+      initiatePayment();
+    } else {
+      // No match found, display toast message
+      toast.error('We do not provide service at this pin code.');
+    }
+  };
+
 
   return (
     <div>
@@ -202,19 +269,32 @@ const handleDateChange = (date) => {
       placeholder="Phone number"
       class="px-4 py-3.5 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
     />
-    <textarea 
+    <input 
+      value={pincode} 
+      onChange={(e) => setPincode(e.target.value)} 
+      type="number" 
+      placeholder="Pin Code"
+      class="px-4 py-3.5 mb-2 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
+    />
+   
+    <div className=" mb-2 flex items-center">
+        <DatePicker
+          value={selectedDate.checkIn ? dayjs(selectedDate.checkIn) : null}
+          onChange={handleCheckInChange}
+          format="YYYY-MM-DD"
+          placeholder="Starting Date"
+          style={{ marginRight: "10px" }}
+          
+        />
+       
+      </div>
+  </div>
+  <textarea 
       value={address} 
       onChange={(e) => setAddress(e.target.value)} 
       placeholder="Address"
       class="px-4 py-3.5 bg-white text-[#333] w-full h-24 text-sm border-2 rounded-md focus:border-blue-500 outline-none resize-none"
     ></textarea>
-    <input 
-      type="date" 
-      onChange={(e) => handleDateChange(e.target.value)} 
-      placeholder="Select date"
-      class="px-4 py-3.5 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
-    />
-  </div>
 </form>
 
             </div>
@@ -244,6 +324,7 @@ const handleDateChange = (date) => {
               <li key={index}>
                 <p>Tenure: {food.tenure}</p>
                 <p>Price: {food.price}</p>
+                <p>Thalli Qty.: {food.noofthalli}</p>
               </li>
             ))}
           </ul>
@@ -252,7 +333,7 @@ const handleDateChange = (date) => {
     </div>
 </div>
 
-          <div class="grid md:grid-cols-3 gap-6 mt-12">
+          {/* <div class="grid md:grid-cols-3 gap-6 mt-12">
             <div>
               <h3 class="text-xl font-bold text-[#333]">03</h3>
               <h3 class="text-xl font-bold text-[#333]">Payment method</h3>
@@ -281,18 +362,19 @@ const handleDateChange = (date) => {
               </div>
             
             </div>
-          </div>
+          </div> */}
           <div class="flex flex-wrap justify-end gap-4 mt-12">
           {/* <button type="button" class="px-6 py-3.5 text-sm bg-transparent border-2 text-[#333] rounded-md hover:bg-gray-100">
   Estimated Total : ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : roomprice)) : roomprice}
 </button> */}
 
-            <button onClick={initiatePayment} 
+            <button onClick={checkAvailabilityAndInitiatePayment} 
               class="px-6 py-3.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Pay now ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : Foodcharge && JSON.parse(Foodcharge)[0]?.price)) : Foodcharge && JSON.parse(Foodcharge)[0]?.price}</button>
           </div>
         </div>
       </div>
     </div>
+    <ToastContainer/>
     </div>
   )
 }

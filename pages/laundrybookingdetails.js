@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { firebase } from '../Firebase/config';
 import { useRouter } from 'next/router';
-const test = () => {
+import dayjs from 'dayjs'; // Import dayjs
+const Billing = () => {
   const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -10,7 +11,7 @@ const test = () => {
     const fetchBookingDetails = async () => {
       try {
         const db = firebase.firestore();
-        const bookingRef = db.collection('bookings').where('orderId', '==', orderId);
+        const bookingRef = db.collection('laundryorders').where('orderId', '==', orderId);
         const snapshot = await bookingRef.get();
 
         if (snapshot.empty) {
@@ -31,8 +32,11 @@ const test = () => {
 
     fetchBookingDetails();
   }, [orderId]);
-console.log(bookingData)
-
+console.log('booking',bookingData)
+ 
+  const handlePrint = () => {
+    window.print();
+  };
   if (loading) {
     return <div class="flex min-h-screen justify-center items-center">
     <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
@@ -44,131 +48,219 @@ console.log(bookingData)
   }
 
   // Render booking details using bookingData
-  const garmentTypes = bookingData.GarmentTypes ? JSON.parse(bookingData.GarmentTypes) : [];
+  const duePayment = bookingData.totalpayment - bookingData.Payment;
+  const start = dayjs(bookingData.checkIn);
+  const end = dayjs(bookingData.checkOut);
+  const totalDays = end.diff(start, 'days') || 1; // Set default value to 1 if totalDays is 0
+  const subtotal = bookingData.totalDays * bookingData.roomprice;
   return (
-    <div>
-      <section class="flex md:mt-0 mt-12 items-center py-16 bg-gray-100 md:py-20 font-poppins dark:bg-gray-800 ">
-<div class="justify-center flex-1 max-w-6xl px-4 py-4 mx-auto bg-white border rounded-md dark:border-gray-900 dark:bg-gray-900 md:py-10 md:px-10">
-<div>
-<h1 class="px-4 mb-8 text-2xl font-semibold tracking-wide text-gray-700 dark:text-gray-300 ">
-Thank you. Your order has been received. </h1>
-<div class="flex border-b border-gray-200 dark:border-gray-700  items-stretch justify-start w-full h-full px-4 mb-8 md:flex-row xl:flex-col md:space-x-6 lg:space-x-8 xl:space-x-0">
-<div class="flex items-start justify-start flex-shrink-0">
-<div class="flex items-center justify-center w-full pb-6 space-x-4 md:justify-start">
-{/* <img src="https://i.postimg.cc/RhQYkKYk/pexels-italo-melo-2379005.jpg" class="object-cover w-16 h-16 rounded-md" alt="avatar"> */}
-<div class="flex flex-col items-start justify-start space-y-2">
-<p class="text-lg font-semibold leading-4 text-left text-gray-800 dark:text-gray-400">
-{bookingData.firstName} {bookingData.lastName}</p>
-{/* <p class="text-sm leading-4 text-gray-600 dark:text-gray-400">16 Previous Orders</p> */}
-<p class="text-sm leading-4 cursor-pointer dark:text-gray-400">{bookingData.email}</p>
+    <div className='min-h-screen py-12' >
+        <div className=" px-4 sm:px-6 lg:px-8  my-4 sm:my-10">
+
+<div className="mb-5 pb-5 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+  <div>
+    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">Invoice</h2>
+  </div>
+
+  <div className="inline-flex gap-x-2">
+    {/* <a className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-lg border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" href="#">
+      <svg className="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+      Invoice PDF
+    </a> */}
+               <button onClick={handlePrint} className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+              <svg className="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+              Print
+            </button>
+
+  </div>
 </div>
+
+<div className="grid md:grid-cols-2 gap-3">
+  <div>
+    <div className="grid space-y-3">
+      <dl className="grid sm:flex gap-x-3 text-sm">
+        <dt className="min-w-36 max-w-[200px] text-gray-500">
+          Billed to:
+        </dt>
+        <dd className="text-gray-800 flex flex-col dark:text-gray-200">
+          <a className="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium" href="#">
+          {bookingData.firstName} {bookingData.lastName}
+          </a>
+          <a className="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium" href="#">
+          {bookingData.email}
+          </a>
+          <a className="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium" href="#">
+          {bookingData.phoneNumber}
+          </a>
+        </dd>
+      </dl>
+
+      <dl className="grid sm:flex gap-x-3 text-sm">
+        <dt className="min-w-36 max-w-[200px] text-gray-500">
+          Your address:
+        </dt>
+        <dd className="font-medium text-gray-800 dark:text-gray-200">
+          {/* <span className="block font-semibold">Sara Williams</span> */}
+          <address className="not-italic font-normal">
+           {bookingData.address}
+          </address>
+        </dd>
+      </dl>
+
+      {/* <dl className="grid sm:flex gap-x-3 text-sm">
+        <dt className="min-w-36 max-w-[200px] text-gray-500">
+          Shipping details:
+        </dt>
+        <dd className="font-medium text-gray-800 dark:text-gray-200">
+          <span className="block font-semibold">Sara Williams</span>
+          <address className="not-italic font-normal">
+            280 Suzanne Throughway,<br />
+            Breannabury, OR 45801,<br />
+            United States<br />
+          </address>
+        </dd>
+      </dl> */}
+    </div>
+  </div>
+
+  <div>
+    <div className="grid space-y-3">
+      <dl className="grid sm:flex gap-x-3 text-sm">
+        <dt className="min-w-36 max-w-[200px] text-gray-500">
+          Order number:
+        </dt>
+        <dd className="font-medium text-gray-800 dark:text-gray-200">
+        {bookingData.orderId}
+        </dd>
+      </dl>
+
+      {/* <dl className="grid sm:flex gap-x-3 text-sm">
+        <dt className="min-w-36 max-w-[200px] text-gray-500">
+          Currency:
+        </dt>
+        <dd className="font-medium text-gray-800 dark:text-gray-200">
+          USD - US Dollar
+        </dd>
+      </dl> */}
+
+      <dl className="grid sm:flex gap-x-3 text-sm">
+        <dt className="min-w-36 max-w-[200px] text-gray-500">
+          Payment date:
+        </dt>
+        <dd className="font-medium text-gray-800 dark:text-gray-200">
+        {bookingData.OrderDate}
+        </dd>
+      </dl>
+      <dl className="grid sm:flex gap-x-3 text-sm">
+  <dt className="min-w-36 max-w-[200px] text-gray-500">Start date:</dt>
+  <dd className="font-medium text-gray-800 dark:text-gray-200">{bookingData.bookingDate.checkIn}</dd>
+</dl>
+
+
+
+      {/* <dl className="grid sm:flex gap-x-3 text-sm">
+        <dt className="min-w-36 max-w-[200px] text-gray-500">
+          Billing method:
+        </dt>
+        <dd className="font-medium text-gray-800 dark:text-gray-200">
+          Send invoice
+        </dd>
+      </dl> */}
+    </div>
+  </div>
 </div>
+<div class="mt-6 overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+    <thead class="bg-gray-50 dark:bg-gray-800">
+      <tr>
+        <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
+        <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+        <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tenure</th>
+        <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+        <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">No. of Garments Available</th>
+        <th scope="col" class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Amount Paid</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+  <tr>
+    <td class="px-3 py-2 whitespace-nowrap">{bookingData.Service}</td>
+    <td class="px-3 py-2 whitespace-nowrap">{bookingData.address}</td>
+    <td class="px-3 py-2 whitespace-nowrap">{bookingData.selectedTenure}</td>
+    <td class="px-3 py-2 whitespace-nowrap">₹ {bookingData.totalpayment}</td>
+    <td class="px-3 py-2 whitespace-nowrap">{bookingData.Noofgarment}</td>
+    <td class="px-3 py-2 text-right whitespace-nowrap">₹{bookingData.Payment}</td>
+  </tr>
+</tbody>
+
+  </table>
 </div>
-</div>
-<div class="flex flex-wrap items-center pb-4 mb-10 border-b border-gray-200 dark:border-gray-700">
-<div class="w-full px-4 mb-4 md:w-1/4">
-<p class="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
-Order Number: </p>
-<p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">
-{bookingData.orderId}</p>
-</div>
-<div class="w-full px-4 mb-4 md:w-1/4">
-<p class="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
-Booking Date: </p>
-<p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">
-{bookingData.bookingDate}</p>
-</div>
-{/* <div class="w-full px-4 mb-4 md:w-1/4">
-<p class="mb-2 text-sm font-medium leading-5 text-gray-800 dark:text-gray-400 ">
-Tenure: </p>
-<p class="text-base font-semibold leading-4 text-blue-600 dark:text-gray-400">
-</p>
-</div>
-<div class="w-full px-4 mb-4 md:w-1/4">
-<p class="mb-2 text-sm font-medium leading-5 text-gray-800 dark:text-gray-400 ">
-No. of Garments: </p>
-<p class="text-base font-semibold leading-4 text-blue-600 dark:text-gray-400">
-</p>
-</div>
-<div class="w-full px-4 mb-4 md:w-1/4">
-<p class="mb-2 text-sm font-medium leading-5 text-gray-800 dark:text-gray-400 ">
- Price: </p>
-<p class="text-base font-semibold leading-4 text-blue-600 dark:text-gray-400">
-</p>
-</div> */}
-<div class="w-full px-4 mb-4 md:w-1/4">
-<p class="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
-Payment Done: </p>
-<p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400 ">
-{bookingData.Payment} </p>
-</div>
-</div>
-<div class="px-4 mb-10">
-<div class="flex flex-col items-stretch justify-center w-full space-y-4 md:flex-row md:space-y-0 md:space-x-8">
-<div class="flex flex-col w-full space-y-6 ">
-<h2 class="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-400">Order details</h2>
-<div class="flex flex-col items-center justify-center w-full pb-4 space-y-4 border-b border-gray-200 dark:border-gray-700">
-<div class="flex justify-between w-full">
-<p class="text-base leading-4 text-gray-800 dark:text-gray-400">Name</p>
-<div>
-        {garmentTypes.map((garment, index) => (
-          <div key={index}>
-            <p>Tenure: {garment.tenure}</p>
-            <p>No. of Garments: {garment.noofgarments}</p>
-            <p>Price: {garment.price}</p>
-          </div>
+
+
+<div class="mt-8 overflow-x-auto">
+  {bookingData.orderHistory && bookingData.orderHistory.length > 0 ? (
+    <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+      <thead class="bg-gray-50 dark:bg-gray-800">
+        <tr>
+          <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">No. of Garment</th>
+          <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Delivered At</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        {bookingData.orderHistory.map((history, index) => (
+          <tr key={index}>
+            <td class="px-3 py-2 whitespace-nowrap">{history.noofgarment}</td>
+            <td class="px-3 py-2 whitespace-nowrap">{history.createdAt.toDate().toLocaleString()}</td>
+          </tr>
         ))}
-      </div>
+      </tbody>
+    </table>
+  ) : (
+    <p class="text-gray-500 dark:text-gray-300 text-center mt-4">No order history found.</p>
+  )}
 </div>
-<div class="flex items-center justify-between w-full">
-<p class="text-base leading-4 text-gray-800 dark:text-gray-400">Location
-</p>
-<p class="text-xs font-bold leading-4 text-gray-600 dark:text-gray-400">{bookingData.address}</p>
-</div>
-{/* <div class="flex items-center justify-between w-full">
-<p class="text-base leading-4 text-gray-800 dark:text-gray-400">Shipping</p>
-<p class="text-base leading-4 text-gray-600 dark:text-gray-400">Rs.100</p>
-</div> */}
-</div>
-{/* <div class="flex items-center justify-between w-full">
-<p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">Total</p>
-<p class="text-base font-semibold leading-4 text-gray-600 dark:text-gray-400">Rs.700</p>
-</div> */}
-</div>
-{/* <div class="flex flex-col w-full px-2 space-y-4 md:px-8 ">
-<h2 class="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-400">Shipping</h2>
-<div class="flex items-start justify-between w-full">
-<div class="flex items-center justify-center space-x-2">
-<div class="w-8 h-8">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-6 h-6 text-blue-600 dark:text-blue-400 bi bi-truck" viewBox="0 0 16 16">
-<path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z">
-</path>
-</svg>
-</div>
-<div class="flex flex-col items-center justify-start">
-<p class="text-lg font-semibold leading-6 text-gray-800 dark:text-gray-400">
-Delivery<br/><span class="text-sm font-normal">Delivery with 24 Hours</span>
-</p>
-</div>
-</div>
-<p class="text-lg font-semibold leading-6 text-gray-800 dark:text-gray-400">Rs.50</p>
-</div>
-</div> */}
-</div>
-</div>
-{/* <div class="flex flex-wrap items-center justify-start gap-4 px-4 mt-6 ">
-<button class="w-full px-4 py-2 text-blue-500 border border-blue-500 rounded-md md:w-auto hover:text-gray-100 hover:bg-blue-600 dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-300">
-Go back shopping
-</button>
-<button class="w-full px-4 py-2 bg-blue-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
-View career details
-</button>
-</div> */}
+
+<div class="mt-8 flex sm:justify-end">
+<div class="w-full max-w-2xl sm:text-end space-y-2">
+
+<div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
+
+{bookingData.totalDays ? (
+  <dl class="grid sm:grid-cols-5 gap-x-3 text-sm">
+  <dt class="col-span-3 text-gray-500">Subtotal:</dt>
+  <dd class="col-span-2 font-medium text-gray-800 dark:text-gray-200">
+          Total Days * Room Price: {bookingData.totalDays} * {bookingData.roomprice} = ₹{subtotal}
+        </dd>
+</dl>
+
+  ) :    <dl class="grid sm:grid-cols-5 gap-x-3 text-sm">
+  <dt class="col-span-3 text-gray-500">Subtotal:</dt>
+  <dd class="col-span-2 font-medium text-gray-800 dark:text-gray-200">
+          {bookingData.totalpayment}
+        </dd>
+</dl>}
+
+
+
+
+
+
+  
+
+  <dl class="grid sm:grid-cols-5 gap-x-3 text-sm">
+    <dt class="col-span-3 text-gray-500">Amount paid:</dt>
+    <dd class="col-span-2 font-medium text-gray-800 dark:text-gray-200">₹{bookingData.Payment}</dd>
+  </dl>
+
+  <dl class="grid sm:grid-cols-5 gap-x-3 text-sm">
+    <dt class="col-span-3 text-gray-500">Due payment:</dt>
+    <dd class="col-span-2 font-medium text-gray-800 dark:text-gray-200">₹{duePayment.toFixed(2)}</dd>
+  </dl>
 </div>
 </div>
-</section>
+</div>
+</div>
     </div>
   )
 }
 
-export default test
+export default Billing

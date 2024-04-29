@@ -23,7 +23,8 @@ const MyApp = ({ Component, pageProps }) => {
 
   
 
-  const showHeaderFooterMobileMenu = !router.pathname.includes('/Admin');
+  const showHeaderFooterMobileMenu = !router.pathname.includes('/Admin') && !router.pathname.includes('/AreneChefVendor') && !router.pathname.includes('/Deliveryboy');
+
 
   return (
     <Fragment>

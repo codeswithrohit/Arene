@@ -86,6 +86,7 @@ const AddResort = ({handleCloseAllInputFormats}) => {
         Laundry: '',
         Food: '',
         roomTypes: [],
+        createdAt: new Date().toISOString(),
       });
       const handleImageChange = (e) => {
         const images = Array.from(e.target.files);
@@ -223,7 +224,7 @@ const AddResort = ({handleCloseAllInputFormats}) => {
             // state: state?.name || '',
             // city: city?.name || '',
             location: Location,
-            Verfied:'false'
+            Verified:'false'
           };
       
           // Log the data just before Firestore submission
@@ -338,7 +339,7 @@ const AddResort = ({handleCloseAllInputFormats}) => {
           name="Owner"
           value={formData.Owner}
           onChange={handleChange}
-          placeholder="Room Owner Name"
+          placeholder="Resort Owner Name"
          className="w-full p-2 border border-gray-300 rounded-md"
         />
        {/* <input
@@ -448,13 +449,12 @@ const AddResort = ({handleCloseAllInputFormats}) => {
   onChange={(e) => handleRoomTypeChange(index, e)}
   className="w-full p-2 border border-gray-300 rounded-md"
 >
-  <option value="">Select Type</option>
-  <option value="Single Room">Single Room</option>
-  <option value="Double Sharing Room">Double Sharing Room</option>
-  <option value="Triple Sharing Room">Triple Sharing Room</option>
-  <option value="Single Ac Room">Single Ac Room</option>
-  <option value="Double Sharing Ac Room">Double Sharing Ac Room</option>
-  <option value="Triple Sharing Ac Room">Triple Sharing Ac Room</option>
+<option value="">Select Type</option>
+  <option value="Deluxe room king bed">Deluxe room king bed</option>
+  <option value="Deluxe room twin bed">Deluxe room twin bed</option>
+  <option value="Junior suite king bed">Junior suite king bed</option>
+  <option value="Premium villa king bed">Premium villa king bed</option>
+  <option value="Deluxe suite">Deluxe suite</option>
   {/* Add more options as needed */}
 </select>
             <input

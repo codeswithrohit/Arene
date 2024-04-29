@@ -26,7 +26,7 @@ const LaundryPage = ({addToCart}) => {
   const fetchData = async () => {
     try {
       // Replace 'yourCollectionName' with the actual collection name
-      const collectionRef = firebase.firestore().collection('Laundry').where('service', '==', services).where('Verfied', '==', 'true');
+      const collectionRef = firebase.firestore().collection('Laundry').where('service', '==', services).where('Verified', '==', 'true');
 
       // Get all documents from the collection
       const querySnapshot = await collectionRef.get();

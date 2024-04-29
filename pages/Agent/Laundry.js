@@ -159,7 +159,7 @@ const Laundry = () => {
 
       const dataToUpload = {
         ...formData, AgentId: user.uid, vendor: userData.name,
-        location: Location, Verfied: 'false'
+        location: Location, Verified: 'false',createdAt: new Date().toISOString(),
       };
       await db.collection("Laundry").add(dataToUpload);
       toast.success("Data uploaded successfully!");

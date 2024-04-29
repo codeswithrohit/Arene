@@ -188,7 +188,7 @@ const handleTenureChange = (e, id) => {
                         <select value={item.selectedTenure} onChange={(e) => handleTenureChange(e, item.id)} className="outline-none">
                           <option value="">Select Your Tenure Period</option>
                           {item.Foodcharge && item.Foodcharge.map((property, i) => (
-                            <option key={i} value={property.tenure}>{property.tenure}</option>
+                            <option key={i} value={property.tenure}>{property.tenure}-{property.noofthalli} thalli-₹{property.price}</option>
                           ))}
                         </select>
                       </div>
@@ -198,7 +198,7 @@ const handleTenureChange = (e, id) => {
                             <div key={index}>
                                            {/* <h2 className="mr-auto text-red-600  text-base capitalize font-bold truncate">{filteredProperty.noofgarments} Garments</h2>
                                            <h2 className="mr-auto text-red-600  text-base capitalize font-bold truncate">Per Piece Price: ₹ {(parseFloat(filteredProperty.price) / parseFloat(filteredProperty.noofgarments)).toFixed(4)}</h2> */}
-                                           <h2 className="mr-auto text-red-600  text-base capitalize font-bold truncate">₹ {filteredProperty.price} </h2>
+                                           <h2 className="mr-auto text-red-600  text-base capitalize font-bold truncate">₹ {filteredProperty.price}- {filteredProperty.noofthalli} Thalli </h2>
 
                             </div>
                           ))}
@@ -210,12 +210,13 @@ const handleTenureChange = (e, id) => {
   <Link href={{
       pathname: '/kitchencheckout',
       query: {
-        Location:item.location,
-        DeliverLocation:location,
+        Location: item.location,
+        DeliverLocation: location,
         thaliname: item.thaliname,
-        Ingredients: item. Ingredients,
+        Ingredients: item.Ingredients,
         selectedTenure: item.selectedTenure,
-        Foodcharge: JSON.stringify(item.Foodcharge.filter(property => property.tenure === item.selectedTenure))
+        Foodcharge: JSON.stringify(item.Foodcharge.filter(property => property.tenure === item.selectedTenure)),
+        noofthalli: JSON.stringify(item.Foodcharge.filter(property => property.noofthalli === item.noofthalli)), // Pass noofthalli to the query
       }
     }} passHref>
     <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-full transition duration-300 ease-in-out">
@@ -223,6 +224,7 @@ const handleTenureChange = (e, id) => {
     </button>
   </Link>
 </div>
+
 
 
 

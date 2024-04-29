@@ -24,17 +24,17 @@ const Filter1 = () => {
     fabric: false,
     crocodile: false,
     wool: false,
-    SingleRoom: false,
-    DoubleSharingRoom: false,
-    TripleSharingRoom: false,
-    SingleAcRoom: false,
-    DoubleSharingAcRoom: false,
+    Deluxeroomkingbed: false,
+    Deluxeroomtwinbed: false,
+    Juniorsuitekingbed: false,
+    Premiumvillakingbed: false,
+    Deluxesuite: false,
     TripleSharingAcRoom: false,
     luxesignatire: false,
     luxelondon: false,
   });
 
-  const { Appartment, BuilderFloor,Villas,Land,OtherProperties,ShopShowroom,OfficeSpace, fabric, crocodile, wool, SingleRoom, DoubleSharingRoom, TripleSharingRoom, SingleAcRoom,DoubleSharingAcRoom,TripleSharingAcRoom, luxesignatire, luxelondon } = check;
+  const { Appartment, BuilderFloor,Villas,Land,OtherProperties,ShopShowroom,OfficeSpace, fabric, crocodile, wool, Deluxeroomkingbed, Deluxeroomtwinbed, Juniorsuitekingbed, Premiumvillakingbed,Deluxesuite,TripleSharingAcRoom, luxesignatire, luxelondon } = check;
   const changeHandler = (e) => {
     setCheck({
       ...check,
@@ -57,12 +57,11 @@ const Filter1 = () => {
   
     //   Filter based on room types
       const roomTypeFilter = item.roomTypes.some((roomType) => {
-        if (SingleRoom && roomType.type === "Single Room") return true;
-        if (DoubleSharingRoom && roomType.type === "Double Sharing Room") return true;
-        if (TripleSharingRoom && roomType.type === "Triple Sharing Room") return true;
-        if (SingleAcRoom && roomType.type === "Single Ac Room") return true;
-        if (DoubleSharingAcRoom && roomType.type === "Double Sharing Ac Room") return true;
-        if (TripleSharingAcRoom && roomType.type === "Triple Sharing Ac Room") return true;
+        if (Deluxeroomkingbed && roomType.type === "Deluxe room king bed") return true;
+        if (Deluxeroomtwinbed && roomType.type === "Deluxe room twin bed") return true;
+        if (Juniorsuitekingbed && roomType.type === "Junior suite king bed") return true;
+        if (Premiumvillakingbed && roomType.type === "Premium villa king bed") return true;
+        if (Deluxesuite && roomType.type === "Deluxe suite") return true;
         return false;
       });
   
@@ -154,7 +153,7 @@ const Filter1 = () => {
       const fetchData = async () => {
         try {
           // Replace 'yourCollectionName' with the actual collection name
-          const collectionRef = firebase.firestore().collection('Resortdetail').where('Verfied', '==', 'true');
+          const collectionRef = firebase.firestore().collection('Resortdetail').where('Verified', '==', 'true');
     
           // Get all documents from the collection
           const querySnapshot = await collectionRef.get();
@@ -360,71 +359,62 @@ Arene Services partners with exquisite resorts known for their breathtaking loca
                             <path d="M21 12L19 10L17 12" stroke="#1F2937" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M12 10H5C3.89543 10 3 10.8954 3 12V19C3 20.1046 3.89543 21 5 21H12C13.1046 21 14 20.1046 14 19V12C14 10.8954 13.1046 10 12 10Z" stroke="#1F2937" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
-                        <p className="  lg:text-2xl text-xl lg:leading-6 leading-5 font-Double Sharing Room text-gray-800 ">Room </p>
+                        <p className="  lg:text-2xl text-xl lg:leading-6 leading-5 font-Deluxe room twin bed text-gray-800 ">Room </p>
                     </div>
                     <div className=" md:flex md:space-x-6 mt-8 grid grid-cols-3 gap-y-8 flex-wrap">
                         <div className=" flex md:justify-center md:items-center items-center justify-start ">
-                            <input className="w-4 h-4 mr-2" type="checkbox" id="Single Room" name="SingleRoom" value="Single Room" checked={SingleRoom} onChange={changeHandler} />
+                            <input className="w-4 h-4 mr-2" type="checkbox" id="Deluxe room king bed" name="Deluxeroomkingbed" value="Deluxe room king bed" checked={Deluxeroomkingbed} onChange={changeHandler} />
                             <div className=" inline-block">
                                 <div className=" flex space-x-6 justify-center items-center">
-                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Single Room">
-                                        Single Room
+                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Deluxe room king bed">
+                                        Deluxe room king bed
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div className=" flex justify-center items-center ">
-                            <input className="w-4 h-4 mr-2" type="checkbox" id="Double Sharing Room" name="DoubleSharingRoom" value="Double Sharing Room" checked={DoubleSharingRoom} onChange={changeHandler} />
+                            <input className="w-4 h-4 mr-2" type="checkbox" id="Deluxe room twin bed" name="Deluxeroomtwinbed" value="Deluxe room twin bed" checked={Deluxeroomtwinbed} onChange={changeHandler} />
                             <div className=" inline-block">
                                 <div className=" flex space-x-6 justify-center items-center">
-                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Double Sharing Room">
-                                        Double Sharing Room
+                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Deluxe room twin bed">
+                                        Deluxe room twin bed
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div className=" flex md:justify-center md:items-center items-center justify-end ">
-                            <input className="w-4 h-4 mr-2" type="checkbox" id="Triple Sharing Room" name="TripleSharingRoom" value="Triple Sharing Room" checked={TripleSharingRoom} onChange={changeHandler} />
+                            <input className="w-4 h-4 mr-2" type="checkbox" id="Junior suite king bed" name="Juniorsuitekingbed" value="Junior suite king bed" checked={Juniorsuitekingbed} onChange={changeHandler} />
                             <div className=" inline-block">
                                 <div className=" flex space-x-6 justify-center items-center">
-                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Triple Sharing Room">
-                                        Triple Sharing Room
+                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Junior suite king bed">
+                                        Junior suite king bed
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div className=" flex md:justify-center md:items-center items-center justify-start ">
-                            <input className="w-4 h-4 mr-2" type="checkbox" id="Single Ac Room" name="SingleAcRoom" value="Single Ac Room" checked={SingleAcRoom} onChange={changeHandler} />
+                            <input className="w-4 h-4 mr-2" type="checkbox" id="Premium villa king bed" name="Premiumvillakingbed" value="Premium villa king bed" checked={Premiumvillakingbed} onChange={changeHandler} />
                             <div className=" inline-block">
                                 <div className=" flex space-x-6 justify-center items-center">
-                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Single Ac Room">
-                                        Single Ac Room
+                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Premium villa king bed">
+                                        Premium villa king bed
                                     </label>
                                 </div>
                             </div>
                         </div>
 
                         <div className=" flex md:justify-center md:items-center items-center justify-start ">
-                            <input className="w-4 h-4 mr-2" type="checkbox" id="Double Sharing Ac Room" name="DoubleSharingAcRoom" value="Double Sharing Ac Room" checked={DoubleSharingAcRoom} onChange={changeHandler} />
+                            <input className="w-4 h-4 mr-2" type="checkbox" id="Deluxe suite" name="Deluxesuite" value="Deluxe suite" checked={Deluxesuite} onChange={changeHandler} />
                             <div className=" inline-block">
                                 <div className=" flex space-x-6 justify-center items-center">
-                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Double Sharing Ac Room">
-                                    Double Sharing Ac Room
+                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Deluxe suite">
+                                    Deluxe suite
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                        <div className=" flex md:justify-center md:items-center items-center justify-start ">
-                            <input className="w-4 h-4 mr-2" type="checkbox" id="Triple Sharing Ac Room" name="TripleSharingAcRoom" value="Triple Sharing Ac Room" checked={TripleSharingAcRoom} onChange={changeHandler} />
-                            <div className=" inline-block">
-                                <div className=" flex space-x-6 justify-center items-center">
-                                    <label className=" mr-2 text-sm leading-3 font-normal text-gray-600" htmlFor="Triple Sharing Ac Room">
-                                    Triple Sharing Ac Room
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                       
                     </div>
                 </div>
 
@@ -518,7 +508,7 @@ Arene Services partners with exquisite resorts known for their breathtaking loca
 
 {item.roomTypes && item.roomTypes.map((property, i) => (
    <div key={i}>
-   <span className="price text-xs">{i + 1}. {property.type} - {property.price}/Month</span>
+   <span className="price text-xs">{i + 1}. {property.type} - {property.price}/day</span>
 </div>
 ))}
 

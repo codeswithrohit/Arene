@@ -96,6 +96,7 @@ const AddBanqueethall = ({handleCloseAllInputFormats}) => {
         AdvancePayment:'',
         Parking:'',
         Decoration:'',
+        createdAt: new Date().toISOString(),
        
 
 
@@ -276,7 +277,7 @@ const AddBanqueethall = ({handleCloseAllInputFormats}) => {
             // state: state?.name || '',
             // city: city?.name || '',
             location: Location,
-            Verfied:'false'
+            Verified:'false'
           };
       
           // Log the data just before Firestore submission
@@ -402,7 +403,7 @@ const AddBanqueethall = ({handleCloseAllInputFormats}) => {
           name="Owner"
           value={formData.Owner}
           onChange={handleChange}
-          placeholder="Room Owner Name"
+          placeholder="Banqueet Hall Owner Name"
          className="w-full p-2 border border-gray-300 rounded-md"
         />
        {/* <input

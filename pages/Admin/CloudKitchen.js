@@ -71,7 +71,7 @@ const Laundry = () => {
   };
 
   const handleAddFoodType = () => {
-    const updatedFoodcharge = [...formData.Foodcharge, { tenure: '', price: '' }];
+    const updatedFoodcharge = [...formData.Foodcharge, { tenure: '', price: '',noofthalli:'' }];
     setFormData({ ...formData, Foodcharge: updatedFoodcharge });
   };
   const handleEditFoodTypeChange = (index, event) => {
@@ -82,7 +82,7 @@ const Laundry = () => {
   };
 
   const handleEditFoodType = () => {
-    const updatedFoodcharge = [...editData.Foodcharge, { tenure: '', price: '' }];
+    const updatedFoodcharge = [...editData.Foodcharge, { tenure: '', price: '',noofthalli:'' }];
     setEditData({ ...editData, Foodcharge: updatedFoodcharge });
   };
 
@@ -260,11 +260,10 @@ const Laundry = () => {
                     required
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   >
-                    <option value="">Select Thaliname</option>
-                    {/* Replace this with your list of thalinames */}
-                    <option value="Veg">Veg</option>
-                    <option value="Non-Veg">Non-Veg</option>
-                    {/* Add more options as needed */}
+              <option value="">Select Food Type</option>
+      <option value="chinese">Chinese</option>
+      <option value="veg-thali">Veg Thali</option>
+      <option value="non-veg-thali">Non-Veg Thali</option>
                   </select>
                 </div>
               </div>
@@ -320,6 +319,14 @@ const Laundry = () => {
                     {/* Add more options as needed */}
                   </select>
                  
+                  <input
+                    type="number"
+                    name="noofthalli"
+                    value={foodType.noofthalli}
+                    onChange={(e) => handleFoodTypeChange(index, e)}
+                    placeholder="Enter No. of Thalli"
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
                   <input
                     type="number"
                     name="price"
@@ -398,7 +405,7 @@ const Laundry = () => {
                     <td class="px-6 py-4 text-base">
                       {item.Foodcharge && item.Foodcharge.map((type, idx) => (
                         <div key={idx}>
-                          <span>{type.tenure}</span> - <span>{type.price}</span>
+                          <span>{type.tenure}</span> - <span>{type.noofthalli}</span> - <span>{type.price}</span>
                         </div>
                       ))}
                     </td>
@@ -482,6 +489,14 @@ const Laundry = () => {
                     {/* Add more options as needed */}
                   </select>
                  
+                  <input
+                    type="number"
+                    name="noofthalli"
+                    value={foodType.noofthalli}
+                    onChange={(e) => handleEditFoodTypeChange(index, e)}
+                    placeholder="Enter No. of Thalli"
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
                   <input
                     type="number"
                     name="price"

@@ -91,6 +91,7 @@ const AddRent = ({handleCloseAllInputFormats}) => {
         Laundry: '',
         Food: '',
         propertytypes: [],
+        createdAt: new Date().toISOString(),
       });
     
       const handleImageChange = (e) => {
@@ -225,7 +226,7 @@ const AddRent = ({handleCloseAllInputFormats}) => {
         // state: state?.name || '',
         // city: city?.name || '',
         location: Location,
-        Verfied:'false'
+        Verified:'false'
       };
 
 
@@ -338,7 +339,7 @@ const AddRent = ({handleCloseAllInputFormats}) => {
      name="Owner"
      value={formData.Owner}
      onChange={handleChange}
-     placeholder="Room Owner Name"
+     placeholder="Property Owner Name"
     className="w-full p-2 border border-gray-300 rounded-md"
    />
   {/* <input

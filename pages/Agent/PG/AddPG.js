@@ -75,20 +75,22 @@ const AddPG = ({handleCloseAllInputFormats}) => {
       // ... (Previous code)
     }, [userData]);
     const [formData, setFormData] = useState({
-        imgSrc: [],
-        videoSrc: null,
-        subcat: '',
-        description: '',
-        Owner: '',
-        category: 'PG',
-        PGName: '',
-        wifi: '',
-        Aquaguard: '',
-        Laundry: '',
-        Food: '',
-        Verified: 'false',
-        roomTypes: [],
-      });
+      imgSrc: [],
+      videoSrc: null,
+      subcat: '',
+      description: '',
+      Owner: '',
+      category: 'PG',
+      PGName: '',
+      wifi: '',
+      Aquaguard: '',
+      Laundry: '',
+      Food: '',
+      Verified: 'false',
+      roomTypes: [],
+      createdAt: new Date().toISOString(), // Add createdAt field with current date
+  });
+  
       const handleImageChange = (e) => {
         const images = Array.from(e.target.files);
         setFormData({ ...formData, imgSrc: [...formData.imgSrc, ...images] });
@@ -227,7 +229,7 @@ const AddPG = ({handleCloseAllInputFormats}) => {
             // state: state?.name || '',
             // city: city?.name || '',
             location: Location,
-            Verfied:'false'
+            Verified:'false'
           };
       
           // Log the data just before Firestore submission

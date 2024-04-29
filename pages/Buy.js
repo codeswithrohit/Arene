@@ -62,7 +62,7 @@ console.log(userData)
     const fetchData = async () => {
       try {
         // Replace 'yourCollectionName' with the actual collection name
-        const collectionRef = firebase.firestore().collection('buydetail').where('subcat', '==', category).where('Verfied', '==', 'true');
+        const collectionRef = firebase.firestore().collection('buydetail').where('subcat', '==', category).where('Verified', '==', 'true');
   
         // Get all documents from the collection
         const querySnapshot = await collectionRef.get();
