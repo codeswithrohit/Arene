@@ -29,7 +29,6 @@ const Register = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        fetchUserData(user);
       } else {
         setUser(null);
         setUserData(null);
@@ -40,30 +39,7 @@ const Register = () => {
     return () => unsubscribe();
   }, []);
 
-  const fetchUserData = async (user) => {
-    try {
-      const db = getFirestore();
-      const userDocRef = doc(db, 'Deliveryboy', user.uid); // Update the path to the user document
-      const userDocSnap = await getDoc(userDocRef);
 
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-        if (userData.isVendor) {
-          setUserData(userData);
-          router.push('/Deliveryboy');
-        } else {
-          router.push('/Deliveryboy/loginregister'); // Redirect to the login page if the user is not an admin
-        }
-      } else {
-        // Handle case where user data doesn't exist in Firestore
-        // You can create a new user profile or handle it based on your app's logic
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   const handleUserTypeChange = (selectedType) => {
     setUserType(selectedType);
   };
@@ -75,65 +51,73 @@ const Register = () => {
   const handlePanCardChange = (e) => {
     setPanCard(e.target.files[0]);
   };
+
+
   const handleSignUp = async () => {
-    try {
-      setisLoadinglogin(true);
-      const auth = getAuth();
-      const storageRef = firebase.storage().ref();
-  
-      // Upload Aadhar Card and get the download URL
-      const aadharCardRef = storageRef.child(`aadharCards/${aadharCard.name}`);
-      await aadharCardRef.put(aadharCard);
-      const aadharCardUrl = await aadharCardRef.getDownloadURL();
-  
-      // Upload PAN Card and get the download URL
-      const panCardRef = storageRef.child(`panCards/${panCard.name}`);
-      await panCardRef.put(panCard);
-      const panCardUrl = await panCardRef.getDownloadURL();
-  
-      // Get user input values
-      const { name, email, mobileNumber, password, address, pincode } = getUserInputValues();
-  
-      if (!name || !email || !mobileNumber || !address || !pincode || !password) {
-        toast.error('All fields are required.');
-        setisLoadinglogin(false);
-        return;
-      }
-  
-      // Get selected food types
-      const foodTypes = getSelectedFoodTypes();
-  
-      // Prepare user data object
-      const userData = {
-        name: name,
-        email: email,
-        mobileNumber: mobileNumber,
-        isDeliveryboy: true,
-        aadharCardUrl: aadharCardUrl,
-        panCardUrl: panCardUrl,
-        pincode: pincode,
-        address: address,
-        foodTypes: foodTypes,
-        verified: false
-      };
-  
-      // Create user in Firebase Authentication
-      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-      const user = userCredential.user;
-      await firebase.firestore().collection('Deliveryboy').doc(user.uid).set(userData);
-      // Display success message
-      toast.success('Delivery Boy account has been created.');
+  try {
+    setisLoadinglogin(true);
+    const auth = getAuth();
+    const storageRef = firebase.storage().ref();
+
+    // Upload Aadhar Card and get the download URL
+    const aadharCardRef = storageRef.child(`aadharCards/${aadharCard.name}`);
+    await aadharCardRef.put(aadharCard);
+    const aadharCardUrl = await aadharCardRef.getDownloadURL();
+
+    // Upload PAN Card and get the download URL
+    const panCardRef = storageRef.child(`panCards/${panCard.name}`);
+    await panCardRef.put(panCard);
+    const panCardUrl = await panCardRef.getDownloadURL();
+
+    // Get user input values
+    const { name, email, mobileNumber, password, address, pincode } = getUserInputValues();
+
+    if (!name || !email || !mobileNumber || !address || !pincode || !password) {
+      toast.error('All fields are required.');
       setisLoadinglogin(false);
-    } catch (error) {
-      setisLoadinglogin(false);
-      if (error.code === 'auth/email-already-in-use') {
-        toast.error('Email already exists.');
-      } else {
-        toast.error('Error signing up: ' + error.message);
-        console.log(error.message);
-      }
+      return;
     }
-  };
+
+    // Determine the delivery boy type based on the selected radio button
+    let boyType = '';
+    if (selectedPgType === 'Arene laundry') {
+      boyType = 'laundry';
+    } else if (selectedPgType === 'Arene Chef') {
+      boyType = 'chef';
+    }
+
+    // Prepare user data object
+    const userData = {
+      name: name,
+      email: email,
+      mobileNumber: mobileNumber,
+      isDeliveryboy: true,
+      aadharCardUrl: aadharCardUrl,
+      panCardUrl: panCardUrl,
+      pincode: pincode,
+      address: address,
+      verified: false,
+      boyType: boyType // Add the delivery boy type to the userData object
+    };
+
+    // Create user in Firebase Authentication
+    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+    await firebase.firestore().collection('Deliveryboy').doc(user.uid).set(userData);
+    // Display success message
+    toast.success('Delivery Boy account has been created.');
+    setisLoadinglogin(false);
+  } catch (error) {
+    setisLoadinglogin(false);
+    if (error.code === 'auth/email-already-in-use') {
+      toast.error('Email already exists.');
+    } else {
+      toast.error('Error signing up: ' + error.message);
+      console.log(error.message);
+    }
+  }
+};
+
   
 
   const getUserInputValues = () => {
@@ -146,14 +130,6 @@ const Register = () => {
     return { name, email, mobileNumber, password, address, pincode };
   };
 
-  const getSelectedFoodTypes = () => {
-    const foodTypes = [];
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-    checkboxes.forEach((checkbox) => {
-      foodTypes.push(checkbox.value);
-    });
-    return foodTypes;
-  };
 
   
 
@@ -216,6 +192,42 @@ const Register = () => {
   <div className="px-4 py-20">
     <h2 className="mb-2 text-3xl font-bold">Sign Up</h2>
    
+    <p className="mb-1 font-medium text-gray-500 py-4">Delivery Boy Type?</p>
+<div className="mb-6 flex flex-col gap-y-2 gap-x-4 lg:flex-row">
+  <div className="relative flex w-56 items-center justify-center rounded-xl bg-gray-50 px-4 py-3 font-medium text-gray-700">
+    <input
+      type="radio"
+      name="radio"
+      id="radio1"
+      checked={selectedPgType === 'Arene laundry'}
+      onChange={() => setSelectedPgType('Arene laundry')}
+    />
+    <label
+      className="peer-checked:border-blue-600 peer-checked:bg-blue-200 absolute top-0 h-full w-full cursor-pointer rounded-xl border"
+      htmlFor="radio1"
+    ></label>
+
+    <span className="pointer-events-none z-10">For Arene laundry</span>
+  </div>
+  <div className="relative flex w-56 items-center justify-center rounded-xl bg-gray-50 px-4 py-3 font-medium text-gray-700">
+    <input
+      type="radio"
+      name="radio"
+      id="radio3"
+      checked={selectedPgType === 'Arene Chef'}
+      onChange={() => setSelectedPgType('Arene Chef')}
+    />
+    <label
+      className="peer-checked:border-blue-600 peer-checked:bg-blue-200 absolute top-0 h-full w-full cursor-pointer rounded-xl border"
+      htmlFor="radio3"
+    ></label>
+
+    <span className="pointer-events-none z-10">For Arene Chef</span>
+  </div>
+</div>
+
+
+
     <p className="mb-1 font-medium text-gray-500">Name</p>
     <div className="mb-4 flex flex-col">
       <div className="focus-within:border-blue-600 relativeflex overflow-hidden rounded-md border-2 transition sm:w-80 lg:w-full">
@@ -234,36 +246,20 @@ const Register = () => {
         <input type="tel" id="signup-mobilenumber" className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none" placeholder="Enter your Mobile Number" />
       </div>
     </div>
-    <p className="mb-1 font-medium text-gray-500">Select Food Types</p>
-<div className="mb-4 flex flex-col">
-  <div className="flex flex-wrap gap-2">
-    <label className="inline-flex items-center">
-      <input type="checkbox" value="chinese" className="form-checkbox text-emerald-600" />
-      <span className="ml-2">Chinese</span>
-    </label>
-    <label className="inline-flex items-center">
-      <input type="checkbox" value="veg-thali" className="form-checkbox text-emerald-600" />
-      <span className="ml-2">Veg Thali</span>
-    </label>
-    <label className="inline-flex items-center">
-      <input type="checkbox" value="non-veg-thali" className="form-checkbox text-emerald-600" />
-      <span className="ml-2">Non-Veg Thali</span>
-    </label>
-  </div>
-</div>
+ 
 
 
 
     <p className="mb-1 font-medium text-gray-500">Address</p>
     <div className="mb-4 flex flex-col">
       <div className="focus-within:border-blue-600 relativeflex overflow-hidden rounded-md border-2 transition sm:w-80 lg:w-full">
-        <input type="text" id="signup-address" className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none" placeholder="Enter your Kitchen Address" />
+        <input type="text" id="signup-address" className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none" placeholder="Enter your  Address" />
       </div>
     </div>
     <p className="mb-1 font-medium text-gray-500">Pin Code</p>
     <div className="mb-4 flex flex-col">
       <div className="focus-within:border-blue-600 relativeflex overflow-hidden rounded-md border-2 transition sm:w-80 lg:w-full">
-        <input type="text" id="signup-pincode" className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none" placeholder="Enter your Kitchen Area Pin Code" />
+        <input type="text" id="signup-pincode" className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none" placeholder="Enter your Area Pin Code for Delivery" />
       </div>
     </div>
     <p className="mb-1 font-medium text-gray-500">Password</p>

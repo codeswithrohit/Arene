@@ -19,7 +19,7 @@ const User = () => {
 
   useEffect(() => {
     const db = firebase.firestore();
-    const RegistrationRef = db.collection("AreneChefVendor");
+    const RegistrationRef = db.collection("Deliveryboy");
 
     RegistrationRef.get()
       .then((RegistrationSnapshot) => {
@@ -69,7 +69,7 @@ const User = () => {
   const handleVerification = async (userId, isVerified) => {
     try {
       const db = firebase.firestore();
-      const userRef = db.collection("AreneChefVendor").doc(userId);
+      const userRef = db.collection("Deliveryboy").doc(userId);
 
       await userRef.update({
         verified: isVerified,
@@ -89,11 +89,10 @@ const User = () => {
       <AdminNavbar />
       <div className="w-full lg:ml-56 sm:px-6">
         <div className="px-4 md:px-10 py-4 md:py-7 bg-gray-100 rounded-tl-lg rounded-tr-lg">
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-normal text-black">
-        Arene Chef Vendor Data
-            </p>
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-normal text-black">
+            Delivery Boy Data
+          </p>
           <div className="sm:flex items-center mt-2 ">
-           
             <div className="flex ">
               <button
                 className={`mx-1 px-3 py-1 rounded ${
@@ -147,75 +146,66 @@ const User = () => {
             </svg>
           </div>
         ) : (
-          <div className="bg-white shadow px-4 md:px-4 pt-4 md:pt-7 pb-5 overflow-x-auto">
-            <table class=" divide-y divide-gray-200 font-[sans-serif]">
-              <thead class="bg-gray-100 whitespace-nowrap">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User Details
-                  </th>
+          <div className="bg-white shadow px-4 md:px-4 pt-4 md:pt-7 pb-5 ">
+            <div className="overflow-x-auto">
+              <table className="divide-y divide-gray-200 font-[sans-serif] w-full">
+                <thead className="bg-gray-100 whitespace-nowrap">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-white">
+                     User Details
+                    </th>
                  
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Address
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Food Types
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                 
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200 whitespace-nowrap">
-                {currentRegistration.map((data, index) => (
-                  <tr key={data.id}>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-white">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap">
+                  {currentRegistration.map((data, index) => (
+                    <tr key={data.id}>
                       <td className="px-6 py-4 text-xs text-[#333]">
   <div className="flex flex-col">
     <span>Name:{data.name}</span>
     <span>email:{data.email}</span>
     <span>M.no:{data.mobileNumber}</span>
+    <span>Address:{data.address},{data.pincode}</span>
+    <span>Deliveryboy: {data.boyType}</span>
   </div>
 </td>
-                    <td class="px-6 py-4 text-xs text-[#333]">
-                      {data.address},{data.pincode}
-                    </td>
-                    <td class="px-6 py-4 text-xs text-[#333]">
-  {data.foodTypes && data.foodTypes.length > 0 ? data.foodTypes.join(', ') : 'No food types'}
-</td>
 
-                    <td class="px-6 py-4 text-xs text-[#333]">
-                      <button
-                        onClick={() => viewAadhar(data.aadharCardUrl)}
-                        className="text-blue-500 hover:text-blue-700 mr-2"
-                      >
-                        Aadhar
-                      </button>
-                      <button
-                        onClick={() => viewPan(data.panCardUrl)}
-                        className="text-blue-500 hover:text-blue-700 mr-2"
-                      >
-                        PAN
-                      </button>
-                      <select
-                        className="text-blue-500 hover:text-blue-700 mr-2"
-                        value={data.verified ? "verify" : "unverify"}
-                        onChange={(e) =>
-                          handleVerification(
-                            data.id,
-                            e.target.value === "verify"
-                          )
-                        }
-                      >
-                        <option value="verify">Verify</option>
-                        <option value="unverify">Unverify</option>
-                      </select>
-                    </td>
-                
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  
+                      <td className="px-6 py-4 text-xs text-[#333]">
+                        <button
+                          onClick={() => viewAadhar(data.aadharCardUrl)}
+                          className="text-blue-500 hover:text-blue-700 mr-2"
+                        >
+                          Aadhar
+                        </button>
+                        <button
+                          onClick={() => viewPan(data.panCardUrl)}
+                          className="text-blue-500 hover:text-blue-700 mr-2"
+                        >
+                          PAN
+                        </button>
+                        <select
+                          className="text-blue-500 hover:text-blue-700 mr-2"
+                          value={data.verified ? "verify" : "unverify"}
+                          onChange={(e) =>
+                            handleVerification(
+                              data.id,
+                              e.target.value === "verify"
+                            )
+                          }
+                        >
+                          <option value="verify">Verify</option>
+                          <option value="unverify">Unverify</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
         <div className="flex items-center justify-center mt-4">

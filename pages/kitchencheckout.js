@@ -48,7 +48,7 @@ const test = () => {
   }, [thaliname]);
   
 
-console.log("kitchen checkout","thaliname",vendorData,thaliname)
+
   // Handle check-in date change
   const handleCheckInChange = (date, dateString) => {
     setSelectedDate((prevState) => ({
@@ -102,8 +102,7 @@ console.log("kitchen checkout","thaliname",vendorData,thaliname)
     }
   }
 
-  console.log('Foodcharge price', foodChargePrice);
-  console.log('nooffthalli:', foodChargeNoOfThalli);
+ 
   const generateOrderId = () => {
     const randomNumber = Math.floor(Math.random() * 1000000); // Generate a random number between 0 and 999999
     const orderId = `ORDER-${randomNumber}`; // Append the random number to a prefix
@@ -211,7 +210,7 @@ console.log("kitchen checkout","thaliname",vendorData,thaliname)
       setLoading(false);
     }
   };
-
+console.log("thaliname","vendordata",thaliname,vendorData)
 
   const checkAvailabilityAndInitiatePayment = async () => {
     const matchedVendor = vendorData.find(vendor => vendor.pincode === pincode);
