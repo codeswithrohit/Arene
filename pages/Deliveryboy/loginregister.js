@@ -162,12 +162,19 @@ const Register = () => {
             const userData = doc.data();
             console.log(userData);
             if (userData.isDeliveryboy) {
-              toast.success('Login successful.', {
-                position: toast.POSITION.TOP_RIGHT,
-              });
-              router.push('/Deliveryboy');
+              if(userData.boyType === "laundry") {
+                toast.success('Login successful.', {
+                  position: toast.POSITION.TOP_RIGHT,
+                });
+                router.push('/Deliveryboy/laundry'); // Redirect to laundry page
+              } else if(userData.boyType === "chef") {
+                toast.success('Login successful.', {
+                  position: toast.POSITION.TOP_RIGHT,
+                });
+                router.push('/Deliveryboy/chef'); // Redirect to chef page
+              }
             } else {
-              toast.error('You do not have Arene Chef Vendor permission.', {
+              toast.error('You do not access delivery boy permission.', {
                 position: toast.POSITION.TOP_RIGHT,
               });
             }
@@ -181,7 +188,8 @@ const Register = () => {
           position: toast.POSITION.TOP_RIGHT,
         });
       });
-  };
+};
+
   
 
   return (

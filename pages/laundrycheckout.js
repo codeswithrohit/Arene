@@ -13,6 +13,7 @@ const test = () => {
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [mobilenumber, setMobileNumber] = useState("");
+  const [pincode, setPincode] = useState("");
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
@@ -102,6 +103,7 @@ const test = () => {
         phoneNumber: mobilenumber,
         email: email,
         Service: service,
+        deliveryconfirmation:'false',
         selectedTenure: selectedTenure,
         GarmentTypes: GarmentTypes,
         Noofgarment:GarmentTypesNOofGarment,
@@ -116,6 +118,7 @@ const test = () => {
         threeday: threeday,
         allday: allday,
         bookingDate:selectedDate,
+        pincode:pincode,
       });
       router.push(`/laundrybookingdetails?orderId=${orderId}`);
       toast.success('Booking Successful!');
@@ -232,7 +235,13 @@ const test = () => {
       placeholder="Phone number"
       class="px-4 py-3.5 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
     />
- 
+   <input 
+      value={pincode} 
+      onChange={(e) => setPincode(e.target.value)} 
+      type="number" 
+      placeholder="Pin Code"
+      class="px-4 py-3.5 mb-2 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
+    />
      <div className=" mb-2 flex items-center">
         <DatePicker
           value={selectedDate.checkIn ? dayjs(selectedDate.checkIn) : null}
