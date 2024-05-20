@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.8.2",
     "@headlessui/react": "^1.7.17",
     "@react-google-maps/api": "^2.19.2",
     "antd": "^5.16.0",
