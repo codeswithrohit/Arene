@@ -142,8 +142,8 @@ const Header = ({ google }) => {
         <Polyline path={directionCoordinates} strokeColor="red" strokeOpacity={0.8} strokeWeight={2} />
       </Map>
       <div style={styles.infoContainer}>
-        <p style={styles.userInfoText}>Distance: {distance}</p>
-        <p style={styles.userInfoText}>Duration: {duration}</p>
+        {/* <p style={styles.userInfoText}>Distance: {distance}</p>
+        <p style={styles.userInfoText}>Duration: {duration}</p> */}
       </div>
     </div>
   );
