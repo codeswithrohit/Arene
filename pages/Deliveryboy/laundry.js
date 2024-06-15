@@ -10,7 +10,7 @@ import { FaBell, FaCheckCircle } from 'react-icons/fa';
 
 const Test = () => {
   const [mainactiveTab, setMainActiveTab] = useState('orderAlert'); // State to track active tab
-
+  const [activeTab, setActiveTab] = useState("ongoingOrders");
   // Function to handle tab change
   const handleTabChange = (tab) => {
     setMainActiveTab(tab);
@@ -21,7 +21,6 @@ const Test = () => {
   const [user, setUser] = useState(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true); // Loading state for user authentication
   const [userData, setUserData] = useState(null);
-  const [noofgarment, setNoofgarment] = useState('');
   const [bookings, setBookings] = useState(null);
   const [deliverybookings, setDeliveryBookings] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(true); // Loading state for fetching bookings
@@ -29,9 +28,8 @@ const Test = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [thalliName, setThalliName] = useState('');
   const [ingredients, setIngredients] = useState('');
-  const [noOfThalli, setNoOfThalli] = useState('');
+  const [availablegarments, setavailablegarments] = useState('');
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
-  const [activeTab, setActiveTab] = useState("today");
 
   const getCurrentDate = () => {
       const today = new Date();
@@ -105,7 +103,6 @@ const Test = () => {
     };
     fetchBookings();
 }, [userData,currentUser]); // Add userData to the dependency array
-
   useEffect(() => {
     const fetchBookings = async () => {
         try {
@@ -124,8 +121,57 @@ const Test = () => {
 }, [userData,currentUser]); // Add userData to the dependency array
 
   
-  console.log("orders",bookings)
+  console.log("orderslaundry",bookings)
 console.log("userdata",userData)
+
+const [latitude, setLatitude] = useState(null);
+const [longitude, setLongitude] = useState(null);
+const [locations, setLocations] = useState(null);
+
+useEffect(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+
+        // Fetch location name using reverse geocoding
+        fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=AIzaSyB6gEq59Ly20DUl7dEhHW9KgnaZy4HrkqQ`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.results && data.results.length > 0) {
+              // Extracting more specific address components
+              const addressComponents = data.results[0].address_components;
+              const cityName = addressComponents.find(component => component.types.includes('locality'));
+              const stateName = addressComponents.find(component => component.types.includes('administrative_area_level_1'));
+              const countryName = addressComponents.find(component => component.types.includes('country'));
+
+              // Constructing a more detailed location name
+              const detailedLocation = [cityName, stateName, countryName]
+                .filter(component => component !== undefined)
+                .map(component => component.long_name)
+                .join(', ');
+
+              setLocations(detailedLocation);
+            } else {
+              setLocations("Location not found");
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching location:', error);
+            setLocations("Error fetching location");
+          });
+      },
+      (error) => {
+        console.error('Error getting geolocation:', error);
+      }
+    );
+  } else {
+    console.error('Geolocation is not supported by this browser.');
+  }
+}, []);
+
+
 
   const handleConfirmOrder = async (bookingId) => {
       try {
@@ -137,7 +183,12 @@ console.log("userdata",userData)
   
           await firebase.firestore().collection('laundryorders').doc(bookingId).update({
               deliveryboyid: currentUser.uid,
-              deliveryconfirmation:true
+              deliveryconfirmation:true,
+              deliveryboyname:userData?.name,
+              deliveryboyaddress:userData?.address,
+              deliveryboyemail:userData?.email,
+              deliveryboymobileNumber:userData?.mobileNumber
+            //   deliveryboylocation:locations
           });
           toast.success('Order confirmed successfully!', {
               position: "top-right",
@@ -154,84 +205,9 @@ console.log("userdata",userData)
       }
   };
   
+
+ 
   
-
-  const openModal = (order) => {
-      setSelectedOrder(order);
-      setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-      setIsModalOpen(false);
-  };
-
-  const handleSubmit = async () => {
-    setIsLoadingSubmit(true);
-    try {
-        // Check if the entered noofgarment is a valid positive integer
-        const parsedNoOfGarment = parseInt(noofgarment);
-        if (isNaN(parsedNoOfGarment) || parsedNoOfGarment <= 0) {
-            toast.error('Please enter a valid number of garments.');
-            setIsLoadingSubmit(false);
-            return;
-        }
-
-        // Check if the entered noofgarment is not greater than the available Noofgarment
-        if (parsedNoOfGarment > selectedOrder.Noofgarment) {
-            toast.error('Cannot enter more garments than available.');
-            setIsLoadingSubmit(false);
-            return;
-        }
-
-        const orderDocRef = firebase.firestore().collection('laundryorders').doc(selectedOrder.id);
-
-        // Get the current kitchenorder document
-        const orderSnapshot = await orderDocRef.get();
-        const currentOrderData = orderSnapshot.data();
-
-        // Create a new order history object
-        const newOrderHistory = {
-            noofgarment: parsedNoOfGarment,
-            createdAt: firebase.firestore.Timestamp.now() // Add current date
-        };
-
-        // Update the order history field in the kitchenorder document
-        const updatedOrderHistory = [...(currentOrderData.orderHistory || []), newOrderHistory];
-
-        // Update noofgarment in the kitchenorder collection
-        const updatednoofgarment = selectedOrder.Noofgarment - parsedNoOfGarment;
-
-        // Update the kitchenorder document with the new order history and updated noofgarment
-        await orderDocRef.update({
-            orderHistory: updatedOrderHistory,
-            Noofgarment: updatednoofgarment // Update Noofgarment with the correct casing
-        });
-
-        // Update bookings state
-        const updatedBookings = bookings.map(booking => {
-            if (booking.id === selectedOrder.id) {
-                return { ...booking, Noofgarment: updatednoofgarment }; // Update Noofgarment with the correct casing
-            }
-            return booking;
-        });
-        setBookings(updatedBookings);
-
-        toast.success('Order delivery updated successfully!', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
-
-        setIsLoadingSubmit(false);
-        closeModal();
-    } catch (error) {
-        console.error('Error updating orders:', error);
-    }
-};
 
 // Inside the component
 const filteredBookings = !isLoadingData && bookings && bookings.filter(booking => {
@@ -243,6 +219,75 @@ const filteredBookings = !isLoadingData && bookings && bookings.filter(booking =
   }
 });
 
+const ongoingOrders = bookings 
+  ? bookings.filter(booking => 
+      booking.availablegarments > 0 && 
+      booking.orderstatus === "Confirm" && 
+      booking.deliveryboyid === currentUser.uid
+    ) 
+  : [];
+  console.log("ongoingorders",ongoingOrders)
+
+const currentDate = new Date().toISOString().split('T')[0];
+
+const completedOrders = bookings 
+  ? bookings.filter(booking => 
+      booking.availablegarments === 0 && 
+      booking.deliveryboyid === currentUser.uid
+    ) 
+  : [];
+
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return now.toLocaleString(); // This will give the date and time in a readable format
+  };
+  
+  const handleStatusChange = async (bookingId, deliveryIndex, newStatus,garmentCount) => {
+    try {
+      const bookingRef = firebase.firestore().collection('laundryorders').doc(bookingId);
+      const bookingDoc = await bookingRef.get();
+      if (bookingDoc.exists) {
+        const bookingData = bookingDoc.data();
+        const orderHistory = bookingData.orderHistory;
+        orderHistory[deliveryIndex].deliverystatus = newStatus;
+        orderHistory[deliveryIndex].deliverydatetime = getCurrentDateTime();
+        orderHistory[deliveryIndex].todayconfirm = newStatus;
+  
+        if (newStatus === "Out of Delivery") {
+          // Update the deliveryboylocation with current location
+          await bookingRef.update({
+            orderHistory: orderHistory,
+            deliveryboylocation: locations,
+          });
+          toast.success('Status updated to Out of Delivery');
+        } else if (newStatus === "Delivered") {
+          // Update the orderHistory and decrease availablegarments by 1
+          console.log("garmentcount",garmentCount)
+          const updatedavailablegarments = bookingData.availablegarments - garmentCount;
+          console.log("upadtedavailablegarments",updatedavailablegarments)
+          await bookingRef.update({
+            orderHistory: orderHistory,
+            availablegarments: updatedavailablegarments,
+          });
+          toast.success('Status updated to Delivered');
+        } else {
+          await bookingRef.update({
+            orderHistory: orderHistory,
+          });
+          toast.success('Status updated successfully');
+        }
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // Reload the page after 2 seconds to give time for the toast to show
+      } else {
+        console.log('No such document!');
+        toast.error('No such document!');
+      }
+    } catch (error) {
+      console.error('Error updating document: ', error);
+      toast.error('Error updating document');
+    }
+  };
 
 
 
@@ -285,94 +330,86 @@ if (userData && userData.verified) {
         {!isLoadingData && deliverybookings && deliverybookings.length > 0 ? (
             <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
                 <div className="w-full overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 font-[sans-serif]">
-    <thead class="bg-gray-100 whitespace-nowrap">
-      <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-        Customer Name
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-     Service
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-        Order Details
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-        Payment
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-        Booking Date
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Actions
-        </th>
-      </tr>
-    </thead>
-    <tbody class="bg-white divide-y divide-gray-200 whitespace-nowrap">
-    {bookings && bookings.map(booking => (
-      <tr key={booking.id} >
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.firstName} {booking.lastName}
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.Service}
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        <div>
-                    <p>No. of Garments: {booking.Noofgarment}</p>
-                    <p>Tenure: {booking.selectedTenure}</p>
-                    <p>Price: {booking.totalpayment}</p>
-                </div>
-        
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.Payment}
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.bookingDate instanceof Object ? (
-    // If bookingDate is an object, extract checkIn or checkOut
-    <>
-        <p>Check In: {booking.bookingDate.checkIn}</p>
-        {booking.bookingDate.checkOut ? (
-            <p>Check Out: {booking.bookingDate.checkOut}</p>
-  ) : null}
-    </>
-) : (
-    // If bookingDate is a string, display it directly
-    <p>{booking.bookingDate}</p>
-)}
+                    <table className="min-w-full divide-y divide-gray-200 font-[sans-serif]">
+                        <thead className="bg-gray-100 whitespace-nowrap">
+                        <tr>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Customer Name
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                               Services
+                              </th>
+                              {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Food Name
+                              </th> */}
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Order Details
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Payment
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Booking Date
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                              </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap">
+                            {/* Table rows */}
 
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.GarmentTypes ? (
-                                                                        <Link href={`/Admin/adminarenelaundrydetails?orderId=${booking.orderId}`}>
-                                                                            <a className="bg-blue-500 text-white px-2 py-1 rounded">
-                                                                                View Details
-                                                                            </a>
-                                                                        </Link>
-                                                                    ) : (
-                                                                        <Link href={`/Admin/adminarenelaundrydetails?orderId=${booking.orderId}`}>
-                                                                            <a className="bg-blue-500 text-white px-2 py-1 rounded">
-                                                                                Booking Details
-                                                                            </a>
-                                                                        </Link>
-                                                                    )}
-                                                                   {booking.deliveryconfirmation === "false" ? (
+            
+                            {deliverybookings.map(booking => (
+                                <tr key={booking.id}>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.firstName} {booking.lastName}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Service}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                  <div>
+                                    <p>No. of Garments: {booking.availablegarments}</p>
+                                    <p>Delivery In: {booking.selectedTenure}</p>
+                                    <p>Price: {booking.Payment}</p>
+                                  </div>
+                                </td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Payment}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                 
+                                 <p>{booking.OrderDate}</p>
+                              
+                             </td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                        {/* Display action buttons */}
+                                        <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
+                                                <a className="bg-blue-500 text-white px-2 py-1 rounded">
+                                                    View Details
+                                                </a>
+                                            </Link>
+                                        {booking.deliveryconfirmation === "false" ? (
                                        <button onClick={() => handleConfirmOrder(booking.id)}
                                        class="animate-bounce focus:animate-none ml-8 hover:animate-none inline-flex text-md font-medium bg-indigo-900  px-4 py-2 rounded-lg tracking-wide text-white">
                                        <span class="ml-2">Confirm </span>
                                    </button>
                                         ) : (
-                                            <button onClick={() => openModal(booking)} className="bg-blue-500 ml-4 text-white px-2 py-1 rounded">
-                                                Update Orders Delivery
-                                            </button>
+                                            <form className="flex items-center w-50 mt-2 ">
+                                            {/* <select 
+                                              className="bg-blue-500 text-white px-2 py-1 rounded"
+                                              value={booking.orderstatus}
+                                              onChange={(e) => handleOrderStatusChange(booking.id, e.target.value)}
+                                            >
+                                              <option value="">Select Options</option>
+                                              <option value="Out of delivery">Out of delivery</option>
+                                              <option value="Delivered">Delivered</option>
+                                            </select> */}
+                                        
+                                          </form>
                                         )}
-        </td>
-       
-      </tr>
-    ))}
-    </tbody>
-  </table>
+                                    </td>
+                                   
+                                  
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         ) : (
@@ -383,136 +420,213 @@ if (userData && userData.verified) {
         </div>
       )}
 
-      {mainactiveTab === 'confirmedOrders' && (
-        <div>
-      
-        <div className="sm:flex items-center mt-2 mb-4 ">
-            <div className="flex ">
-                {/* Step 4: Add button click handlers */}
-                <button
-                    className={`mx-1 px-3 py-1 rounded ${
-                        activeTab === "today"
-                            ? "bg-gray-800 text-white"
-                            : "bg-gray-200 text-black"
-                    }`}
-                    onClick={() => setActiveTab("today")}
-                >
-                    Today
-                </button>
-                <button
-                    className={`mx-1 px-3 py-1 rounded ${
-                        activeTab === "total"
-                            ? "bg-gray-800 text-white"
-                            : "bg-gray-200 text-black"
-                    }`}
-                    onClick={() => setActiveTab("total")}
-                >
-                    Total
-                </button>
-            </div>
-        </div>
-        {/* Step 5: Use filteredBookings */}
-
-        {!isLoadingData && filteredBookings && filteredBookings.length > 0 ? (
-            <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
-                <div className="w-full overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 font-[sans-serif]">
-    <thead class="bg-gray-100 whitespace-nowrap">
-      <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-        Customer Name
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-     Service
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-        Order Details
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-        Payment
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-        Booking Date
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Actions
-        </th>
-      </tr>
-    </thead>
-    <tbody class="bg-white divide-y divide-gray-200 whitespace-nowrap">
-    {bookings && bookings.map(booking => (
-      <tr key={booking.id} >
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.firstName} {booking.lastName}
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.Service}
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        <div>
-                    <p>No. of Garments: {booking.Noofgarment}</p>
-                    <p>Tenure: {booking.selectedTenure}</p>
-                    <p>Price: {booking.totalpayment}</p>
+{mainactiveTab === 'confirmedOrders' && (
+                <div>
+                  <div className="sm:flex items-center mt-2 mb-4 ">
+                    <div className="flex ">
+                      <button
+                        className={`mx-1 px-3 py-1 rounded ${activeTab === "ongoingOrders" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"}`}
+                        onClick={() => setActiveTab("ongoingOrders")}
+                      >
+                        Ongoing Orders
+                      </button>
+                      <button
+                        className={`mx-1 px-3 py-1 rounded ${activeTab === "completedOrders" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"}`}
+                        onClick={() => setActiveTab("completedOrders")}
+                      >
+                        Completed Orders
+                      </button>
+                    </div>
+                  </div>
+                  {activeTab === "ongoingOrders" && (
+                     <div>
+                     {!isLoadingData && ongoingOrders && ongoingOrders.length > 0 ? (
+                       <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+                         <div className="w-full overflow-x-auto">
+                           <table className="min-w-full divide-y divide-gray-200 font-[sans-serif]">
+                             <thead className="bg-gray-100">
+                               <tr>
+                               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Name</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Services</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Details</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking Date</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                               </tr>
+                             </thead>
+                             <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap">
+      {ongoingOrders.map((booking, index) => (
+        <React.Fragment key={booking.id}>
+          <tr>
+            <td className="px-6 py-4 text-sm text-gray-800">
+              <div className="flex items-center">
+                <div className="w-8 h-8 flex items-center justify-center font-bold rounded-full bg-gray-200 text-gray-800 mr-3">
+                  {index + 1}.
                 </div>
-        
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.Payment}
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.bookingDate instanceof Object ? (
-    // If bookingDate is an object, extract checkIn or checkOut
-    <>
-        <p>Check In: {booking.bookingDate.checkIn}</p>
-        {booking.bookingDate.checkOut ? (
-            <p>Check Out: {booking.bookingDate.checkOut}</p>
-  ) : null}
-    </>
-) : (
-    // If bookingDate is a string, display it directly
-    <p>{booking.bookingDate}</p>
-)}
+                {booking.firstName} {booking.lastName}
+              </div>
+            </td>
+            <td className="px-6 py-4 text-sm text-[#333]">{booking.Service}</td>
+            <td className="px-6 py-4 text-sm text-[#333]">
+                                  <div>
+                                    <p>No. of Garments: {booking.availablegarments}</p>
+                                    <p>Delivery In: {booking.selectedTenure}</p>
+                                    <p>Price: {booking.Payment}</p>
+                                  </div>
+                                </td>
+            <td className="px-6 py-4 text-sm text-gray-800">{booking.Payment}</td>
+            <td className="px-6 py-4 text-sm text-[#333]">
+                                 
+                                 <p>{booking.OrderDate}</p>
+                              
+                             </td>
+            <td className="px-6 py-4 text-sm text-gray-800">
+             
+               
+            <Link href={`/Admin/adminarenelaundrydetails?orderId=${booking.orderId}`}>
+                  <a className="bg-blue-500 text-white px-2 py-1 rounded">Booking Details</a>
+                </Link>
+            </td>
+          </tr>
+          {booking.orderHistory && booking.orderHistory.length > 0 && (
+            <tr>
+              <td colSpan="7">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full bg-white border border-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pickup Date</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Garment Count</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Delivery Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {booking.orderHistory.map((delivery, deliveryIndex) => (
+                        delivery.pickupDate === currentDate && (
+                          <tr key={deliveryIndex} className={delivery.deliverystatus === "cancel" ? "border-b-2 border-red-500" : ""}>
+                                                       <td className="px-3 py-1 text-sm font-medium text-gray-900">{delivery.pickupDate}</td>
+                                                       <td className="px-3 py-1 text-sm text-gray-500">{delivery.garmentCount}</td>
 
-        </td>
-        <td class="px-6 py-4 text-sm text-[#333]">
-        {booking.GarmentTypes ? (
-                                                                        <Link href={`/Admin/adminarenelaundrydetails?orderId=${booking.orderId}`}>
-                                                                            <a className="bg-blue-500 text-white px-2 py-1 rounded">
-                                                                                View Details
-                                                                            </a>
-                                                                        </Link>
-                                                                    ) : (
-                                                                        <Link href={`/Admin/adminarenelaundrydetails?orderId=${booking.orderId}`}>
-                                                                            <a className="bg-blue-500 text-white px-2 py-1 rounded">
-                                                                                Booking Details
-                                                                            </a>
-                                                                        </Link>
-                                                                    )}
-                                                                   {booking.deliveryconfirmation === "false" ? (
-                                       <button onClick={() => handleConfirmOrder(booking.id)}
-                                       class="animate-bounce focus:animate-none ml-8 hover:animate-none inline-flex text-md font-medium bg-indigo-900  px-4 py-2 rounded-lg tracking-wide text-white">
-                                       <span class="ml-2">Confirm </span>
-                                   </button>
-                                        ) : (
-                                            <button onClick={() => openModal(booking)} className="bg-blue-500 ml-4 text-white px-2 py-1 rounded">
-                                                Update Orders Delivery
-                                            </button>
-                                        )}
-        </td>
-       
-      </tr>
-    ))}
+                            <td className="px-3 py-1 text-sm text-gray-500">
+                              <select
+                                value={delivery.deliverystatus}
+                                onChange={(e) => handleStatusChange(booking.id, deliveryIndex, e.target.value, delivery.garmentCount)}
+                                className="border border-gray-300 rounded px-2 py-1"
+                              >
+                                <option value="">Change Status</option>
+                                <option value="Out of Delivery">Out of Delivery</option>
+                                <option value="Delivered">Delivered</option>
+                              </select>
+                              {delivery.deliverystatus}
+                              {delivery.deliverystatus === "Out of Delivery" && (
+                  <div>
+                    <a href={`/Deliveryboy/viewmaplaundry?orderId=${booking.orderId}`} className="text-green-500 cursor-pointer font-bold p-2 rounded">
+                    Track Order
+                    </a>
+                  </div>
+                )}
+                            </td>
+                          </tr>
+                        )
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          )}
+        </React.Fragment>
+      ))}
     </tbody>
-  </table>
+                           </table>
+                         </div>
+                       </div>
+                     ) : (
+                       <div className="text-center mt-4">No ongoing orders</div>
+                     )}
+                   </div>
+                  )}
+
+                  {activeTab === "completedOrders" && (
+                    <div>
+                      {!isLoadingData && completedOrders && completedOrders.length > 0 ? (
+                        <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+                          <div className="w-full overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200 font-[sans-serif]">
+                              <thead className="bg-gray-100 whitespace-nowrap">
+                              <tr>
+                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Customer Name
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Services
+                                  </th>
+                                 
+                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Order Details
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Payment
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Booking Date
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap">
+                                {completedOrders.map(booking => (
+                                  <tr key={booking.id}>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.firstName} {booking.lastName}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Service}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                  <div>
+                                    <p>No. of Garments: {booking.availablegarments}</p>
+                                    <p>Delivery In: {booking.selectedTenure}</p>
+                                    <p>Price: {booking.Payment}</p>
+                                  </div>
+                                </td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Payment}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                 
+                                 <p>{booking.OrderDate}</p>
+                              
+                             </td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                      {booking.orderstatus === "Out of delivery" && (
+                                        <div>
+                                          <a href={`/mapview?orderId=${booking.orderId}`} className="bg-green-500 text-white px-2 py-1 rounded">
+                                            View on Map
+                                          </a>
+                                        </div>
+                                      )}
+                                   <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
+                                          <a className="bg-blue-500 text-white px-2 py-1 rounded">
+                                            View Details
+                                          </a>
+                                        </Link>
+                                      {/* <button onClick={() => handleConfirmOrder(booking.id)}
+                                        className="animate-bounce focus:animate-none ml-8 hover:animate-none inline-flex text-md font-medium bg-indigo-900  px-4 py-2 rounded-lg tracking-wide text-white">
+                                        <span className="ml-2">Confirm </span>
+                                      </button> */}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center mt-4">
+                          No completed orders
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-            </div>
-        ) : (
-            <div className="text-center mt-4">
-                {activeTab === "today" ? "No orders for today" : "No orders"}
-            </div>
-        )}
-        </div>
-      )}
+              )}
     </div>
 
     
@@ -520,52 +634,7 @@ if (userData && userData.verified) {
         )}
     </section>
     
-    {isModalOpen && (
-                <div className="fixed inset-0 z-10 overflow-y-auto">
-                    <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                        {/* Modal background */}
-                        <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
-                        {/* Modal content */}
-                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                            {/* Modal content here */}
-                            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                <div className="sm:flex sm:items-start">
-                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                        <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4" id="modal-title">
-                                            Update Order Delivery
-                                        </h3>
-                                        <form onSubmit={handleSubmit} className="space-y-6 px-4 max-w-sm mx-auto font-[sans-serif]">
-                                            
-                                            <div className="flex items-center">
-                                                <input type="number" placeholder="Enter no. of Garments"
-                                                    value={noofgarment}
-                                                    onChange={(e) => setNoofgarment(e.target.value)}
-                                                    className="px-2 py-2 w-full border-b-2 focus:border-[#333] outline-none text-sm bg-white" />
-                                            </div>
-
-                                            <button
-                                                type="button"
-                                                className="px-6 py-2 w-full bg-[#333] text-sm text-white hover:bg-[#444] mx-auto block"
-                                                onClick={handleSubmit}
-                                                disabled={isLoadingSubmit} // Disable button while loading
-                                            >
-                                                {isLoadingSubmit ? 'Submitting...' : 'Submit'}
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Modal footer */}
-                            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                <button type="button" onClick={closeModal} className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+ 
 
 
 

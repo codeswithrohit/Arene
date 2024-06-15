@@ -470,8 +470,8 @@ Experience the difference with Arene Services - where quality meets convenience,
         <section className="listing-grid-area pt-15 pb-1">
         <div className="container">
          
-        <div className="flex justify-center items-center min-h-screen">
-  <div className="row">
+        
+    <div className="grid px-8 mt-4 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
     {loading ? ( // Show spinner while loading
       <div className="flex justify-center items-center">
         <img className="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
@@ -485,75 +485,61 @@ Experience the difference with Arene Services - where quality meets convenience,
         filteredData
           .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)) // Sort data based on distance
           .map((item, index) => (
-            <div key={item.id} className="col-lg-6 col-md-7 col-sm-12">
-              <div className="listing-item listing-grid-one mb-45 wow fadeInUp" data-wow-delay="10ms">
-                <div className="listing-thumbnail">
-                  <Carousel showThumbs={false} autoPlay>
-                    {item.imgSrc.map((src, idx) => (
-                      <div key={idx}>
-                        <img
-                          src={src}
-                          className="w-full h-64 lg:object-cover rounded-md"
-                          style={{ objectFit: 'cover' }}
-                          alt={`Image ${idx}`}
-                        />
-                      </div>
-                    ))}
-                  </Carousel>
-                  <span className="featured-btn">{item.subcat} Hostel</span>
+        <div key={item.id} className="w-full bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shadow-lg rounded-md">
+            <Link href={`/pgdetail?id=${item.id}`}>
+          <div className="flex-none lg:flex-col">
+          <Carousel showThumbs={false} autoPlay>
+            {item.imgSrc.map((src, idx) => (
+              <div key={idx} className="h-full w-full lg:h-64 lg:w-full rounded-md lg:mb-0 mb-3">
+                <img src={src} alt={`Image ${idx}`} className="w-full h-64 object-contain rounded-md" />
+              </div>
+            ))}
+          </Carousel>
+            <div className="flex-auto mt-4 px-6 lg:ml-3 justify-evenly py-2">
+              <div className="flex flex-col">
+                <div className="flex items-center mr-auto text-sm">
+                  <FaStar size={16} className='stroke-yellow-500 fill-yellow-500' />  {/* Use the imported Star icon */}
+                  <p className="font-normal text-gray-500">5</p>
                 </div>
-                <div className="listing-content">
-                  <h3 className="title">
-                    <Link href={`/pgdetail?id=${item.id}`}>
-                      <a>{item.PGName}</a>
-                    </Link>
-                  </h3>
-                  <div className="ratings">
-                    <ul className="ratings ratings-three">
-                      {Array.from({ length: 5 }, (_, i) => (
-                        <li key={i} className="star">
-                          <i className="flaticon-star-1"></i>
-                        </li>
-                      ))}
-                      <li>
-                        <span>
-                          <a href="#">(02 Reviews)</a>
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                  {item.roomTypes && item.roomTypes.map((property, i) => (
-                    <div key={i}>
-                      <span className="price text-xs">{i + 1}. {property.type} - {property.price}/Month</span>
-                    </div>
-                  ))}
-                  <span className="phone-meta">
-                    <i className="ti-tablet"></i>
-                    <a href="tel:+919871713129">+919871713129</a>
+                <div className="flex items-center justify-between min-w-0">
+                  <h2 className="mr-auto text-blue-600 text-base capitalize font-medium truncate">{item.PGName}</h2>
+                </div>
+                <p className="flex capitalize items-center text-xs text-gray-400">
+                {item.location.split(',')[item.location.split(',').length - 4]},{item.location.split(',')[item.location.split(',').length - 3]}, {item.location.split(',')[item.location.split(',').length - 2]}, {item.location.split(',')[item.location.split(',').length - 1]},{item.distance}
+                  <span className="relative inline-flex rounded-md shadow-sm ml-2">
+                    <span className="flex absolute h-2 w-2 top-0 right-0 -mt-1 -mr-1">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    </span>
                   </span>
-                  <div className="listing-meta">
-                    <ul>
-                      <li>
-                        <span>
-                          <i className="ti-location-pin"></i>
-                          {item.location.split(',')[item.location.split(',').length - 4]},{item.location.split(',')[item.location.split(',').length - 3]}, {item.location.split(',')[item.location.split(',').length - 2]}, {item.location.split(',')[item.location.split(',').length - 1]}
-                        </span>
-                      </li>
-                      <li>
-                        <span>
-                          <p className="flex capitalize items-center text-sm text-emerald-500 font-bold"> {item.distance} <span className="relative inline-flex rounded-md shadow-sm ml-2"><span className="flex absolute h-2 w-2 top-0 right-0 -mt-1 -mr-1"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span></span></p>
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
+                </p>
+                <div className=" flex flex-col  font-medium text-gray-700 dark:text-gray-100">
+                {item.roomTypes && item.roomTypes.map((property, i) => (
+  <div key={i}>
+    <span className="price text-xs font-bold">{i + 1}. {property.type} - {property.price}/Month</span>
+  </div>
+))}
+                  {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg> */}
+                 
                 </div>
               </div>
+              <div className="flex my-3 border-t border-gray-300 dark:border-gray-600"></div>
+              <div className="flex items-center justify-center space-x-3 text-sm font-medium">
+               
+                <button className="mb-2 md:mb-0 flex-no-shrink bg-blue-400 hover:bg-blue-500 px-5 py-2 text-xs shadow-sm hover:shadow-lg font-medium tracking-wider border-2 border-blue-300 hover:border-blue-500 text-white rounded-full transition ease-in duration-300" type="button" aria-label="like">
+                  Book Now
+                </button>
+              </div>
             </div>
-          ))
+          </div>
+          </Link>
+        </div>
+       ))
       )
     )}
-  </div>
-</div>
+    </div>
 
 
         </div>

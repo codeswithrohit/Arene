@@ -15,64 +15,18 @@ import 'react-toastify/dist/ReactToastify.css';
 const LaundryPage = ({addToCart}) => {
   const router = useRouter(); // Initialize the router
  
+  const { location,services,subservices,nearestLocation } = router.query;
   const [loading, setLoading] = useState(true);
   const [flatTypeFilter, setFlatTypeFilter] = useState('');
   const [fetchedData, setFetchedData] = useState([]);
   const [laundrydata, setLaundrydata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
-  const [location, setLocation] = useState(null);
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLatitude(position.coords.latitude);
-          setLongitude(position.coords.longitude);
-
-          // Fetch location name using reverse geocoding
-          fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=AIzaSyB6gEq59Ly20DUl7dEhHW9KgnaZy4HrkqQ`)
-            .then(response => response.json())
-            .then(data => {
-              if (data.results && data.results.length > 0) {
-                // Extracting more specific address components
-                const addressComponents = data.results[0].address_components;
-                const cityName = addressComponents.find(component => component.types.includes('locality'));
-                const stateName = addressComponents.find(component => component.types.includes('administrative_area_level_1'));
-                const countryName = addressComponents.find(component => component.types.includes('country'));
-
-                // Constructing a more detailed location name
-                const detailedLocation = [cityName, stateName, countryName]
-                  .filter(component => component !== undefined)
-                  .map(component => component.long_name)
-                  .join(', ');
-
-                setLocation(detailedLocation);
-              } else {
-                setLocation("Location not found");
-              }
-            })
-            .catch(error => {
-              console.error('Error fetching location:', error);
-              setLocation("Error fetching location");
-            });
-        },
-        (error) => {
-          console.error('Error getting geolocation:', error);
-        }
-      );
-    } else {
-      console.error('Geolocation is not supported by this browser.');
-    }
-  }, []);
-
-
+ console.log(location,services,nearestLocation)
  useEffect(() => {
   const fetchData = async () => {
     try {
       // Replace 'yourCollectionName' with the actual collection name
-      const collectionRef = firebase.firestore().collection('Laundry').where('Verified', '==', 'true');
+      const collectionRef = firebase.firestore().collection('Laundry');
 
       // Get all documents from the collection
       const querySnapshot = await collectionRef.get();
@@ -117,7 +71,7 @@ const LaundryPage = ({addToCart}) => {
   };
 
   fetchData(); // Call the function to fetch data
-}, [location]);
+}, []);
 
 const calculateDistance = (location1, location2) => {
   return new Promise((resolve, reject) => {
@@ -152,8 +106,7 @@ const calculateDistance = (location1, location2) => {
   });
 };
 
-// Filter fetchedData based on distances less than 15 km
-const filteredData = fetchedData.filter(item => parseFloat(item.distance) < parseFloat("5000"));
+
 
 
 
@@ -178,13 +131,8 @@ const handleTenureChange = (e, id) => {
 };
   return (
     <Fragment>
-    <Head>
-        <script
-          src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyB6gEq59Ly20DUl7dEhHW9KgnaZy4HrkqQ&libraries=places`}
-          async
-          defer
-        ></script>
-        
+      <Head>
+        <title>{router.query.title || 'Laundry Page'}</title>
       </Head>
       <div className="flex flex-wrap justify-center">
         <div className=" p-16 bg-white grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -193,7 +141,7 @@ const handleTenureChange = (e, id) => {
      <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
  </div>
     ) : (
-      filteredData.map((item, index) => (
+      fetchedData.map((item, index) => (
         <div key={item.id} className="w-full mt-32 md:mt-16 p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
           <div className="flex-none lg:flex">
            
@@ -225,7 +173,7 @@ const handleTenureChange = (e, id) => {
                         <select value={item.selectedTenure} onChange={(e) => handleTenureChange(e, item.id)} className="outline-none">
                           <option value="">Select Your Tenure Period</option>
                           {item.GarmentTypes && item.GarmentTypes.map((property, i) => (
-                            <option key={i} value={property.tenure}>{property.tenure}</option>
+                            <option key={i} value={property.tenure}>{property.tenure}-{property.noofgarments} Garments -₹ {property.price} </option>
                           ))}
                         </select>
                       </div>
@@ -253,7 +201,7 @@ const handleTenureChange = (e, id) => {
         service: item.service,
         Agentid: item.AgentId,
         selectedTenure: item.selectedTenure,
-        GarmentTypes: JSON.stringify(item.GarmentTypes.filter(property => property.tenure === item.selectedTenure))
+        // GarmentTypes: JSON.stringify(item.GarmentTypes.filter(property => property.tenure === item.selectedTenure))
       }
     }} passHref>
     <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-full transition duration-300 ease-in-out">

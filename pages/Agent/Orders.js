@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { firebase } from '../../Firebase/config';
 import AgentNav from '../../components/AgentNav';
 import Link from 'next/link';
 
-const AgentProfile = () => {
+const Ourhistory = () => {
     const router = useRouter();
     const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
     const [userData, setUserData] = useState(null);
     const [bookings, setBookings] = useState(null); // Moved here
     const [totalOrders, setTotalOrders] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [showToday, setShowToday] = useState(false);
+
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -34,25 +36,29 @@ const AgentProfile = () => {
             try {
                 const snapshot = await firebase.firestore().collection('bookings').where('Agentid', '==', user).get();
                 const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                setBookings(data);
+                // Sort bookings by OrderDate from current date to the latest date
+                data.sort((a, b) => new Date(a.OrderDate) - new Date(b.OrderDate));
+                const currentDate = new Date().toISOString().slice(0, 10);
+                const filteredBookings = showToday ? data.filter(booking => booking.OrderDate === currentDate) : data;
+                setBookings(filteredBookings);
                 setTotalOrders(data.length);
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching bookings:', error);
+                setLoading(false);
             }
         };
-    
+
         fetchBookings();
-    }, [user]); // Dependency array is empty since it only needs to run once
-     // Dependency array is empty since it only needs to run once
-console.log(bookings)
+    }, [user, showToday]);
+
     useEffect(() => {
-        if (isLoading) {
+        if (loading) {
             return; // No need to fetch user data while loading
         }
         // Fetch user data after authentication is done
         fetchUserData(user);
-    }, [isLoading, user]);
+    }, [loading, user]);
 
     const fetchUserData = async (user) => {
         try {
@@ -74,202 +80,135 @@ console.log(bookings)
         } catch (error) {
             console.error('Error fetching user data:', error);
         } finally {
-            setIsLoading(false);
-        }
-    };
-console.log(userData)
-    const handleLogout = async () => {
-        const auth = getAuth();
-        try {
-            await signOut(auth);
-            router.push('/Admin/Register');
-        } catch (error) {
-            console.error('Error signing out:', error);
+            setLoading(false);
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <p>Loading...</p>
-            </div>
-        );
-    }
+    const handleTodayClick = () => {
+        setShowToday(true);
+    };
 
-    // Check if user data is available and if it is verified
-    if (userData && userData.verified) {
-        return (
-            <div>
-                 <div class="bg-gray-100 dark:bg-gray-900 dark:text-white text-gray-600 h-screen flex overflow-hidden text-sm">
+    const handleTotalClick = () => {
+        setShowToday(false);
+    };
 
-<div class="flex-grow overflow-hidden h-full flex flex-col">
-  
-  <div class="flex-grow flex overflow-x-hidden">
-   
-    <div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
-      <AgentNav/>
-      <section class="px-6 pt-6">
-                  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                      {/* <div class="flex items-center p-4 rounded-md shadow dark:bg-gray-900 bg-gray-50">
-                          <div class="mr-4">
-                              <span
-                                  class="inline-block p-4 mr-2 text-blue-600 bg-blue-100 rounded-full dark:text-gray-400 dark:bg-gray-700">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="w-6 h-6 bi bi-currency-dollar" viewBox="0 0 16 16">
-                                      <path
-                                          d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z">
-                                      </path>
-                                  </svg>
-                              </span>
-                          </div>
-                          <div>
-                              <p class="mb-2 text-gray-700 dark:text-gray-400">Earnings Total</p>
-                              <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-400">
-                                  $1,25,220</h2>
-                          </div>
-                      </div> */}
-                      {/* <div class="flex items-center p-4 rounded-md shadow dark:bg-gray-900 bg-gray-50">
-                          <div class="mr-4">
-                              <span
-                                  class="inline-block p-4 mr-2 text-blue-600 bg-blue-100 rounded-full dark:text-gray-400 dark:bg-gray-700">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="w-6 h-6 bi bi-bag-check" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                          d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0z">
-                                      </path>
-                                      <path
-                                          d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z">
-                                      </path>
-                                  </svg>
-                              </span>
-                          </div>
-                          <div>
-                              <p class="mb-2 text-gray-700 dark:text-gray-400">Total Orders</p>
-                              <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-400">
-                                  {totalOrders}</h2>
-                          </div>
-                      </div>
-                      <div class="flex items-center p-4 rounded-md shadow dark:bg-gray-900 bg-gray-50">
-                          <div class="mr-4">
-                              <span
-                                  class="inline-block p-4 mr-2 text-blue-600 bg-blue-100 rounded-full dark:text-gray-400 dark:bg-gray-700">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="w-6 h-6 bi bi-bag-check" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                          d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0z">
-                                      </path>
-                                      <path
-                                          d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z">
-                                      </path>
-                                  </svg>
-                              </span>
-                          </div>
-                          <div>
-                              <p class="mb-2 text-gray-700 dark:text-gray-400">Today Orders</p>
-                              <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-400">
-                                 {bookings.length}</h2>
-                          </div>
-                      </div> */}
-                      {/* <div class="flex items-center p-4 rounded-md shadow dark:bg-gray-900 bg-gray-50">
-                          <div class="mr-4">
-                              <span
-                                  class="inline-block p-4 mr-2 text-blue-600 bg-blue-100 rounded-full dark:text-gray-400 dark:bg-gray-700">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="w-6 h-6 bi bi-chat-text" viewBox="0 0 16 16">
-                                      <path
-                                          d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z">
-                                      </path>
-                                      <path
-                                          d="M4 5.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8zm0 2.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z">
-                                      </path>
-                                  </svg>
-                              </span>
-                          </div>
-                          <div>
-                              <p class="mb-2 text-gray-700 dark:text-gray-400">Pending Order</p>
-                              <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-400">
-                                  56</h2>
-                          </div>
-                      </div> */}
-                  </div>
-              </section>
-              <section class="px-6 py-6">
-                  <div class="grid lg:grid-cols-[100%,1fr]  grid-cols-1 gap-6 ">
-                      <div class="pt-4 bg-white rounded shadow dark:text-gray-100 dark:bg-gray-900">
-                          <div class="flex px-6 pb-4 border-b dark:border-gray-700">
-                              <h2 class="text-xl font-bold dark:text-gray-400">Your Orders</h2>
-                          </div>
-                          <div class="p-4 overflow-x-auto">
-                          <table className="w-full table-auto">
-  <thead>
-      <tr className="text-xs text-left text-gray-500 dark:text-gray-400">
-          <th className="px-6 pb-3 font-medium">Customer Name</th>
-          <th className="px-6 pb-3 font-medium">Order Details</th>
-          <th className="px-6 pb-3 font-medium">Payment</th>
-          <th className="px-6 pb-3 font-medium">Booking Date</th>
-          <th className="px-6 pb-3 font-medium">Actions</th>
-
-      </tr>
-  </thead>
-  <tbody>
-      {bookings && bookings.map(booking => (
-          <tr key={booking.id} className="text-xs dark:text-gray-400">
-              <td className="px-6 py-5 font-medium">{booking.firstName} {booking.lastName}</td>
-              <td className="px-6 py-5 font-medium">{booking.GarmentTypes ? (
-            // If GarmentTypes available, show the data
-            JSON.parse(booking.GarmentTypes).map((garment, index) => (
-                <div key={index}>
-                    <p>No. of Garments: {garment.noofgarments}</p>
-                    <p>Tenure: {garment.tenure}</p>
-                    <p>Price: {garment.price}</p>
-                </div>
-            ))
-        ) : (
-            // If GarmentTypes not available, show order details
-            `${booking.Propertyname}-${booking.roomType}-${booking.roomprice}`
-        )}</td>
-              <td className="px-6 py-5 font-medium">{booking.Payment}</td>
-              <td className="px-6 py-5 font-medium">{booking.bookingDate}</td>
-              <td className="px-6 py-5 font-medium">
-                                                                    {booking.GarmentTypes ? (
-                                                                        <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
-                                                                            <a className="bg-blue-500 text-white px-2 py-1 rounded">
-                                                                                View Details
-                                                                            </a>
-                                                                        </Link>
-                                                                    ) : (
-                                                                        <Link href={`/bookingdetails?orderId=${booking.orderId}`}>
-                                                                            <a className="bg-blue-500 text-white px-2 py-1 rounded">
-                                                                                Booking Details
-                                                                            </a>
-                                                                        </Link>
-                                                                    )}
-                                                                </td>
-          </tr>
-      ))}
-  </tbody>
-</table>
-
-                          </div>
-                      </div>
-                     
-                  </div>
-              </section>
-     
-    </div>
-  </div>
-</div>
-</div>
-            </div>
-        );
-    } else {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                {/* Show a message if user data is not verified */}
-                <p>Your account verification is in process. Please wait.</p>
-            </div>
-        );
-    }
+    return (
+        <div className='min-h-screen'>
+            <AgentNav />
+            <section className="container px-4 md:px-24 lg:py-16 py-4 md:py-36 font-mono">
+                <h1 className='text-red-600 text-center font-bold text-4xl'>Our Orders</h1>
+                <ul className="grid grid-cols-2 mt-20 font-sans">
+                    <li
+                        onClick={handleTodayClick}
+                        className={`text-center py-3 px-4 border-b-2 cursor-pointer transition-all ${
+                            showToday ? 'bg-blue-600 font-bold text-xl text-white' : 'bg-gray-200 font-bold text-xl text-gray-700 hover:bg-gray-300'
+                        }`}>
+                        Today
+                    </li>
+                    <li
+                        onClick={handleTotalClick}
+                        className={`text-center py-3 px-4 border-b-2 cursor-pointer transition-all ${
+                            !showToday ? 'bg-blue-600 font-bold text-xl text-white' : 'bg-gray-200 font-bold text-xl text-gray-700 hover:bg-gray-300'
+                        }`}>
+                        Total
+                    </li>
+                </ul>
+                {loading && <div className="flex min-h-screen justify-center items-center">
+                    <button type="button"
+                        className="px-6 py-2.5 rounded-full text-white text-sm tracking-wider font-semibold border-none outline-none bg-orange-600 hover:bg-orange-700 active:bg-orange-600">
+                        Loading
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18px" fill="#fff" className="ml-2 inline animate-spin"
+                            viewBox="0 0 24 24">
+                            <path fillRule="evenodd"
+                                d="M7.03 2.757a1 1 0 0 1 1.213-.727l4 1a1 1 0 0 1 .59 1.525l-2 3a1 1 0 0 1-1.665-1.11l.755-1.132a7.003 7.003 0 0 0-2.735 11.77 1 1 0 0 1-1.376 1.453A8.978 8.978 0 0 1 3 12a9 9 0 0 1 4.874-8l-.117-.03a1 1 0 0 1-.727-1.213zm10.092 3.017a1 1 0 0 1 1.414.038A8.973 8.973 0 0 1 21 12a9 9 0 0 1-5.068 8.098 1 1 0 0 1-.707 1.864l-3.5-1a1 1 0 0 1-.557-1.517l2-3a1 1 0 0 1 1.664 1.11l-.755 1.132a7.003 7.003 0 0 0 3.006-11.5 1 1 0 0 1 .039-1.413z"
+                                clipRule="evenodd" data-original="#000000" />
+                        </svg>
+                    </button>
+                </div>}
+                {!loading && bookings && bookings.length === 0 && <p>No Data</p>}
+                {!loading && bookings && bookings.length > 0 && (
+                    <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+                        <div className="w-full overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200 font-[sans-serif]">
+                                <thead className="bg-gray-100 whitespace-nowrap">
+                                    <tr>
+                                        <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Customer Name
+                                        </th>
+                                        <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Order Details
+                                        </th>
+                                        <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Payment
+                                        </th>
+                                        <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Booking Date
+                                        </th>
+                                        <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap">
+                                    {bookings.map((booking) => (
+                                        <tr key={booking.id}>
+                                            <td className="px-2 py-4 text-xs text-[#333]">
+                                                {booking.firstName} {booking.lastName}
+                                            </td>
+                                            <td className="px-2 py-4 text-xs text-[#333]">
+                                                {booking.GarmentTypes ? (
+                                                    // If GarmentTypes available, show the data
+                                                    JSON.parse(booking.GarmentTypes).map((garment, index) => (
+                                                        <div key={index}>
+                                                            <p>No. of Garments: {garment.noofgarments}</p>
+                                                            <p>Tenure: {garment.tenure}</p>
+                                                            <p>Price: {garment.price}</p>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    // If GarmentTypes not available, show order details
+                                                    `${booking.Propertyname}-${booking.roomType}-${booking.roomprice}`
+                                                )}
+                                            </td>
+                                            <td className="px-2 py-4 text-xs text-[#333]">
+                                                {booking.Payment}
+                                            </td>
+                               <td className="px-2 py-4 text-xs text-[#333]">
+                                 {booking.bookingDate instanceof Object ? (
+                                   // If bookingDate is an object, extract checkIn or checkOut
+                                   <>
+                                     <p>Check In: {booking.bookingDate.checkIn}</p>
+                                     {booking.bookingDate.checkOut ? (
+                                       <p>Check Out: {booking.bookingDate.checkOut}</p>
+                                     ) : null}
+                                   </>
+                                 ) : (
+                                   // If bookingDate is a string, display it directly
+                                   <p>{booking.bookingDate}</p>
+                                 )}
+                               </td>
+                               <td className="px-2 py-4 text-xs text-[#333]">
+                                 {booking.GarmentTypes ? (
+                                   <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
+                                     <a className="bg-blue-500 text-white px-2 py-1 rounded">View Details</a>
+                                   </Link>
+                                 ) : (
+                                   <Link href={`/Admin/adminorder?orderId=${booking.orderId}`}>
+                                     <a className="bg-blue-500 text-white px-2 py-1 rounded">Booking Details</a>
+                                   </Link>
+                                 )}
+                               </td>
+                             </tr>
+                           ))}
+                       </tbody>
+                     </table>
+                   </div>
+                 </div>
+                 
+                )}
+            </section>
+        </div>
+    );
 }
 
-export default AgentProfile;
+export default Ourhistory;

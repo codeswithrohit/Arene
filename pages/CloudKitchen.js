@@ -72,50 +72,50 @@ const LaundryPage = ({addToCart}) => {
 
   fetchData(); // Call the function to fetch data
 }, [location, services,subservices]);
-
-const calculateDistance = (location1, location2) => {
-  return new Promise((resolve, reject) => {
-    if (location1.trim() !== '' && location2.trim() !== '') {
-      const service = new window.google.maps.DistanceMatrixService();
-      service.getDistanceMatrix(
-        {
-          origins: [location1],
-          destinations: [location2],
-          travelMode: 'DRIVING',
-        },
-        (response, status) => {
-          if (status === 'OK' && response.rows && response.rows.length > 0 && response.rows[0].elements && response.rows[0].elements.length > 0) {
-            const { distance } = response.rows[0].elements[0];
-            if (distance) {
-              const distanceValue = distance.value; // Distance in meters
-              const distanceKm = distanceValue / 1000; // Convert distance to kilometers
-              const formattedDistance = `${distance.text}`; // Construct the desired format
-              console.log('Distance:', formattedDistance);
-              resolve(formattedDistance);
-            }
-          } else {
-            console.log('Error:', status);
-            reject(null);
-          }
-        }
-      );
-    } else {
-      console.log('Please enter both locations.');
-      reject(null);
-    }
-  });
-};
+console.log()
+// const calculateDistance = (location1, location2) => {
+//   return new Promise((resolve, reject) => {
+//     if (location1.trim() !== '' && location2.trim() !== '') {
+//       const service = new window.google.maps.DistanceMatrixService();
+//       service.getDistanceMatrix(
+//         {
+//           origins: [location1],
+//           destinations: [location2],
+//           travelMode: 'DRIVING',
+//         },
+//         (response, status) => {
+//           if (status === 'OK' && response.rows && response.rows.length > 0 && response.rows[0].elements && response.rows[0].elements.length > 0) {
+//             const { distance } = response.rows[0].elements[0];
+//             if (distance) {
+//               const distanceValue = distance.value; // Distance in meters
+//               const distanceKm = distanceValue / 1000; // Convert distance to kilometers
+//               const formattedDistance = `${distance.text}`; // Construct the desired format
+//               console.log('Distance:', formattedDistance);
+//               resolve(formattedDistance);
+//             }
+//           } else {
+//             console.log('Error:', status);
+//             reject(null);
+//           }
+//         }
+//       );
+//     } else {
+//       console.log('Please enter both locations.');
+//       reject(null);
+//     }
+//   });
+// };
 
 // Filter fetchedData based on distances less than 15 km
-const filteredData = fetchedData.filter(item => parseFloat(item.distance) < parseFloat(nearestLocation));
+// const filteredData = fetchedData.filter(item => parseFloat(item.distance) < parseFloat(nearestLocation));
 
 
 
 
 
-const onViewMapClick = (location) => {
-window.open(`https://www.google.com/maps/search/?api=1&query=${location}`, '_blank');
-};
+// const onViewMapClick = (location) => {
+// window.open(`https://www.google.com/maps/search/?api=1&query=${location}`, '_blank');
+// };
 const handleTenureChange = (e, id) => {
   // Function to handle tenure change
   const { value } = e.target;
@@ -133,7 +133,7 @@ const handleTenureChange = (e, id) => {
   return (
     <Fragment>
       <Head>
-        <title>{router.query.title || 'Laundry Page'}</title>
+        <title>{router.query.title || 'Arene Chef Page'}</title>
       </Head>
       <div className="flex flex-wrap justify-center">
         <div className=" p-16 bg-white grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -142,7 +142,7 @@ const handleTenureChange = (e, id) => {
      <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
  </div>
     ) : (
-      filteredData.map((item, index) => (
+      fetchedData.map((item, index) => (
         <div key={item.id} className="w-full mt-32 md:mt-16 p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
           <div className="flex-none lg:flex">
            
@@ -155,7 +155,10 @@ const handleTenureChange = (e, id) => {
            <div className="flex flex-col">
             <img src={item.image} className='h-48 w-48 rounded-lg' />
   <div className="flex items-center justify-between min-w-0">
-    <h2 className="mr-auto text-red-600 text-base capitalize font-bold truncate">{item.thaliname}</h2>
+    <h2 className="mr-auto text-red-600 text-md capitalize font-bold truncate">{item.Foodname}</h2>
+  </div>
+  <div className="flex items-center justify-between min-w-0">
+    <h2 className="mr-auto text-red-600 text-xs capitalize font-bold truncate">{item.thaliname}</h2>
   </div>
   <div className="flex items-center mr-auto text-sm">
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-300 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -170,7 +173,7 @@ const handleTenureChange = (e, id) => {
     {item.Ingredients}
    
   </p>
-  <p className="flex capitalize items-center text-xs text-gray-400">
+  {/* <p className="flex capitalize items-center text-xs text-gray-400">
     {item.location}. {item.distance}
     <span className="relative inline-flex rounded-md shadow-sm ml-2">
       <span className="flex absolute h-2 w-2 top-0 right-0 -mt-1 -mr-1">
@@ -178,7 +181,7 @@ const handleTenureChange = (e, id) => {
         <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
       </span>
     </span>
-  </p>
+  </p> */}
 </div>
 
               
@@ -186,9 +189,9 @@ const handleTenureChange = (e, id) => {
               <div className="flex-col space-y-3 text-sm font-medium">
               <div className="items-center bg-white p-2 rounded-lg justify-center flex gap-1 font-medium text-[#10b981] dark:text-[#10b981]">
                         <select value={item.selectedTenure} onChange={(e) => handleTenureChange(e, item.id)} className="outline-none">
-                          <option value="">Select Your Tenure Period</option>
+                          <option value="">Select Your Package</option>
                           {item.Foodcharge && item.Foodcharge.map((property, i) => (
-                            <option key={i} value={property.tenure}>{property.tenure}-{property.noofthalli} thalli-₹{property.price}</option>
+                            <option key={i} value={property.tenure}>{property.tenure}-{property.noofthalli} thalli/plate-₹{property.price}</option>
                           ))}
                         </select>
                       </div>
@@ -198,7 +201,7 @@ const handleTenureChange = (e, id) => {
                             <div key={index}>
                                            {/* <h2 className="mr-auto text-red-600  text-base capitalize font-bold truncate">{filteredProperty.noofgarments} Garments</h2>
                                            <h2 className="mr-auto text-red-600  text-base capitalize font-bold truncate">Per Piece Price: ₹ {(parseFloat(filteredProperty.price) / parseFloat(filteredProperty.noofgarments)).toFixed(4)}</h2> */}
-                                           <h2 className="mr-auto text-red-600  text-base capitalize font-bold truncate">₹ {filteredProperty.price}- {filteredProperty.noofthalli} Thalli </h2>
+                                           <h2 className="mr-auto text-red-600  text-base capitalize font-bold truncate">₹ {filteredProperty.price}- {filteredProperty.noofthalli} Plate/Thalli </h2>
 
                             </div>
                           ))}
@@ -210,9 +213,8 @@ const handleTenureChange = (e, id) => {
   <Link href={{
       pathname: '/kitchencheckout',
       query: {
-        Location: item.location,
-        DeliverLocation: location,
         thaliname: item.thaliname,
+        Foodname: item.Foodname,
         Ingredients: item.Ingredients,
         selectedTenure: item.selectedTenure,
         Foodcharge: JSON.stringify(item.Foodcharge.filter(property => property.tenure === item.selectedTenure)),
@@ -220,7 +222,7 @@ const handleTenureChange = (e, id) => {
       }
     }} passHref>
     <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-full transition duration-300 ease-in-out">
-      Select Package
+    Order Now
     </button>
   </Link>
 </div>

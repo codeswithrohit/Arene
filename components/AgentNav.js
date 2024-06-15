@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/router';
-import { firebase } from '../Firebase/config';
+import { useState, useRef, useEffect } from "react";
+import { FaHome, FaClipboardList, FaUser } from 'react-icons/fa';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+
+
 
 const AgentNav = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [activePage, setActivePage] = useState('');
-
-  useEffect(() => {
-    setActivePage(router.pathname);
-  }, [router.pathname]);
+  const navigateTo = (path) => {
+    router.push(`/Agent${path}`);
+  };
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user);
+        setUser(user.uid);
         fetchUserData(user);
       } else {
         setUser(null);
@@ -30,6 +30,14 @@ const AgentNav = () => {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (loading) {
+      return; // No need to fetch user data while loading
+    }
+    // Fetch user data after authentication is done
+    fetchUserData(user);
+  }, [loading, user]);
 
   const fetchUserData = async (user) => {
     try {
@@ -51,89 +59,108 @@ const AgentNav = () => {
     } catch (error) {
       console.error('Error fetching user data:', error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleLogout = async () => {
-    const auth = getAuth();
-    try {
-      await signOut(auth);
-      router.push('/Admin/Register');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+  const [menuState, setMenuState] = useState(false);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  console.log(userData);
-
-  const verificationMessage = userData && userData.verified
-    ? "You are verified"
-    : "Your verification is in process";
-
-  const renderLinksBasedOnUserType = () => {
-    if (userData && userData.userType === "Agent") {
-      return (
-        <div className="flex items-center space-x-3 sm:mt-7 mt-4">
-          <a href="/Agent/dashboard" className={`px-3 border-b-2 ${activePage === '/Agent/dashboard' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Dashboard</a>
-          <a href="/Agent/Orders" className={`px-3 border-b-2 ${activePage === '/Agent/Order' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Order</a>
-          <a href="/Agent/addbuydata" className={`px-3 border-b-2 ${activePage === '/Agent/addbuydata' ? 'border-emerald-600 text-emerald-600 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Sell Property</a>
-        </div>
-      );
-    } else if (userData && userData.userType === "Individual") {
-      // Render all links for Individual type
-      return (
-        <div className="flex items-center space-x-3 sm:mt-7 mt-4">
-                <a href="/Agent/dashboard" className={`px-3 border-b-2 ${activePage === '/Agent/dashboard' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Dashboard</a>
-        <a href="/Agent/Orders" className={`px-3 border-b-2 ${activePage === '/Agent/Order' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Order</a>
-        <a href="/Agent/addbuydata" className={`px-3 border-b-2 ${activePage === '/Agent/addbuydata' ? 'border-emerald-600 text-emerald-600 dark:text-white dark:border-white pb-1.5' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5'}`}>Buy</a>
-        <a href="/Agent/addrent" className={`px-3 border-b-2 ${activePage === '/Agent/addrent' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Rent</a>
-        <a href="/Agent/addpg" className={`px-3 border-b-2 ${activePage === '/Agent/addpg' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>PG</a>
-        <a href="/Agent/addhotel" className={`px-3 border-b-2 ${activePage === '/Agent/addhotel' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Hotel</a>
-        <a href="/Agent/addbanqueethall" className={`px-3 border-b-2 ${activePage === '/Agent/addbanqueethall' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Banqueet Hall</a>
-        <a href="/Agent/addresort" className={`px-3 border-b-2 ${activePage === '/Agent/addresort' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Resort</a>
-        <a href="/Agent/Laundry" className={`px-3 border-b-2 ${activePage === '/Agent/Laundry' ? 'border-emerald-500 text-emerald-500 dark:text-white dark:border-white pb-1.5 sm:block hidden' : 'border-transparent text-gray-600 dark:text-gray-400 pb-1.5 sm:block hidden'}`}>Laundry</a>
-        </div>
-      );
-    }
-    // You can add more conditions for other user types
-  };
+  const navigation = [
+    { title: "Sell Property", path: "/Agent/addbuydata" },
+    { title: "Rent Property", path: "/Agent/addrent" },
+    { title: "PG", path: "/Agent/addpg" },
+    { title: "Hotel", path: "/Agent/addpg" },
+    { title: "Banqueet Hall", path: "/Agent/addbanqueethall" },
+    { title: "Resort", path: "/Agent/addresort" },
+    { title: "Laundry", path: "/Agent/Laundry" },
+  ];
 
   return (
     <div>
-      <div className="bg-gray-100 dark:bg-gray-900 dark:text-white text-gray-600  flex overflow-hidden text-sm">
-        <div className="flex-grow overflow-hidden h-full flex flex-col">
-          <div className="flex-grow flex overflow-x-hidden">
-            <div className="flex-grow bg-white mt-10 dark:bg-gray-900 overflow-y-auto">
-              <div className="sm:px-7 sm:pt-7 px-4 pt-4 mt-36 lg:mt-0 flex flex-col w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0">
-                <span className='text-green-700'>{verificationMessage}</span>
-                <div className="flex w-full items-center">
-                  <div className="flex items-center text-3xl text-gray-900 dark:text-white">
-                    {userData ? (
-                      <span>Welcome, {userData.name}</span>
+      <div className='fixed top-0 w-full'>
+        <nav className="bg-white border-b">
+          <div className="flex items-center space-x-8 py-3 px-4 max-w-screen-xl mx-auto md:px-8">
+            <div className="flex-none lg:flex-initial">
+              <a href="javascript:void(0)">
+                <img
+                  src="https://www.areneservices.in/public/front/images/property-logo.png"
+                  width={80}
+                  height={30}
+                  alt="logo"
+                />
+              </a>
+            </div>
+            <div className="flex-1 flex items-center justify-between">
+              <div className={`bg-white absolute z-20 w-full top-16 left-0 p-4 border-b lg:static lg:block lg:border-none ${menuState ? '' : 'hidden'}`}>
+                <ul className="mt-12 space-y-5 lg:flex lg:space-x-6 lg:space-y-0 lg:mt-0">
+                  {
+                    navigation.map((item, idx) => (
+                      <li key={idx} className="bg-gray-600 hover:bg-gray-900 p-2 rounded-lg">
+                        <a className='text-white font-bold hover:white' href={item.path}>
+                          {item.title}
+                        </a>
+                      </li>
+                    ))
+                  }
+                </ul>
+             
+              </div>
+              <div className="flex-1 flex items-center justify-end space-x-2 sm:space-x-6">
+               
+                <button
+                  className="outline-none text-gray-400 block lg:hidden"
+                  onClick={() => setMenuState(!menuState)}
+                >
+                  {
+                    menuState ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
                     ) : (
-                      <span>Loading...</span>
-                    )}
-                  </div>
-                </div>
-                <div className="overflow-x-auto">
-                  {renderLinksBasedOnUserType()}
-                </div>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                      </svg>
+                    )
+                  }
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </nav>
       </div>
+    <div className='fixed bottom-0 w-full bg-white shadow-md'>
+      <ul className='flex justify-around font-sans'>
+        <li
+          className={`flex flex-col items-center justify-center font-bold w-full text-[15px] py-3.5 cursor-pointer ${
+            router.pathname === '/Agent' ? 'text-blue-600' : 'text-gray-600'
+          }`}
+          onClick={() => navigateTo('')}
+        >
+          <FaHome className='w-6 h-6 mb-1' />
+          Home
+        </li>
+        <li
+          className={`flex flex-col items-center justify-center font-bold w-full text-[15px] py-3.5 cursor-pointer ${
+            router.pathname.startsWith('/Agent/Orders') ? 'text-blue-600' : 'text-gray-600'
+          }`}
+          onClick={() => navigateTo('/Orders')}
+        >
+          <FaClipboardList className='w-6 h-6 mb-1' />
+          Orders
+        </li>
+        <li
+          className={`flex flex-col items-center justify-center font-bold w-full text-[15px] py-3.5 cursor-pointer ${
+            router.pathname.startsWith('/Agent/Profile') ? 'text-blue-600' : 'text-gray-600'
+          }`}
+          onClick={() => navigateTo('/Profile')}
+        >
+          <FaUser className='w-6 h-6 mb-1' />
+          Profile
+        </li>
+      </ul>
+    </div>
     </div>
   );
-}
+};
 
 export default AgentNav;

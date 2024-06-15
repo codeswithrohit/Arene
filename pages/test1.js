@@ -1,199 +1,563 @@
-import React, { useState, useEffect } from 'react';
-import { Map, Marker, Circle, Polyline, GoogleApiWrapper } from 'google-maps-react';
-import { ClipLoader } from 'react-spinners';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { firebase } from '../../Firebase/config';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import Link from 'next/link';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const DeliveryLocation = "kargahar, Sasaram, Bihar, India,821107";
-const DeliveryBoyLocation = "silari, Sasaram, Bihar, India,821111";
+import { FaBell, FaCheckCircle } from 'react-icons/fa';
 
-const Header = ({ google }) => {
-  const [location, setLocation] = useState(null);
-  const [deliveryLocation, setDeliveryLocation] = useState(null);
-  const [deliveryBoyLocation, setDeliveryBoyLocation] = useState(null);
-  const [distance, setDistance] = useState(null);
-  const [duration, setDuration] = useState(null);
-  const [directionCoordinates, setDirectionCoordinates] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const Test = () => {
+  const [mainactiveTab, setMainActiveTab] = useState('orderAlert'); // State to track active tab
+
+  // Function to handle tab change
+  const handleTabChange = (tab) => {
+    setMainActiveTab(tab);
+  };
+
+
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true); // Loading state for user authentication
+  const [userData, setUserData] = useState(null);
+  const [bookings, setBookings] = useState(null);
+  const [isLoadingData, setIsLoadingData] = useState(true); // Loading state for fetching bookings
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [thalliName, setThalliName] = useState('');
+  const [ingredients, setIngredients] = useState('');
+  const [noOfThalli, setNoOfThalli] = useState('');
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [activeTab, setActiveTab] = useState("today");
+
+  const getCurrentDate = () => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+  };
 
   useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const userLocation = await getCurrentLocation();
-        setLocation(userLocation);
-        
-        const deliveryLoc = await fetchGeocode(DeliveryLocation);
-        setDeliveryLocation(deliveryLoc);
-
-        const deliveryBoyLoc = await fetchGeocode(DeliveryBoyLocation);
-        setDeliveryBoyLocation(deliveryBoyLoc);
-
-        const directions = await fetchDirections(userLocation, deliveryLoc);
-        setDirectionCoordinates(decodePolyline(directions.polyline));
-        setDistance(directions.distance);
-        setDuration(directions.duration);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLocations();
+      const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+          setUser(user);
+          setIsLoadingAuth(false); // Set loading state to false when authentication state is resolved
+      });
+      return () => unsubscribe();
   }, []);
 
-  const getCurrentLocation = () => {
-    return new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
-          error => reject(new Error('Error fetching current location'))
-        );
-      } else {
-        reject(new Error('Geolocation is not supported by this browser'));
+  useEffect(() => {
+      if (user) {
+          fetchUserData(user);
       }
-    });
+  }, [user]);
+
+  const fetchUserData = async (user) => {
+      try {
+          const userDocRef = firebase
+              .firestore()
+              .collection("AreneChefVendor")
+              .doc(user.uid);
+          const userDocSnap = await userDocRef.get();
+          if (userDocSnap.exists) {
+              const userData = userDocSnap.data();
+              if (userData && userData.isArenechef) {
+                  setUserData(userData);
+              } else {
+                  router.push('/AreneChefVendor/loginregister');
+              }
+          } else {
+              // Handle case where user data doesn't exist
+          }
+      } catch (error) {
+          console.error('Error fetching user data:', error);
+      } finally {
+          setIsLoadingData(false); // Set loading state to false after fetching user data
+      }
   };
 
-  const fetchGeocode = async (address) => {
-    const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
-      params: {
-        address: address,
-        key: 'YOUR_API_KEY',
-      },
-    });
-    if (response.data.status === 'OK') {
-      return response.data.results[0].geometry.location;
-    } else {
-      throw new Error('Error fetching geocode data');
+  const handleLogout = async () => {
+      const auth = getAuth();
+      try {
+          await signOut(auth);
+          router.push('/Admin/Register');
+      } catch (error) {
+          console.error('Error signing out:', error);
+      }
+  };
+  const currentUser = firebase.auth().currentUser;
+  useEffect(() => {
+    const fetchBookings = async () => {
+        try {
+            if (userData) {
+                const snapshot = await firebase.firestore().collection('kitchenorder').where('pincode', '==', userData.pincode).get();
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                data.sort((a, b) => new Date(a.OrderDate) - new Date(b.OrderDate));
+                setBookings(data);
+                setIsLoadingData(false); // Set loading state to false after fetching bookings
+            }
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+        }
+    };
+    fetchBookings();
+}, [userData,currentUser]); // Add userData to the dependency array
+
+  
+  console.log("orders",bookings)
+console.log("userdata",userData)
+
+  const handleConfirmOrder = async (bookingId) => {
+      try {
+          const currentUser = firebase.auth().currentUser;
+          if (!currentUser || !currentUser.uid) {
+              console.error('User is not authenticated.');
+              return;
+          }
+  
+          await firebase.firestore().collection('kitchenorder').doc(bookingId).update({
+              confirmation: true,
+              vendorid: currentUser.uid,
+              VendorLocation:userData?.address,
+              deliveryconfirmation:'false',
+              orderstatus:"Confirm",
+          });
+          toast.success('Order confirmed successfully!', {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+          });
+          window.location.reload();
+      } catch (error) {
+          console.error('Error confirming order:', error);
+      }
+  };
+
+  
+  
+  const handleOrderStatusChange = async (bookingId, newStatus) => {
+    try {
+      const orderRef = firebase.firestore().collection('kitchenorder').doc(bookingId);
+      await firebase.firestore().runTransaction(async (transaction) => {
+        const orderDoc = await transaction.get(orderRef);
+        if (!orderDoc.exists) {
+          throw new Error("Order does not exist!");
+        }
+       
+        transaction.update(orderRef, { orderstatus: newStatus });
+      });
+      toast.success('Order status updated successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      toast.error('Error updating order status.', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
+  
 
-  const fetchDirections = async (origin, destination) => {
-    const response = await axios.get(`https://maps.googleapis.com/maps/api/directions/json`, {
-      params: {
-        origin: `${origin.lat},${origin.lng}`,
-        destination: `${destination.lat},${destination.lng}`,
-        key: 'YOUR_API_KEY',
-      },
-    });
-    if (response.data.status === 'OK') {
-      const route = response.data.routes[0].legs[0];
-      return {
-        polyline: response.data.routes[0].overview_polyline.points,
-        distance: route.distance.text,
-        duration: route.duration.text,
-      };
-    } else {
-      throw new Error('Error fetching directions');
-    }
-  };
+  
 
-  const decodePolyline = (encoded) => {
-    let index = 0, len = encoded.length;
-    let lat = 0, lng = 0;
-    const coordinates = [];
-    while (index < len) {
-      let b, shift = 0, result = 0;
-      do {
-        b = encoded.charCodeAt(index++) - 63;
-        result |= (b & 0x1f) << shift;
-        shift += 5;
-      } while (b >= 0x20);
-      const dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
-      lat += dlat;
-      shift = 0;
-      result = 0;
-      do {
-        b = encoded.charCodeAt(index++) - 63;
-        result |= (b & 0x1f) << shift;
-        shift += 5;
-      } while (b >= 0x20);
-      const dlng = (result & 1) ? ~(result >> 1) : (result >> 1);
-      lng += dlng;
-      coordinates.push({ lat: lat / 1e5, lng: lng / 1e5 });
-    }
-    return coordinates;
-  };
-
-  if (loading) {
-    return (
-      <div style={styles.spinnerContainer}>
-        <ClipLoader loading={loading} size={150} color={'#123abc'} />
-      </div>
-    );
+// Inside the component
+const filteredBookings = !isLoadingData && bookings && bookings.filter(booking => {
+  // Filter by confirmation and vendorid
+  if (activeTab === "today") {
+      return booking.OrderDate === getCurrentDate() && booking.vendorid === currentUser.uid;
+  } else {
+      return booking.vendorid === currentUser.uid;
   }
+});
 
-  if (error) {
-    return (
-      <div style={styles.errorContainer}>
-        <p style={styles.errorText}>Error: {error}</p>
-      </div>
-    );
-  }
+
+const filteredBooking = !isLoadingData && bookings && (activeTab === "today"
+    ? bookings.filter(booking => {
+        // Filter by confirmation and vendorid
+        return booking.OrderDate === getCurrentDate() && booking.confirmation === 'false' ;
+    })
+    : bookings.filter(booking => {
+        // Filter by confirmation and vendorid
+        return booking.confirmation === 'false' ;
+    }));
+
+
+
+// Then use filteredBookings in your JSX
+
+
+
 
   return (
-    <div style={styles.container}>
-      <Map google={google} initialCenter={location} zoom={14} style={styles.map}>
-        <Circle center={location} radius={50} fillColor={'rgba(0, 255, 0, 0.3)'} />
-        <Marker position={location} title="Your Location" label="Y" />
-        <Marker position={deliveryLocation} title="Delivery Location" label="L" />
-        <Marker position={deliveryBoyLocation} title="Delivery Boy Location" label="D" />
-        <Polyline path={directionCoordinates} strokeColor="red" strokeOpacity={0.8} strokeWeight={2} />
-      </Map>
-      <div style={styles.infoContainer}>
-        {/* <p style={styles.userInfoText}>Distance: {distance}</p>
-        <p style={styles.userInfoText}>Duration: {duration}</p> */}
-      </div>
+    <div>
+    <section className="px-6 lg:py-4 py-4 font-mono">
+    {isLoadingAuth || isLoadingData ? ( // Check if either authentication or data loading is in progress
+            <div className="text-center mt-4">
+                Loading...
+            </div>
+        ) : (
+<div>
+
+        <h1 className='text-red-600 text-center font-bold text-4xl'>Our Orders</h1>
+        <div className="flex mb-8">
+      <button
+        className={`mr-4 px-4 py-2 flex items-center justify-center ${mainactiveTab === 'orderAlert' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+        onClick={() => handleTabChange('orderAlert')}
+      >
+        <FaBell className="mr-2" />
+        Order Alert
+      </button>
+      <button
+        className={`px-4 py-2 flex items-center justify-center ${mainactiveTab === 'confirmedOrders' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+        onClick={() => handleTabChange('confirmedOrders')}
+      >
+        <FaCheckCircle className="mr-2" />
+        Confirmed Orders
+      </button>
     </div>
+         {/* Data display based on active tab */}
+    <div className="bg-gray-100 p-4 rounded-md">
+      {mainactiveTab === 'orderAlert' && (
+        <div>
+      
+       
+        {/* Step 5: Use filteredBookings */}
+
+        {!isLoadingData && filteredBooking && filteredBooking.length > 0 ? (
+            <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+                <div className="w-full overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 font-[sans-serif]">
+                        <thead className="bg-gray-100 whitespace-nowrap">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Customer Name
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Thalli Name
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                   Food Name
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Order Details
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Payment
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Booking Date
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap">
+                            {/* Table rows */}
+
+            
+                            {filteredBooking.map(booking => (
+                                <tr key={booking.id}>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.firstName} {booking.lastName}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.thaliname}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Foodname}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                        <div>
+                                            <p>No. of Thalli: {booking.noofthalli}</p>
+                                            <p>Tenure: {booking.selectedTenure}</p>
+                                            <p>Price: {booking.Foodcharge}</p>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Payment}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                        {/* Display booking date */}
+                                        {booking.bookingDate instanceof Object ? (
+                                            <>
+                                                <p> {booking.bookingDate.checkIn}</p>
+                                                {booking.bookingDate.checkOut ? (
+                                                    <p> {booking.bookingDate.checkOut}</p>
+                                                ) : null}
+                                            </>
+                                        ) : (
+                                            <p>{booking.bookingDate}</p>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                    {booking.orderstatus === "Out of delivery" && ( // Check if order status is "Out of delivery"
+            <div>
+                <a href={`/mapview?orderId=${booking.orderId}`} className="bg-green-500 text-white px-2 py-1 rounded">
+                    View on Map
+                </a>
+            </div>
+        )}
+                                        {/* Display action buttons */}
+                                        {booking.GarmentTypes ? (
+                                            <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
+                                                <a className="bg-blue-500 text-white px-2 py-1 rounded">
+                                                    View Details
+                                                </a>
+                                            </Link>
+                                        ) : (
+                                            <Link href={`/Admin/adminarenechefdetails?orderId=${booking.orderId}`}>
+                                                <a className="bg-blue-500 text-white px-2 py-1 rounded">
+                                                    Booking Details
+                                                </a>
+                                            </Link>
+                                        )}
+                                         <button onClick={() => handleConfirmOrder(booking.id)}
+                                       class="animate-bounce focus:animate-none ml-8 hover:animate-none inline-flex text-md font-medium bg-indigo-900  px-4 py-2 rounded-lg tracking-wide text-white">
+                                       <span class="ml-2">Confirm </span>
+                                   </button>
+                                    </td>
+                                   
+                                  
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        ) : (
+            <div className="text-center mt-4">
+                {activeTab === "today" ? "No orders for today" : "No orders"}
+            </div>
+        )}
+        </div>
+      )}
+
+      {mainactiveTab === 'confirmedOrders' && (
+        <div>
+      
+        <div className="sm:flex items-center mt-2 mb-4 ">
+            <div className="flex ">
+                {/* Step 4: Add button click handlers */}
+                <button
+                    className={`mx-1 px-3 py-1 rounded ${
+                        activeTab === "today"
+                            ? "bg-gray-800 text-white"
+                            : "bg-gray-200 text-black"
+                    }`}
+                    onClick={() => setActiveTab("today")}
+                >
+                    Today
+                </button>
+                <button
+                    className={`mx-1 px-3 py-1 rounded ${
+                        activeTab === "total"
+                            ? "bg-gray-800 text-white"
+                            : "bg-gray-200 text-black"
+                    }`}
+                    onClick={() => setActiveTab("total")}
+                >
+                    Total
+                </button>
+            </div>
+        </div>
+        {/* Step 5: Use filteredBookings */}
+
+        {!isLoadingData && filteredBookings && filteredBookings.length > 0 ? (
+            <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+                <div className="w-full overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 font-[sans-serif]">
+                        <thead className="bg-gray-100 whitespace-nowrap">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Customer Name
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Thalli Name
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Food Name
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Order Details
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Payment
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Booking Date
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap">
+                            {/* Table rows */}
+
+            
+                            {filteredBookings.map(booking => (
+                                <tr key={booking.id}>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.firstName} {booking.lastName}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.thaliname}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Foodname}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                        <div>
+                                            <p>No. of Thalli: {booking.noofthalli}</p>
+                                            <p>Package: {booking.selectedTenure}</p>
+                                            <p>Price: {booking.Foodcharge}</p>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Payment}</td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                        {/* Display booking date */}
+                                        {booking.bookingDate instanceof Object ? (
+                                            <>
+                                                <p> {booking.bookingDate.checkIn}</p>
+                                                {booking.bookingDate.checkOut ? (
+                                                    <p> {booking.bookingDate.checkOut}</p>
+                                                ) : null}
+                                            </>
+                                        ) : (
+                                            <p>{booking.bookingDate}</p>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-[#333]">
+                                    {booking.orderstatus === "Out of delivery" && ( // Check if order status is "Out of delivery"
+            <div>
+                <a href={`/mapview?orderId=${booking.orderId}`} className="bg-green-500 mb-2 text-white px-2 py-1 rounded">
+                    View on Map
+                </a>
+            </div>
+        )}
+                                        {/* Display action buttons */}
+                                        {booking.GarmentTypes ? (
+                                            <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
+                                                <a className="bg-blue-500 text-white px-2 py-1 rounded">
+                                                    View Details
+                                                </a>
+                                            </Link>
+                                        ) : (
+                                            <Link href={`/Admin/adminarenechefdetails?orderId=${booking.orderId}`}>
+                                                <a className="bg-blue-500 text-white px-2 py-1 rounded">
+                                                    Booking Details
+                                                </a>
+                                            </Link>
+                                        )}
+                                        {booking.confirmation === "false" ? (
+                                       <button onClick={() => handleConfirmOrder(booking.id)}
+                                       class="animate-bounce focus:animate-none ml-8 hover:animate-none inline-flex text-md font-medium bg-indigo-900  px-4 py-2 rounded-lg tracking-wide text-white">
+                                       <span class="ml-2">Confirm </span>
+                                   </button>
+                                        ) : (
+                                            <form className="flex items-center w-50 mt-2 ">
+                                      <select 
+                                        className="bg-blue-500 text-white px-2 py-1 rounded"
+                                        value={booking.orderstatus}
+                                        onChange={(e) => handleOrderStatusChange(booking.id, e.target.value)}
+                                      >
+                                        <option value="">Select Options</option>
+                                        <option value="preparing">Preparing</option>
+                                        <option value="ready">Ready</option>
+                                        {/* <option value="delivered">Delivered</option> */}
+                                      </select>
+                                    </form>
+                                        )}
+                                    </td>
+                                   
+                                  
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        ) : (
+            <div className="text-center mt-4">
+                {activeTab === "today" ? "No orders for today" : "No orders"}
+            </div>
+        )}
+        </div>
+      )}
+    </div>
+
+    
+        </div>
+        )}
+    </section>
+    
+    {/* {isModalOpen && (
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+                <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div className="sm:flex sm:items-start">
+                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4" id="modal-title">
+                                    Update Order Delivery
+                                </h3>
+                                <form onSubmit={handleSubmit} className="space-y-6 px-4 max-w-sm mx-auto font-[sans-serif]">
+                                    <div className="flex items-center">
+                                        <label className="text-gray-400 w-36 text-sm">Thalli Name</label>
+                                        <input type="text" placeholder="Enter thalli name"
+                                            value={thalliName}
+                                            onChange={(e) => setThalliName(e.target.value)}
+                                            className="px-2 py-2 w-full border-b-2 focus:border-[#333] outline-none text-sm bg-white" />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <label className="text-gray-400 w-36 text-sm">Ingredients</label>
+                                        <input type="text" placeholder="Enter Ingredients"
+                                            value={ingredients}
+                                            onChange={(e) => setIngredients(e.target.value)}
+                                            className="px-2 py-2 w-full border-b-2 focus:border-[#333] outline-none text-sm bg-white" />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <label className="text-gray-400 w-36 text-sm">No. of Thalli</label>
+                                        <input type="number" placeholder="Enter no. of thalli"
+                                            value={noOfThalli}
+                                            onChange={(e) => setNoOfThalli(e.target.value)}
+                                            className="px-2 py-2 w-full border-b-2 focus:border-[#333] outline-none text-sm bg-white" />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="px-6 py-2 w-full bg-[#333] text-sm text-white hover:bg-[#444] mx-auto block"
+                                        onClick={handleSubmit}
+                                        disabled={isLoadingSubmit}
+                                    >
+                                        {isLoadingSubmit ? 'Submitting...' : 'Submit'}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" onClick={closeModal} className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )} */}
+
+
+
+    <ToastContainer />
+</div>
   );
+
 };
 
-const styles = {
-  container: {
-    position: 'relative',
-    height: '100vh',
-    width: '100%',
-  },
-  map: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  infoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    padding: 20,
-  },
-  userInfoText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 8,
-  },
-  spinnerContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-  },
-  errorContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-  },
-  errorText: {
-    fontSize: 18,
-    color: 'red',
-  },
-};
-
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyB6gEq59Ly20DUl7dEhHW9KgnaZy4HrkqQ'
-})(Header);
+export default Test;

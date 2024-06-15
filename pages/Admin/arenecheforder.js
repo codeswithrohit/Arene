@@ -188,9 +188,13 @@ const ChefOrders = () => {
                                                                             </a>
                                                                         </Link>
                                                                     )}
-                                                                    <button onClick={() => openModal(booking)} className="bg-blue-500 ml-4 text-white px-2 py-1 rounded">
-                                                                                Update Orders Delivery
-                                                                            </button>
+                                                                    {booking.orderstatus === "Out of delivery" && ( // Check if order status is "Out of delivery"
+            <div>
+                <a href={`/mapview?orderId=${booking.orderId}`} className="bg-green-500 text-white px-2 py-1 rounded">
+                    View on Map
+                </a>
+            </div>
+        )}
         </td>
        
       </tr>

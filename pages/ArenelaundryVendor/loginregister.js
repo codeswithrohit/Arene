@@ -9,7 +9,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/router';
 const Register = () => {
   const router = useRouter();
-  const [userType, setUserType] = useState('Individual');
   const [isLoadinglogin, setisLoadinglogin] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -24,9 +23,7 @@ const Register = () => {
   const [userData, setUserData] = useState(null);
   const [activePage, setActivePage] = useState('');
 
-  useEffect(() => {
-    setActivePage(router.pathname);
-  }, [router.pathname]);
+ 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -36,7 +33,7 @@ const Register = () => {
       } else {
         setUser(null);
         setUserData(null);
-        router.push('/Agent/Register'); // Redirect to the login page if the user is not authenticated
+        router.push('/ArenelaundryVendor/loginregister'); // Redirect to the login page if the user is not authenticated
       }
     });
 
@@ -46,16 +43,16 @@ const Register = () => {
   const fetchUserData = async (user) => {
     try {
       const db = getFirestore();
-      const userDocRef = doc(db, 'users', user.uid); // Update the path to the user document
+      const userDocRef = doc(db, 'ArenelaundryVendor', user.uid); // Update the path to the user document
       const userDocSnap = await getDoc(userDocRef);
 
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         if (userData.isVendor) {
           setUserData(userData);
-          router.push('/Agent');
+          router.push('/ArenelaundryVendor');
         } else {
-          router.push('/Agent/Register'); // Redirect to the login page if the user is not an admin
+          router.push('/ArenelaundryVendor/loginregister'); // Redirect to the login page if the user is not an admin
         }
       } else {
         // Handle case where user data doesn't exist in Firestore
@@ -78,151 +75,115 @@ const Register = () => {
   const handlePanCardChange = (e) => {
     setPanCard(e.target.files[0]);
   };
-
   const handleSignUp = async () => {
-    // Get other input values (name, email, mobileNumber, password, confirmPassword)
-    const nameInput = document.getElementById('signup-name');
-    const emailInput = document.getElementById('signup-email');
-    const mobileNumberInput = document.getElementById('signup-mobilenumber');
-    const passwordInput = document.getElementById('signup-password');
-    const confirmPasswordInput = document.getElementById('signup-confirm-password');
-    
-    const name = nameInput.value;
-    const email = emailInput.value;
-    const mobileNumber = mobileNumberInput.value;
-    const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-  
-    if (!name || !email || !mobileNumber || !password || !confirmPassword) {
-      return toast.error('All fields are required.', {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-    }
-  
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match.', {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-      return;
-    }
-  
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters long.', {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-      return;
-    }
-  
-    if (mobileNumber.length !== 10) {
-      toast.error('Mobile number must be exactly 10 digits.', {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-      return;
-    }
-  
     try {
       setisLoadinglogin(true);
+      const auth = getAuth();
       const storageRef = firebase.storage().ref();
   
-      // Assuming 'aadharCard' and 'panCard' are already defined or provided in the scope
-  
+      // Upload Aadhar Card and get the download URL
       const aadharCardRef = storageRef.child(`aadharCards/${aadharCard.name}`);
       await aadharCardRef.put(aadharCard);
       const aadharCardUrl = await aadharCardRef.getDownloadURL();
   
+      // Upload PAN Card and get the download URL
       const panCardRef = storageRef.child(`panCards/${panCard.name}`);
       await panCardRef.put(panCard);
       const panCardUrl = await panCardRef.getDownloadURL();
   
-      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-      const user = userCredential.user;
+      // Get user input values
+      const { name, email, mobileNumber, password, address, pincode } = getUserInputValues();
   
+      if (!name || !email || !mobileNumber || !address || !pincode || !password) {
+        toast.error('All fields are required.');
+        setisLoadinglogin(false);
+        return;
+      }
+  
+    
+  
+      // Prepare user data object
       const userData = {
         name: name,
         email: email,
         mobileNumber: mobileNumber,
-        userType: userType,
-        isVendor: true,
+        isArenelaundry: true,
         aadharCardUrl: aadharCardUrl,
-        panCardUrl: panCardUrl
+        panCardUrl: panCardUrl,
+        pincode: pincode,
+        address: address,
+        verified: false
       };
   
-      if (userType === 'Agent') {
-        userData.selectedBuyOption = selectedBuyOption;
-        userData.Verified = false; // Assuming 'Verified' should be a boolean, not a string
-  
-      }
-  
-      await firebase.firestore().collection('AgentOwner').doc(user.uid).set(userData);
+      // Create user in Firebase Authentication
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      await firebase.firestore().collection('ArenelaundryVendor').doc(user.uid).set(userData);
+      // Display success message
+      toast.success('Arene laundry Vendor account has been created.');
       setisLoadinglogin(false);
-  
-      if (userType === 'Agent') {
-        toast.success('Agent account has been created.', {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      } else if (userType === 'Individual') {
-        toast.success('Owner account has been created.', {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      }
-  
-      // Clear input fields
-      nameInput.value = '';
-      emailInput.value = '';
-      mobileNumberInput.value = '';
-      passwordInput.value = '';
-      confirmPasswordInput.value = '';
-  
     } catch (error) {
       setisLoadinglogin(false);
       if (error.code === 'auth/email-already-in-use') {
-        toast.error('Email already exists.', {
-          position: toast.POSITION.TOP_RIGHT,
-        });
+        toast.error('Email already exists.');
       } else {
-        toast.error('Error signing up: ' + error.message, {
-          position: toast.POSITION.TOP_RIGHT,
-        });
+        toast.error('Error signing up: ' + error.message);
+        console.log(error.message);
       }
     }
   };
   
 
-  const [isLoading, setIsLoading] = useState(false);
+  const getUserInputValues = () => {
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const mobileNumber = document.getElementById('signup-mobilenumber').value;
+    const password = document.getElementById('signup-password').value;
+    const address = document.getElementById('signup-address').value;
+    const pincode = document.getElementById('signup-pincode').value;
+    return { name, email, mobileNumber, password, address, pincode };
+  };
 
+
+
+  
+
+  const [isLoading, setIsLoading] = useState(false);
   const handleLogin = (event) => {
     event.preventDefault();
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
-
+  
     if (!email || !password) {
       return toast.error('Please enter both email and password.', {
         position: toast.POSITION.TOP_RIGHT,
       });
     }
-
+  
     setIsLoading(true);
-
+  
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Check if isVendor is true
         const user = userCredential.user;
+        console.log("user",user);
         firebase
           .firestore()
-          .collection('AgentOwner')
+          .collection('ArenelaundryVendor')
           .doc(user.uid)
           .get()
           .then((doc) => {
             const userData = doc.data();
-            if (userData.isVendor) {
+            console.log(userData);
+            if (userData.isArenelaundry) {
               toast.success('Login successful.', {
                 position: toast.POSITION.TOP_RIGHT,
               });
-              router.push('/Agent')
+              router.push('/ArenelaundryVendor');
             } else {
-              toast.error('You do not have Agent permission.', {
+              toast.error('You do not have Arene laundry Vendor permission.', {
                 position: toast.POSITION.TOP_RIGHT,
               });
             }
@@ -231,11 +192,13 @@ const Register = () => {
       })
       .catch((error) => {
         setIsLoading(false);
+        console.log(error.message);
         toast.error('Email & Password are Incorrect ' , {
           position: toast.POSITION.TOP_RIGHT,
         });
       });
   };
+  
 
   return (
     <div classNameName='min-h-screen bg-white dark:bg-white'>
@@ -244,22 +207,7 @@ const Register = () => {
 
   <div className="px-4 py-20">
     <h2 className="mb-2 text-3xl font-bold">Sign Up</h2>
-    <a href="#" className="mb-10 block font-bold text-gray-600">Have an account</a>
-    <p className="mb-1 font-medium text-gray-500">User Type?</p>
-    <div className="mb-6 flex flex-col gap-y-2 gap-x-4 lg:flex-row">
-      <div onClick={() => handleUserTypeChange('Agent')} className="relative flex w-56 items-center justify-center rounded-xl bg-gray-50 px-4 py-3 font-medium text-gray-700">
-        <input className="peer hidden" type="radio" name="radio" id="radio1" checked />
-        <label className="peer-checked:border-blue-600 peer-checked:bg-blue-200 absolute top-0 h-full w-full cursor-pointer rounded-xl border" for="radio1"> </label>
-        <div className="peer-checked:border-transparent peer-checked:bg-blue-600 peer-checked:ring-2 absolute left-4 h-5 w-5 rounded-full border-2 border-emerald-500 border-2 bg-gray-200 ring-blue-600 ring-offset-2"></div>
-        <span className="pointer-events-none z-10">Agent</span>
-      </div>
-      <div onClick={() => handleUserTypeChange('Individual')} className="relative flex w-56 items-center justify-center rounded-xl bg-gray-50 px-4 py-3 font-medium text-gray-700">
-        <input className="peer hidden" type="radio" name="radio" id="radio3" checked />
-        <label className="peer-checked:border-blue-600 peer-checked:bg-blue-200 absolute top-0 h-full w-full cursor-pointer rounded-xl border" for="radio3"> </label>
-        <div className="peer-checked:border-transparent peer-checked:bg-blue-600 peer-checked:ring-2 absolute left-4 h-5 w-5 rounded-full border-2 border-emerald-500 border-2 bg-gray-200 ring-blue-600 ring-offset-2"></div>
-        <span className="pointer-events-none z-10">Owner</span>
-      </div>
-    </div>
+   
     <p className="mb-1 font-medium text-gray-500">Name</p>
     <div className="mb-4 flex flex-col">
       <div className="focus-within:border-blue-600 relativeflex overflow-hidden rounded-md border-2 transition sm:w-80 lg:w-full">
@@ -276,6 +224,22 @@ const Register = () => {
     <div className="mb-4 flex flex-col">
       <div className="focus-within:border-blue-600 relativeflex overflow-hidden rounded-md border-2 transition sm:w-80 lg:w-full">
         <input type="tel" id="signup-mobilenumber" className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none" placeholder="Enter your Mobile Number" />
+      </div>
+    </div>
+ 
+
+
+
+    <p className="mb-1 font-medium text-gray-500">Address</p>
+    <div className="mb-4 flex flex-col">
+      <div className="focus-within:border-blue-600 relativeflex overflow-hidden rounded-md border-2 transition sm:w-80 lg:w-full">
+        <input type="text" id="signup-address" className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none" placeholder="Enter your Kitchen Address" />
+      </div>
+    </div>
+    <p className="mb-1 font-medium text-gray-500">Pin Code</p>
+    <div className="mb-4 flex flex-col">
+      <div className="focus-within:border-blue-600 relativeflex overflow-hidden rounded-md border-2 transition sm:w-80 lg:w-full">
+        <input type="text" id="signup-pincode" className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none" placeholder="Enter your Kitchen Area Pin Code" />
       </div>
     </div>
     <p className="mb-1 font-medium text-gray-500">Password</p>
@@ -311,81 +275,8 @@ const Register = () => {
           />
         </div>
       </div>
-    {userType === 'Agent' && (
-      <>
-   {/* <div className="mb-4 flex flex-col">
-  <label htmlFor="select-pg-type" className="mb-1 font-medium text-gray-500 uppercase">Select PG Type</label>
-  <div className="relative">
-    <select
-      className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-600 rounded-md"
-      id="select-pg-type"
-      name="select-pg-type"
-      onChange={(e) => setSelectedPgType(e.target.value)}
-    >
-      <option value="Boys">Boys</option>
-      <option value="Girls">Girls</option>
-    </select>
-   
-  </div>
-</div>
+  
 
-<div className="mb-4 flex flex-col">
-  <label htmlFor="select-rent-type" className="mb-1 font-medium text-gray-500 uppercase">Select Rent Type</label>
-  <div className="relative">
-    <select
-      className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-600 rounded-md"
-      id="select-rent-type"
-      name="select-rent-type"
-      onChange={(e) => setSelectedRentType(e.target.value)}
-    >
-      <option value="Appartment">Appartment</option>
-      <option value="Builder floor">Builder Floor</option>
-      <option value="Shop/Showroom">Shop/Showroom</option>
-      <option value="Office space">Office Space</option>
-      <option value="Other properties">Other Properties</option>
-    </select>
-   
-  </div>
-</div> */}
-
-
-<div className="mb-4 flex flex-col">
-  <label htmlFor="select-buy-option" className="mb-1 font-medium text-gray-500 uppercase">Select Sell Property Type</label>
-  <div className="relative">
-    <select
-      className="w-full border-emerald-500 border-2 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-600 rounded-md"
-      id="select-buy-option"
-      name="select-buy-option"
-      onChange={(e) => setSelectedBuyOption(e.target.value)}
-    >
-      <option value="Appartment">Appartment</option>
-      <option value="Independent House">Independent House</option>
-      <option value="Builder Floor">Builder Floor</option>
-      <option value="Villas">Villas</option>
-      <option value="Bunglow">Bunglow</option>
-      <option value="Land">Land</option>
-      <option value="Commercial Shop">Commercial Shop</option>
-      <option value="Office Space">Office Space</option>
-      <option value="Go Down">Go Down</option>
-    </select>
-   
-  </div>
-</div>
-
-</>
-    )}
-    
-{/*     
-    <button   disabled={isLoadinglogin}
-            onClick={handleSignUp}
-            classNameName={`w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform ${
-              isLoadinglogin
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-400'
-            } rounded-lg focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50`}
-          >
-         {isLoadinglogin ? 'Loading...' : 'Sign Up'}
-          </button> */}
 
           <button
                   type='submit'
@@ -401,7 +292,7 @@ const Register = () => {
 <div className='mx-auto py-0 md:-mt-0  md:py-24 flex h-screen max-w-lg flex-col md:max-w-none md:flex-row md:pr-10'>
           <div className='flex w-full flex-col md:w-1/2 '>
             <div className='lg:w-[28rem] mx-auto my-auto flex flex-col justify-center pt-8 md:justify-start md:px-6 md:pt-0'>
-              <p className='text-left text-3xl font-bold'>Welcome back, User</p>
+              <p className='text-left text-2xl font-bold'>Welcome back, Arene Laundry Vendor</p>
               <p className='mt-2 text-left text-gray-500'>Welcome back, please enter your details.</p>
 
               <div className='relative mt-8 flex h-px place-items-center bg-gray-200'>

@@ -105,14 +105,14 @@ export const Blog = () => {
 export const BanQueetHall = () => (
   <Fragment>
     <li className="menu-item">
-      <Link href="/contact">Banqueet Hall</Link>
+      <Link href="/banquethallall">Banqueet Hall</Link>
     </li>
   </Fragment>
 );
 export const CloudKitchen = () => (
   <Fragment>
     <li className="menu-item">
-      <Link href="/contact">Arene Chef</Link>
+      <Link href="/allarenechef">Arene Chef</Link>
     </li>
   </Fragment>
 );

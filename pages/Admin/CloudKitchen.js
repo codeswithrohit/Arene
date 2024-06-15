@@ -43,6 +43,7 @@ const Laundry = () => {
 
   const [formData, setFormData] = useState({
     thaliname: '',
+    Foodname: '',
     Ingredients:'',
     Foodcharge: [], // Initialize Foodcharge as an empty array
   });
@@ -50,6 +51,7 @@ const Laundry = () => {
 
   const [editData, setEditData] = useState({
     thaliname: '',
+    Foodname: '',
     Ingredients:'',
     Foodcharge: [], // Initialize Foodcharge as an empty array
   });
@@ -121,13 +123,14 @@ const Laundry = () => {
       const dataToUpload = {
         ...formData,
         image: imageUrl,
-        location: Location,
+        // location: Location,
       };
       await db.collection("Cloud Kitchen").add(dataToUpload);
       toast.success("Data uploaded successfully!");
       window.location.reload();
       setFormData({
         thaliname: '',
+        Foodname: '',
         Ingredients:'',
         Foodcharge: [],
       });
@@ -171,6 +174,7 @@ const Laundry = () => {
     setEditingProduct(id);
     setEditData({
       thaliname: selectedData.thaliname,
+      Foodname: selectedData.Foodname,
       Ingredients: selectedData.Ingredients,
       Foodcharge: selectedData.Foodcharge,
     });
@@ -266,8 +270,15 @@ const Laundry = () => {
       <option value="non-veg-thali">Non-Veg Thali</option>
                   </select>
                 </div>
+                <input
+                    type="text"
+                    name="Foodname"
+                    onChange={handleInputChange}
+                    placeholder="Food Name"
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+                  />
               </div>
-              <div style={{ width: '100%' }}> {/* Ensure the parent container spans the full width */}
+              {/* <div style={{ width: '100%' }}>
                 <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
                   <input
                     name="Location"
@@ -279,19 +290,19 @@ const Laundry = () => {
                     placeholder="Enter Your location"
                   />
                 </Autocomplete>
-              </div>
+              </div> */}
 
               <input
                     type="text"
                     name="Ingredients"
                     onChange={handleInputChange}
                     placeholder="Ingredients Name"
-                    className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+                    className="w-full mt-2 p-2 border mb-2 border-gray-300 rounded-md"
                   />
                     <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+              {/* <label className="block text-gray-700 text-sm font-bold mb-2">
                 Upload Image
-              </label>
+              </label> */}
               <input
                 type="file"
                 accept="image/*"
@@ -311,6 +322,8 @@ const Laundry = () => {
                     className="w-full p-2 border border-gray-300 rounded-md"
                   >
                     <option value="">Select Type</option>
+                    <option value="1 Piece">1 Piece</option>
+                    <option value="1 Plate">1 Plate</option>
                     <option value="1 Thali">1 Thali</option>
                     <option value="1 Month">1 Month</option>
                     <option value="6 Month">6 Month</option>
@@ -324,7 +337,7 @@ const Laundry = () => {
                     name="noofthalli"
                     value={foodType.noofthalli}
                     onChange={(e) => handleFoodTypeChange(index, e)}
-                    placeholder="Enter No. of Thalli"
+                    placeholder="Enter No. of Quantity thalli/Plate"
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                   <input
@@ -374,12 +387,15 @@ const Laundry = () => {
                   Thalinames
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700">
+                  Foodname
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700">
                 Ingredients
                 </th>
 
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700">
+                {/* <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700">
                   Loaction
-                </th>
+                </th> */}
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700">
                   Foodcharge
                 </th>
@@ -396,12 +412,15 @@ const Laundry = () => {
                       {item.thaliname}
                     </td>
                     <td class="px-6 py-4 text-base">
+                      {item.Foodname}
+                    </td>
+                    <td class="px-6 py-4 text-base">
                       {item.Ingredients}
                     </td>
 
-                    <td class="px-6 py-4 text-base">
+                    {/* <td class="px-6 py-4 text-base">
                       {item.location}
-                    </td>
+                    </td> */}
                     <td class="px-6 py-4 text-base">
                       {item.Foodcharge && item.Foodcharge.map((type, idx) => (
                         <div key={idx}>
@@ -452,11 +471,21 @@ const Laundry = () => {
                 >
                   <option value="">Select thaliname</option>
                   {/* Replace this with your list of thalinames */}
-                 <option value="Veg">Veg</option>
-                    <option value="Non-Veg">Non-Veg</option>
-                  {/* Add more options as needed */}
+                  <option value="chinese">Chinese</option>
+      <option value="veg-thali">Veg Thali</option>
+      <option value="non-veg-thali">Non-Veg Thali</option>
                 </select>
               </div>
+<div>
+<input
+                    type="text"
+                    name="Foodname"
+                    value={editData.Foodname}
+                    onChange={handleInputChanges}
+                    placeholder="Food Name"
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+</div>
 <div>
 <input
                     type="text"
@@ -481,6 +510,8 @@ const Laundry = () => {
                     className="w-full p-2 border border-gray-300 rounded-md"
                   >
                     <option value="">Select Type</option>
+                    <option value="1 Piece">1 Piece</option>
+                    <option value="1 Plate">1 Plate</option>
                     <option value="1 Thali">1 Thali</option>
                     <option value="1 Month">1 Month</option>
                     <option value="6 Month">6 Month</option>
@@ -509,7 +540,7 @@ const Laundry = () => {
               ))}
 
               <button type="button" onClick={handleEditFoodType} className="w-full mt-2 p-2 bg-blue-500 text-white rounded-md">
-                Add Garment
+                Add Food
               </button>
 
             <div className="flex items-center justify-center mt-4">

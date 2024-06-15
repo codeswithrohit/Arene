@@ -121,57 +121,77 @@ const Buy = () => {
       ></script>
     </Head>
     <p className=" text-xs leading-4 text-gray-600 font-normal mt-32 md:mt-16 ">Arene Services redefines the rental experience with a commitment to excellence and a focus on customer satisfaction. Our rent services stand out for their efficiency, transparency, and dedication to providing top-notch properties for our clients.</p>
+    <div className="grid px-8 mt-4 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
     {loading ? ( // Show spinner while loading
-     <div class="flex min-h-screen justify-center items-center">
-     <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
- </div>
+      <div className="flex justify-center items-center">
+        <img className="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
+      </div>
     ) : (
-      filteredData.map((item, index) => (
-        <div key={item.id} className="w-full  p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
-          <div className="flex-none lg:flex">
-            <div className="h-48 w-full lg:h-32 lg:w-32 rounded-md lg:mb-0 mb-3">
-              <img
-                src={item.imgSrc}
-                alt="Pet images"
-                className="w-full h-full lg:object-cover rounded-md"
-                style={{ objectFit: 'cover' }} 
-              />
-            </div>
-            <div className="flex-auto lg:ml-3 justify-evenly py-2">
-              <div className="flex flex-col ">
-                <div className="flex items-center mr-auto text-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-300 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                  </svg>
-                  <p className="font-normal text-gray-500">4.5</p>
-                </div>
-                <div className="flex items-center  justify-between min-w-0">
-                  <h2 className="mr-auto text-red-600  text-base capitalize font-medium truncate">{item.Propertyname}</h2>
-                </div>
-                <p className="flex capitalize items-center text-xs text-gray-400">{item.location}. {item.distance} <span className="relative inline-flex rounded-md shadow-sm ml-2"><span className="flex absolute h-2 w-2 top-0 right-0 -mt-1 -mr-1"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span></span></p>
+      filteredData.length === 0 ? (
+        <div className="flex justify-center items-center">
+          <p className="text-2xl text-gray-600">No Data</p>
+        </div>
+      ) : (
+        filteredData
+          .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)) // Sort data based on distance
+          .map((item, index) => (
+        <div key={item.id} className="w-full bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shadow-lg rounded-md">
+            <Link href={`/rentdetail?id=${item.id}`}>
+          <div className="flex-none lg:flex-col">
+          <Carousel showThumbs={false} autoPlay>
+            {item.imgSrc.map((src, idx) => (
+              <div key={idx} className="h-full w-full lg:h-64 lg:w-full rounded-md lg:mb-0 mb-3">
+                <img src={src} alt={`Image ${idx}`} className="w-full h-64 object-contain rounded-md" />
               </div>
-              <div className="flex my-3 border-t border-gray-300 dark:border-gray-600 "></div>
-              <div className="flex space-x-3 text-sm font-medium">
-                <div className=" items-center bg-white p-2 rounded-lg justify-center flex gap-1 font-medium text-[#10b981] dark:text-[#10b981]">
-                  {item.propertytypes.map((property, i) => (
+            ))}
+          </Carousel>
+            <div className="flex-auto mt-4 px-6 lg:ml-3 justify-evenly py-2">
+              <div className="flex flex-col">
+                <div className="flex items-center mr-auto text-sm">
+                  <FaStar size={16} className='stroke-yellow-500 fill-yellow-500' />  {/* Use the imported Star icon */}
+                  <p className="font-normal text-gray-500">5</p>
+                </div>
+                <div className="flex items-center justify-between min-w-0">
+                  <h2 className="mr-auto text-blue-600 text-base capitalize font-medium truncate">{item.Propertyname}</h2>
+                </div>
+                <p className="flex capitalize items-center text-xs text-gray-400">
+                {item.location.split(',')[item.location.split(',').length - 4]},{item.location.split(',')[item.location.split(',').length - 3]}, {item.location.split(',')[item.location.split(',').length - 2]}, {item.location.split(',')[item.location.split(',').length - 1]},{item.distance}
+                  <span className="relative inline-flex rounded-md shadow-sm ml-2">
+                    <span className="flex absolute h-2 w-2 top-0 right-0 -mt-1 -mr-1">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    </span>
+                  </span>
+                </p>
+                <div className=" flex flex-col  font-medium text-gray-700 dark:text-gray-100">
+            
+
+                {item.propertytypes.map((property, i) => (
                     <div key={i}>
-                      <p className='text-emerald-500' >{property.type}-{property.price}/Month |</p>
+                         <span className="price text-xs font-bold">{i + 1}. {property.type} - {property.price}/Month</span>
                     </div>
                   ))}
+                  {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg> */}
+                 
                 </div>
-                <Link href={`/rentdetail?id=${item.id}`} passHref>
-  <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-full transition duration-300 ease-in-out">
-    View Details
-  </button>
-</Link>
-
+              </div>
+              <div className="flex my-3 border-t border-gray-300 dark:border-gray-600"></div>
+              <div className="flex items-center justify-center space-x-3 text-sm font-medium">
+               
+                <button className="mb-2 md:mb-0 flex-no-shrink bg-blue-400 hover:bg-blue-500 px-5 py-2 text-xs shadow-sm hover:shadow-lg font-medium tracking-wider border-2 border-blue-300 hover:border-blue-500 text-white rounded-full transition ease-in duration-300" type="button" aria-label="like">
+                  Book Now
+                </button>
               </div>
             </div>
           </div>
+          </Link>
         </div>
-      ))
-      
-    )}
+          ))
+        )
+      )}
+    </div>
     
   
   </div>

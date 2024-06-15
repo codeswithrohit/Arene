@@ -111,7 +111,7 @@ const Footer = () => {
               data-name="16" data-original="#000000"></path>
           </svg>
           </h4>
-          <ul class="space-y-5 mt-4 max-sm:hidden">
+          <ul class="space-y-5 mt-4 ">
           <li>
                 <a href='javascript:void(0)' onClick={() => handleBUyLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Buy Property in Delhi</a>
               </li>
@@ -138,7 +138,7 @@ const Footer = () => {
               data-name="16" data-original="#000000"></path>
           </svg>
           </h4>
-          <ul class="space-y-5 mt-4 max-sm:hidden">
+          <ul class="space-y-5 mt-4 ">
           <li>
                 <a href='javascript:void(0)' onClick={() => handleRentLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Rent Property in Delhi</a>
               </li>
@@ -165,7 +165,7 @@ const Footer = () => {
               data-name="16" data-original="#000000"></path>
           </svg>
           </h4>
-          <ul class="space-y-5 mt-4 max-sm:hidden">
+          <ul class="space-y-5 mt-4 ">
           <li>
                 <a href='javascript:void(0)' onClick={() => handleHotelLocationClick('Delhi')} className='hover:text-[#10b981] uppercase hover:font-bold text-black text-sm'>Hotel in Delhi</a>
               </li>
@@ -213,7 +213,7 @@ const Footer = () => {
           </svg>
           </h4>
         </Link>
-        <Link href='/'>
+        <Link href='/allarenelaundry'>
           <h4 class="text-black font-semibold text-lg relative cursor-pointer">Arene laundry<svg
             xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
             class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
@@ -223,7 +223,7 @@ const Footer = () => {
           </svg>
           </h4>
         </Link>
-        <Link href='/'>
+        <Link href='/allarenechef'>
           <h4 class="text-black font-semibold text-lg relative cursor-pointer">Arene chef<svg
             xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
             class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">

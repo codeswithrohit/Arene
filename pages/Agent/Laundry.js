@@ -283,7 +283,7 @@ const Laundry = () => {
   return (
     <div className='min-h-screen  bg-white dark:bg-white'>
       <AgentNav />
-      <div className=" text-center p-8 bg-white dark:bg-white min-h-screen">
+      <div className=" text-center p-4 mt-20 md:p-4 bg-white dark:bg-white ">
         {showAllInputFormats ? (
           <div>
             <form onSubmit={handleFormSubmit} className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -382,9 +382,11 @@ const Laundry = () => {
           </div>
         ) : (
           // Display the add PG Detail button when isEditing is false and showAllInputFormats is false
-          <button onClick={handleShowAllInputFormats} className="w-full mt-6 mb-2 p-2 bg-blue-500 text-white rounded-md">
-            Add Products
+          <div className="flex items-end justify-end" >
+          <button onClick={handleShowAllInputFormats} className="w-48 mt-6 mb-2 p-2 bg-blue-500 text-white rounded-md">
+           + Add Products
           </button>
+          </div>
         )}
         <div class="overflow-x-auto">
           <table class="min-w-full bg-white font-[sans-serif]">

@@ -19,7 +19,7 @@ const Test = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [thalliName, setThalliName] = useState('');
   const [ingredients, setIngredients] = useState('');
-  const [noOfThalli, setNoOfThalli] = useState('');
+  const [availablegarments, setavailablegarments] = useState('');
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
   const router = useRouter();
@@ -53,15 +53,15 @@ const Test = () => {
     try {
       const userDocRef = firebase
         .firestore()
-        .collection("AreneChefVendor")
+        .collection("ArenelaundryVendor")
         .doc(user.uid);
       const userDocSnap = await userDocRef.get();
       if (userDocSnap.exists) {
         const userData = userDocSnap.data();
-        if (userData && userData.isArenechef) {
+        if (userData && userData.isArenelaundry) {
           setUserData(userData);
         } else {
-          router.push('/AreneChefVendor/loginregister');
+          router.push('/ArenelaundryVendor/loginregister');
         }
       } else {
         // Handle case where user data doesn't exist
@@ -73,21 +73,13 @@ const Test = () => {
     }
   };
 
-  const handleLogout = async () => {
-    const auth = getAuth();
-    try {
-      await signOut(auth);
-      router.push('/Admin/Register');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         if (userData) {
-          const snapshot = await firebase.firestore().collection('kitchenorder').where('pincode', '==', userData.pincode).get();
+          const snapshot = await firebase.firestore().collection('laundryorders').where('pincode', '==', userData.pincode).get();
           const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           data.sort((a, b) => new Date(a.OrderDate) - new Date(b.OrderDate));
           setBookings(data);
@@ -99,7 +91,7 @@ const Test = () => {
     };
     fetchBookings();
   }, [userData, currentUser]); // Add userData to the dependency array
-
+console.log("Bookings",bookings)
   const handleConfirmOrder = async (bookingId) => {
     try {
       const currentUser = firebase.auth().currentUser;
@@ -108,10 +100,13 @@ const Test = () => {
         return;
       }
 
-      await firebase.firestore().collection('kitchenorder').doc(bookingId).update({
+      await firebase.firestore().collection('laundryorders').doc(bookingId).update({
         confirmation: true,
         vendorid: currentUser.uid,
         VendorLocation: userData?.address,
+        VendormobileNumber: userData?.mobileNumber,
+        Vendorname: userData?.name,
+        Vendoremail: userData?.email,
         deliveryconfirmation: 'false',
         orderstatus: "Confirm",
       });
@@ -129,6 +124,7 @@ const Test = () => {
       console.error('Error confirming order:', error);
     }
   };
+  console.log("current date",getCurrentDate)
   const filteredBooking = !isLoadingData && bookings && (activeTab === "today"
   ? bookings.filter(booking => {
       // Filter by confirmation and vendorid
@@ -139,20 +135,21 @@ const Test = () => {
       return booking.confirmation === 'false' ;
   }));
 
-  const ongoingOrders = bookings ? bookings.filter(booking => booking.availablethalli > 0 && booking.orderstatus === "Confirm") : [];
+  const ongoingOrders = bookings ? bookings.filter(booking => booking.availablegarments > 0 && booking.orderstatus === "Confirm") : [];
   const currentDate = new Date().toISOString().split('T')[0];
-  const completedOrders = bookings ? bookings.filter(booking => booking.availablethalli === 0) : [];
+  const completedOrders = bookings ? bookings.filter(booking => booking.availablegarments === 0) : [];
+
   const handleStatusChange = async (bookingId, deliveryIndex, newStatus) => {
     try {
-      const bookingRef = firebase.firestore().collection('kitchenorder').doc(bookingId);
+      const bookingRef = firebase.firestore().collection('laundryorders').doc(bookingId);
       const bookingDoc = await bookingRef.get();
       console.log(bookingId)
       if (bookingDoc.exists) {
-        const deliveryInfo = bookingDoc.data().Deliveryinfo;
-        deliveryInfo[deliveryIndex].deliverystatus = newStatus;
-        deliveryInfo[deliveryIndex].todayconfirm = newStatus;
+        const orderHistory = bookingDoc.data().orderHistory;
+        orderHistory[deliveryIndex].deliverystatus = newStatus;
+        orderHistory[deliveryIndex].todayconfirm = newStatus;
   
-        await bookingRef.update({ Deliveryinfo: deliveryInfo });
+        await bookingRef.update({ orderHistory: orderHistory });
         toast.success('Status updated successfully');
         setTimeout(() => {
           window.location.reload();
@@ -166,16 +163,26 @@ const Test = () => {
       toast.error('Error updating document');
     }
   };
+
   return (
     <div>
       <section className="px-6 lg:py-4 py-4 font-mono">
         {isLoadingAuth || isLoadingData ? ( // Check if either authentication or data loading is in progress
-          <div className="text-center mt-4">
-            Loading...
-          </div>
+                <div className="flex justify-center items-center h-screen">
+                <button type="button"
+                        className="px-6 py-2.5 rounded-full text-white text-sm tracking-wider font-semibold border-none outline-none bg-[#43d3b0] hover:bg-orange-700 active:bg-[#43d3b0]">
+                    Loading
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18px" fill="#fff" className="ml-2 inline animate-spin"
+                         viewBox="0 0 24 24">
+                        <path fillRule="evenodd"
+                              d="M7.03 2.757a1 1 0 0 1 1.213-.727l4 1a1 1 0 0 1 .59 1.525l-2 3a1 1 0 0 1-1.665-1.11l.755-1.132a7.003 7.003 0 0 0-2.735 11.77 1 1 0 0 1-1.376 1.453A8.978 8.978 0 0 1 3 12a9 9 0 0 1 4.874-8l-.117-.03a1 1 0 0 1-.727-1.213zm10.092 3.017a1 1 0 0 1 1.414.038A8.973 8.973 0 0 1 21 12a9 9 0 0 1-5.068 8.098 1 1 0 0 1-.707 1.864l-3.5-1a1 1 0 0 1-.557-1.517l2-3a1 1 0 0 1 1.664 1.11l-.755 1.132a7.003 7.003 0 0 0 3.006-11.5 1 1 0 0 1 .039-1.413z"
+                              clipRule="evenodd" data-original="#000000"/>
+                    </svg> {/* You can replace this with any loading spinner component or element */}
+                </button>
+            </div>
         ) : (
           <div>
-            <h1 className='text-red-600 text-center font-bold text-4xl'>Our Orders</h1>
+            <h1 className='text-red-600 mt-8 text-center font-bold text-4xl'>Our Orders</h1>
             <div className="flex mb-8">
               <button
                 className={`mr-4 px-4 py-2 flex items-center justify-center ${mainactiveTab === 'orderAlert' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
@@ -206,11 +213,11 @@ const Test = () => {
                                 Customer Name
                               </th>
                               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Thalli Name
+                               Services
                               </th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Food Name
-                              </th>
+                              </th> */}
                               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Order Details
                               </th>
@@ -229,49 +236,28 @@ const Test = () => {
                             {filteredBooking.map(booking => (
                               <tr key={booking.id}>
                                 <td className="px-6 py-4 text-sm text-[#333]">{booking.firstName} {booking.lastName}</td>
-                                <td className="px-6 py-4 text-sm text-[#333]">{booking.thaliname}</td>
-                                <td className="px-6 py-4 text-sm text-[#333]">{booking.Foodname}</td>
+                                <td className="px-6 py-4 text-sm text-[#333]">{booking.Service}</td>
+                                {/* <td className="px-6 py-4 text-sm text-[#333]">{booking.Foodname}</td> */}
                                 <td className="px-6 py-4 text-sm text-[#333]">
                                   <div>
-                                    <p>No. of Thalli: {booking.noofthalli}</p>
-                                    <p>Tenure: {booking.selectedTenure}</p>
-                                    <p>Price: {booking.Foodcharge}</p>
+                                    <p>No. of Garments: {booking.availablegarments}</p>
+                                    <p>Delivery In: {booking.selectedTenure}</p>
+                                    <p>Price: {booking.Payment}</p>
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 text-sm text-[#333]">{booking.Payment}</td>
                                 <td className="px-6 py-4 text-sm text-[#333]">
-                                  {booking.bookingDate instanceof Object ? (
-                                    <>
-                                      <p> {booking.bookingDate.checkIn}</p>
-                                      {booking.bookingDate.checkOut ? (
-                                        <p> {booking.bookingDate.checkOut}</p>
-                                      ) : null}
-                                    </>
-                                  ) : (
-                                    <p>{booking.bookingDate}</p>
-                                  )}
+                                 
+                                    <p>{booking.OrderDate}</p>
+                                 
                                 </td>
                                 <td className="px-6 py-4 text-sm text-[#333]">
-                                  {booking.orderstatus === "Out of delivery" && (
-                                    <div>
-                                      <a href={`/mapview?orderId=${booking.orderId}`} className="bg-green-500 text-white px-2 py-1 rounded">
-                                        View on Map
-                                      </a>
-                                    </div>
-                                  )}
-                                  {booking.GarmentTypes ? (
-                                    <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
+                                  
+                                <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
                                       <a className="bg-blue-500 text-white px-2 py-1 rounded">
                                         View Details
                                       </a>
                                     </Link>
-                                  ) : (
-                                    <Link href={`/Admin/adminarenechefdetails?orderId=${booking.orderId}`}>
-                                      <a className="bg-blue-500 text-white px-2 py-1 rounded">
-                                        Booking Details
-                                      </a>
-                                    </Link>
-                                  )}
                                {booking.orderstatus === "Processing" && (
           <button onClick={() => handleConfirmOrder(booking.id)}
             className="animate-bounce focus:animate-none ml-8 hover:animate-none inline-flex text-md font-medium bg-indigo-900  px-4 py-2 rounded-lg tracking-wide text-white">
@@ -320,8 +306,7 @@ const Test = () => {
                              <thead className="bg-gray-100">
                                <tr>
                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Name</th>
-                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thalli Name</th>
-                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Food Name</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Services</th>
                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Details</th>
                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking Date</th>
@@ -332,63 +317,48 @@ const Test = () => {
       {ongoingOrders.map((booking, index) => (
         <React.Fragment key={booking.id}>
           <tr>
-            <td className="px-6 py-4 text-sm text-gray-800">
-              <div className="flex items-center">
-                <div className="w-8 h-8 flex items-center justify-center font-bold rounded-full bg-gray-200 text-gray-800 mr-3">
-                  {index + 1}.
-                </div>
-                {booking.firstName} {booking.lastName}
-              </div>
-            </td>
-            <td className="px-6 py-4 text-sm text-gray-800">{booking.thaliname}</td>
-            <td className="px-6 py-4 text-sm text-gray-800">{booking.Foodname}</td>
-            <td className="px-6 py-4 text-sm text-gray-800">
-              <div>
-                <p>No. of Thalli: {booking.noofthalli}</p>
-                <p>Tenure: {booking.selectedTenure}</p>
-                <p>Price: {booking.Foodcharge}</p>
-              </div>
-            </td>
-            <td className="px-6 py-4 text-sm text-gray-800">{booking.Payment}</td>
-            <td className="px-6 py-4 text-sm text-gray-800">
-              {booking.bookingDate instanceof Object ? (
-                <>
-                  <p>{booking.bookingDate.checkIn}</p>
-                  {booking.bookingDate.checkOut && <p>{booking.bookingDate.checkOut}</p>}
-                </>
-              ) : (
-                <p>{booking.bookingDate}</p>
-              )}
-            </td>
+          <td className="px-6 py-4 text-sm text-[#333]">{booking.firstName} {booking.lastName}</td>
+                                <td className="px-6 py-4 text-sm text-[#333]">{booking.Service}</td>
+                                {/* <td className="px-6 py-4 text-sm text-[#333]">{booking.Foodname}</td> */}
+                                <td className="px-6 py-4 text-sm text-[#333]">
+                                  <div>
+                                    <p>No. of Garments: {booking.availablegarments}</p>
+                                    <p>Delivery In: {booking.selectedTenure}</p>
+                                    <p>Price: {booking.Payment}</p>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-[#333]">{booking.Payment}</td>
+                                <td className="px-6 py-4 text-sm text-[#333]">
+                                 
+                                    <p>{booking.OrderDate}</p>
+                                 
+                                </td>
             <td className="px-6 py-4 text-sm text-gray-800">
              
-            <Link href={`/Admin/adminarenechefdetails?orderId=${booking.orderId}`}>
+            <Link href={`/Admin/adminarenelaundrydetails?orderId=${booking.orderId}`}>
                   <a className="bg-blue-500 text-white px-2 py-1 rounded">Booking Details</a>
                 </Link>
             </td>
           </tr>
-          {booking.Deliveryinfo && booking.Deliveryinfo.length > 0 && (
+          {booking.orderHistory && booking.orderHistory.length > 0 && (
             <tr>
               <td colSpan="7">
                 <div className="overflow-x-auto">
                   <table className="min-w-full bg-white border border-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thalli No</th>
-                        <th className="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                        <th className="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">You Want Today Delivery</th>
-                        <th className="px-3 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivery Status</th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pickup Date</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Garment Count</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Delivery Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {booking.Deliveryinfo.map((delivery, deliveryIndex) => (
-                        delivery.date === currentDate && (
+                      {booking.orderHistory.map((delivery, deliveryIndex) => (
+                        delivery.pickupDate === currentDate && (
                           <tr key={deliveryIndex} className={delivery.deliverystatus === "cancel" ? "border-b-2 border-red-500" : ""}>
-                            <td className="px-3 py-1 text-sm font-medium text-gray-900">{delivery.thalliNo}</td>
-                            <td className="px-3 py-1 text-sm text-gray-500">{delivery.date}</td>
-                            <td className={`px-3 py-1 font-bold uppercase text-sm ${delivery.todayconfirm === 'yes' ? 'text-green-500' : delivery.todayconfirm === 'no' ? 'text-red-500' : 'text-gray-500'}`}>
-  {delivery.todayconfirm}
-</td>
+                            <td className="px-3 py-1 text-sm font-medium text-gray-900">{delivery.pickupDate}</td>
+                            <td className="px-3 py-1 text-sm text-gray-500">{delivery.garmentCount}</td>
+                    
 
                             <td className="px-3 py-1 text-sm text-gray-500">
                               <select
@@ -397,7 +367,8 @@ const Test = () => {
                                 className="border border-gray-300 rounded px-2 py-1"
                               >
                                 <option value="Pending">Pending</option>
-                                <option value="Preparing">Preparing</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Washed">Washed</option>
                               </select>
                               {delivery.deliverystatus}
                               {booking.orderstatus === "Out of Delivery" && (
@@ -441,11 +412,9 @@ const Test = () => {
                                     Customer Name
                                   </th>
                                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Thalli Name
+                                    Services
                                   </th>
-                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Food Name
-                                  </th>
+                                 
                                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Order Details
                                   </th>
@@ -463,29 +432,22 @@ const Test = () => {
                               <tbody className="bg-white divide-y divide-gray-200 whitespace-nowrap">
                                 {completedOrders.map(booking => (
                                   <tr key={booking.id}>
-                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.firstName} {booking.lastName}</td>
-                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.thaliname}</td>
-                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Foodname}</td>
-                                    <td className="px-6 py-4 text-sm text-[#333]">
-                                      <div>
-                                        <p>No. of Thalli: {booking.noofthalli}</p>
-                                        <p>Tenure: {booking.selectedTenure}</p>
-                                        <p>Price: {booking.Foodcharge}</p>
-                                      </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-[#333]">{booking.Payment}</td>
-                                    <td className="px-6 py-4 text-sm text-[#333]">
-                                      {booking.bookingDate instanceof Object ? (
-                                        <>
-                                          <p> {booking.bookingDate.checkIn}</p>
-                                          {booking.bookingDate.checkOut ? (
-                                            <p> {booking.bookingDate.checkOut}</p>
-                                          ) : null}
-                                        </>
-                                      ) : (
-                                        <p>{booking.bookingDate}</p>
-                                      )}
-                                    </td>
+                                   <td className="px-6 py-4 text-sm text-[#333]">{booking.firstName} {booking.lastName}</td>
+                                <td className="px-6 py-4 text-sm text-[#333]">{booking.Service}</td>
+                                {/* <td className="px-6 py-4 text-sm text-[#333]">{booking.Foodname}</td> */}
+                                <td className="px-6 py-4 text-sm text-[#333]">
+                                  <div>
+                                    <p>No. of Garments: {booking.availablegarments}</p>
+                                    <p>Delivery In: {booking.selectedTenure}</p>
+                                    <p>Price: {booking.Payment}</p>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-[#333]">{booking.Payment}</td>
+                                <td className="px-6 py-4 text-sm text-[#333]">
+                                 
+                                    <p>{booking.OrderDate}</p>
+                                 
+                                </td>
                                     <td className="px-6 py-4 text-sm text-[#333]">
                                       {booking.orderstatus === "Out of delivery" && (
                                         <div>
@@ -494,19 +456,13 @@ const Test = () => {
                                           </a>
                                         </div>
                                       )}
-                                      {booking.GarmentTypes ? (
+                                     
                                         <Link href={`/laundrybookingdetails?orderId=${booking.orderId}`}>
                                           <a className="bg-blue-500 text-white px-2 py-1 rounded">
                                             View Details
                                           </a>
                                         </Link>
-                                      ) : (
-                                        <Link href={`/Admin/adminarenechefdetails?orderId=${booking.orderId}`}>
-                                          <a className="bg-blue-500 text-white px-2 py-1 rounded">
-                                            Booking Details
-                                          </a>
-                                        </Link>
-                                      )}
+                                     
                                       {/* <button onClick={() => handleConfirmOrder(booking.id)}
                                         className="animate-bounce focus:animate-none ml-8 hover:animate-none inline-flex text-md font-medium bg-indigo-900  px-4 py-2 rounded-lg tracking-wide text-white">
                                         <span className="ml-2">Confirm </span>

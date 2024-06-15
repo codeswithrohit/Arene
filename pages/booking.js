@@ -15,7 +15,7 @@ const test = () => {
   const [mobilenumber, setMobileNumber] = useState("");
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
-  const [paymentOption, setPaymentOption] = useState("");
+  const [paymentOption, setPaymentOption] = useState("oneday");
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState({
     checkIn: null,
@@ -114,6 +114,10 @@ const test = () => {
   
 
   const initiatePayment = async () => {
+    if (!firstName || !lastName || !email || !mobilenumber || !address || !selectedDate.checkIn) {
+      toast.error('Please fill in all required fields.');
+      return;
+    }
     try {
       setLoading(true);
       let paymentAmount;
@@ -300,12 +304,12 @@ const test = () => {
                   Pay only 1000 for three days
                   </label>
                 </div>
-                <div class="flex items-center">
+                {/* <div class="flex items-center">
                   <input type="radio" id="allday" name="paymentOption" value="allday" onChange={(e) => setPaymentOption(e.target.value)}  class="w-5 h-5 cursor-pointer"  />
                   <label for="paypal" class="ml-4 flex gap-2 cursor-pointer">
                   Full Payment {roomprice}
                   </label>
-                </div>
+                </div> */}
               </div>
             
             </div>
@@ -315,12 +319,15 @@ const test = () => {
   Estimated Total : ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : roomprice)) : roomprice}
 </button> */}
 
-            <button onClick={initiatePayment} 
-              class="px-6 py-3.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Pay now ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : roomprice)) : roomprice}</button>
+<button onClick={initiatePayment} 
+      className="px-6 py-3.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">
+      Pay now ₹ {paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : paymentOption)}
+    </button>
           </div>
         </div>
       </div>
     </div>
+    <ToastContainer/>
     </div>
   )
 }

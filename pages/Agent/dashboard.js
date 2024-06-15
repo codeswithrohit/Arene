@@ -5,14 +5,14 @@ import { useRouter } from 'next/router';
 import { firebase } from '../../Firebase/config';
 import AgentNav from '../../components/AgentNav';
 import Link from 'next/link';
-
-const AgentProfile = () => {
+const Ourhistory = () => {
     const router = useRouter();
     const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
     const [userData, setUserData] = useState(null);
     const [bookings, setBookings] = useState(null); // Moved here
     const [totalOrders, setTotalOrders] = useState(0);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -29,34 +29,39 @@ const AgentProfile = () => {
         return () => unsubscribe();
     }, []);
 
+
+    
+
     useEffect(() => {
         const fetchBookings = async () => {
             try {
                 const snapshot = await firebase.firestore().collection('bookings').where('Agentid', '==', user).get();
                 const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                // Filter bookings where bookingDate is today
+                // Sort bookings by OrderDate from current date to the latest date
+                data.sort((a, b) => new Date(a.OrderDate) - new Date(b.OrderDate));
                 const currentDate = new Date().toISOString().slice(0, 10);
                 console.log(currentDate) // Get current date in 'YYYY-MM-DD' format
                 const filteredBookings = data.filter(booking => booking.OrderDate === currentDate);
                 console.log(filteredBookings); // Log filtered bookings
                 setBookings(filteredBookings);
                 setTotalOrders(data.length);
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching bookings:', error);
+                setLoading(false);
             }
         };
-    
+
         fetchBookings();
-    }, [user]); // Dependency array is empty since it only needs to run once
-     // Dependency array is empty since it only needs to run once
-console.log(bookings)
+    }, [user]);
+
     useEffect(() => {
-        if (isLoading) {
+        if (loading) {
             return; // No need to fetch user data while loading
         }
         // Fetch user data after authentication is done
         fetchUserData(user);
-    }, [isLoading, user]);
+    }, [loading, user]);
 
     const fetchUserData = async (user) => {
         try {
@@ -78,17 +83,7 @@ console.log(bookings)
         } catch (error) {
             console.error('Error fetching user data:', error);
         } finally {
-            setIsLoading(false);
-        }
-    };
-console.log(userData)
-    const handleLogout = async () => {
-        const auth = getAuth();
-        try {
-            await signOut(auth);
-            router.push('/Admin/Register');
-        } catch (error) {
-            console.error('Error signing out:', error);
+            setLoading(false);
         }
     };
 
@@ -100,7 +95,6 @@ console.log(userData)
         );
     }
 
-    // Check if user data is available and if it is verified
     if (userData && userData.verified) {
         return (
             <div>
@@ -276,4 +270,4 @@ console.log(userData)
     }
 }
 
-export default AgentProfile;
+export default Ourhistory;

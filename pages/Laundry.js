@@ -26,7 +26,7 @@ const LaundryPage = ({addToCart}) => {
   const fetchData = async () => {
     try {
       // Replace 'yourCollectionName' with the actual collection name
-      const collectionRef = firebase.firestore().collection('Laundry').where('service', '==', services).where('Verified', '==', 'true');
+      const collectionRef = firebase.firestore().collection('Laundry').where('service', '==', services);
 
       // Get all documents from the collection
       const querySnapshot = await collectionRef.get();
@@ -106,8 +106,7 @@ const calculateDistance = (location1, location2) => {
   });
 };
 
-// Filter fetchedData based on distances less than 15 km
-const filteredData = fetchedData.filter(item => parseFloat(item.distance) < parseFloat(nearestLocation));
+
 
 
 
@@ -142,7 +141,7 @@ const handleTenureChange = (e, id) => {
      <img class="w-20 h-20 animate-spin" src="https://www.svgrepo.com/show/70469/loading.svg" alt="Loading icon"/>
  </div>
     ) : (
-      filteredData.map((item, index) => (
+      fetchedData.map((item, index) => (
         <div key={item.id} className="w-full mt-32 md:mt-16 p-4 bg-gray-100 dark:bg-gray-800 border-gray-800 shadow-md hover:shodow-lg rounded-md">
           <div className="flex-none lg:flex">
            
@@ -174,7 +173,7 @@ const handleTenureChange = (e, id) => {
                         <select value={item.selectedTenure} onChange={(e) => handleTenureChange(e, item.id)} className="outline-none">
                           <option value="">Select Your Tenure Period</option>
                           {item.GarmentTypes && item.GarmentTypes.map((property, i) => (
-                            <option key={i} value={property.tenure}>{property.tenure}</option>
+                            <option key={i} value={property.tenure}>{property.tenure}-{property.noofgarments} Garments -₹ {property.price} </option>
                           ))}
                         </select>
                       </div>

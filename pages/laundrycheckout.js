@@ -11,6 +11,7 @@ dayjs.extend(customParseFormat);
 const test = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [vendorData, setVendorData] = useState(null);
   const [email, setEmail] = useState("");
   const [mobilenumber, setMobileNumber] = useState("");
   const [pincode, setPincode] = useState("");
@@ -23,14 +24,25 @@ const test = () => {
   });
  
 
-  // Handle check-in date change
-  const handleCheckInChange = (date, dateString) => {
-    setSelectedDate((prevState) => ({
-      ...prevState,
-      checkIn: dateString
-    }));
-   
-  };
+
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const snapshot = await firebase.firestore().collection('ArenelaundryVendor').get();
+        const data = snapshot.docs.map(doc => {
+          const vendorData = doc.data();
+          return { id: doc.id, ...vendorData };
+        });
+  
+        setVendorData(data);
+      } catch (error) {
+        console.error('Error fetching vendors:', error);
+      }
+    };
+    fetchVendors();
+  }, []);
+
+  console.log("vendor",vendorData)
 
   const loadScript = async (src) => {
       try {
@@ -63,7 +75,7 @@ const test = () => {
   }, []);
 
   const router = useRouter();
-  const { service, selectedTenure, GarmentTypes,Vendor,Location,DeliverLocation,Agentid } = router.query;
+  const { service, selectedTenure, GarmentTypes, } = router.query;
   let GarmentTypesData = [];
   let GarmentTypesPrice = 0;
   let GarmentTypesNOofGarment = 0;
@@ -88,7 +100,7 @@ const test = () => {
   const submitBookingData = async (paymentAmount) => {
     try {
       // Get current date and time
-      const currentDate = new Date().toISOString().slice(0, 10);
+      const currentDate = dayjs().format('YYYY-MM-DD');
   
       // Prepare payment options based on selected option
       let oneday = paymentOption === 'oneday' ? true : false;
@@ -99,17 +111,15 @@ const test = () => {
         firstName: firstName,
         orderId: orderId,
         lastName: lastName,
-        address: DeliverLocation,
+        address: address,
         phoneNumber: mobilenumber,
         email: email,
         Service: service,
-        deliveryconfirmation:'false',
+        confirmation:'false',
         selectedTenure: selectedTenure,
         GarmentTypes: GarmentTypes,
+        availablegarments:GarmentTypesNOofGarment,
         Noofgarment:GarmentTypesNOofGarment,
-        Vendor: Vendor,
-        VendorLocation:Location,
-        Agentid: Agentid,
         totalpayment: GarmentTypes && JSON.parse(GarmentTypes)[0]?.price,
         Userid: user,
         OrderDate: currentDate,
@@ -117,7 +127,8 @@ const test = () => {
         oneday: oneday,
         threeday: threeday,
         allday: allday,
-        bookingDate:selectedDate,
+        orderstatus:"Processing",
+        // bookingDate:selectedDate,
         pincode:pincode,
       });
       router.push(`/laundrybookingdetails?orderId=${orderId}`);
@@ -191,6 +202,33 @@ const test = () => {
     }
   };
 
+
+  const checkAvailabilityAndInitiatePayment = async () => {
+    if (!pincode) {
+      toast.error('Please enter a valid pin code.');
+      return;
+    }
+  
+    let matchedVendor = null;
+    if (vendorData) {
+      for (const vendor of vendorData) {
+        console.log('Vendor Pincode:', vendor.pincode);
+        console.log('Pincode:', pincode);
+        if (vendor.pincode === pincode) {
+          matchedVendor = vendor;
+          break;
+        }
+      }
+    }
+  
+    if (matchedVendor) {
+      initiatePayment();
+    } else {
+      toast.error('We do not provide service at this pin code.');
+     
+    }
+  };
+
   return (
     <div>
       <div class="font-[sans-serif] bg-white mt-20 p-4">
@@ -242,17 +280,17 @@ const test = () => {
       placeholder="Pin Code"
       class="px-4 py-3.5 mb-2 bg-white text-[#333] w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none" 
     />
-     <div className=" mb-2 flex items-center">
+     {/* <div className=" mb-2 flex items-center">
         <DatePicker
           value={selectedDate.checkIn ? dayjs(selectedDate.checkIn) : null}
           onChange={handleCheckInChange}
           format="YYYY-MM-DD"
-          placeholder="Starting Date"
+          placeholder="Select Pickup Date"
           style={{ marginRight: "10px" }}
           
         />
        
-      </div>
+      </div> */}
   </div>
   <textarea 
       value={address} 
@@ -276,18 +314,10 @@ const test = () => {
                 <p class="text-base leading-6 text-gray-800 dark:text-gray-400">{service}</p>
             </div>
             <div class="w-full px-4 mb-4 md:w-1/2">
-                <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Location:</p>
-                <p class="text-base leading-6 text-gray-800 dark:text-gray-400">{Location}</p>
-            </div>
-            <div class="w-full px-4 mb-4 md:w-1/2">
-                <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Vendor:</p>
-                <p class="text-base leading-6 text-blue-600 dark:text-gray-400">{Vendor}</p>
-            </div>
-            <div class="w-full px-4 mb-4 md:w-1/2">
             <ul>
             {GarmentTypes && JSON.parse(GarmentTypes).map((garment, index) => (
               <li key={index}>
-                <p>Tenure: {garment.tenure}</p>
+                <p>Delivery In: {garment.tenure}</p>
                 <p>No. of Garments: {garment.noofgarments}</p>
                 <p>Price: {garment.price}</p>
               </li>
@@ -333,12 +363,13 @@ const test = () => {
   Estimated Total : ₹ {paymentOption ? (paymentOption === 'oneday' ? 500 : (paymentOption === 'threeday' ? 1000 : roomprice)) : roomprice}
 </button> */}
 
-            <button onClick={initiatePayment} 
+            <button onClick={checkAvailabilityAndInitiatePayment} 
               class="px-6 py-3.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">Pay now ₹ {paymentOption ? (paymentOption === 'oneday' ? 100 : (paymentOption === 'threeday' ? 1000 : GarmentTypes && JSON.parse(GarmentTypes)[0]?.price)) : GarmentTypes && JSON.parse(GarmentTypes)[0]?.price}</button>
           </div>
         </div>
       </div>
     </div>
+    <ToastContainer/>
     </div>
   )
 }

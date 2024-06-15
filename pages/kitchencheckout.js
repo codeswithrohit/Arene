@@ -7,9 +7,11 @@ import { firebase } from '../Firebase/config';
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { error } from 'highcharts';
 dayjs.extend(customParseFormat);
+
 const test = () => {
-  const [vendorData, setVendorData] = useState('null');
+  const [vendorData, setVendorData] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [mobilenumber, setMobileNumber] = useState("");
@@ -18,26 +20,22 @@ const test = () => {
   const [address, setAddress] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState({
-    checkIn: null,
-  });
- 
+  const [selectedDate, setSelectedDate] = useState({ checkIn: null });
 
   const router = useRouter();
-  const { thaliname, selectedTenure, Foodcharge, Location, DeliverLocation, Ingredients, noofthalli } = router.query;
+  const { thaliname, selectedTenure, Foodcharge,Foodname, Ingredients, noofthalli } = router.query;
+  console.log("all detail",thaliname, selectedTenure, Foodcharge,Foodname, Ingredients, noofthalli)
+
   useEffect(() => {
     const fetchVendors = async () => {
       try {
         const snapshot = await firebase.firestore().collection('AreneChefVendor').get();
         const data = snapshot.docs.map(doc => {
           const vendorData = doc.data();
-          // Convert foodTypes into the desired format
           const foodTypesArray = Object.keys(vendorData.foodTypes).map(key => vendorData.foodTypes[key]);
-          // Replace the original foodTypes with the new array format
           vendorData.foodTypes = foodTypesArray;
           return { id: doc.id, ...vendorData };
         });
-        // Filter vendorData based on thaliname
         const filteredData = data.filter(vendor => vendor.foodTypes.includes(thaliname));
         setVendorData(filteredData);
       } catch (error) {
@@ -46,38 +44,36 @@ const test = () => {
     };
     fetchVendors();
   }, [thaliname]);
-  
+  console.log("vendorData",vendorData)
 
-
-  // Handle check-in date change
   const handleCheckInChange = (date, dateString) => {
-    setSelectedDate((prevState) => ({
+    setSelectedDate(prevState => ({
       ...prevState,
       checkIn: dateString
     }));
-   
   };
 
   const loadScript = async (src) => {
-      try {
-          await new Promise((resolve, reject) => {
-              const script = document.createElement('script');
-              script.src = src;
-              script.onload = resolve;
-              script.onerror = reject;
-              document.body.appendChild(script);
-          });
-          return true;
-      } catch (error) {
-          console.error('Error loading script:', error);
-          toast.error('Failed to load Razorpay SDK. Please try again later.');
-          return false;
-      }
+    try {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.body.appendChild(script);
+      });
+      return true;
+    } catch (error) {
+      console.error('Error loading script:', error);
+      toast.error('Failed to load Razorpay SDK. Please try again later.');
+      return false;
+    }
   };
+
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((authUser) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged(authUser => {
       if (authUser) {
         setUser(authUser.uid);
       } else {
@@ -102,53 +98,95 @@ const test = () => {
     }
   }
 
- 
   const generateOrderId = () => {
-    const randomNumber = Math.floor(Math.random() * 1000000); // Generate a random number between 0 and 999999
-    const orderId = `ORDER-${randomNumber}`; // Append the random number to a prefix
+    const randomNumber = Math.floor(Math.random() * 1000000);
+    const orderId = `ORDER-${randomNumber}`;
     return orderId;
   };
   const submitBookingData = async (paymentAmount) => {
     try {
       const currentDate = dayjs().format('YYYY-MM-DD');
+      const bookingDateStr = selectedDate.checkIn; // Access the checkIn property
+      const bookingDate = dayjs(bookingDateStr, 'YYYY-MM-DD'); // Ensure selectedDate is parsed correctly
   
-      // Prepare payment options based on selected option
-      let oneday = paymentOption === 'oneday' ? true : false;
-      let threeday = paymentOption === 'threeday' ? true : false;
-      let allday = paymentOption === 'allday' ? true : false;
+      // Log selectedDate and bookingDate to debug date parsing issues
+      console.log('Selected Date:', bookingDateStr);
+      console.log('Parsed Booking Date:', bookingDate.format('YYYY-MM-DD'));
+      console.log('Current Date:', currentDate);
+  
+      const noOfThalli = parseInt(foodChargeNoOfThalli, 10); // Assuming foodChargeNoOfThalli is a string
+      const deliveryInfoArray = [];
+  
+      // Check if bookingDate is valid
+      if (!bookingDate.isValid()) {
+        throw new Error('Invalid booking date');
+      }
+  
+      // Create Deliveryinfo array based on noofthalli and bookingDate
+      for (let i = 0; i < noOfThalli; i++) {
+        const deliveryDate = bookingDate.clone().add(i, 'day').format('YYYY-MM-DD'); // Clone the bookingDate before adding days
+        deliveryInfoArray.push({
+          thalliNo: i + 1,
+          date: deliveryDate,
+          todayconfirm: "yes",
+          deliverystatus: 'Pending' // Assuming initial status is 'Pending'
+        });
+      }
+  
+      // Log the deliveryInfoArray to the console
+      console.log('Deliveryinfo Array:', deliveryInfoArray);
+  
       const orderId = generateOrderId();
-      await firebase.firestore().collection('kitchenorder').add({
-        firstName: firstName,
-        orderId: orderId,
-        lastName: lastName,
-        address: DeliverLocation,
+  
+      // Create the order object to log it before adding to Firestore
+      const orderData = {
+        firstName,
+        orderId,
+        lastName,
+        address,
         phoneNumber: mobilenumber,
-        email: email,
-        confirmation:'false',
-        thaliname: thaliname,
-        selectedTenure: selectedTenure,
-        Ingredients:Ingredients,
+        email,
+        confirmation: 'false',
+        thaliname,
+        Foodname,
+        selectedTenure,
+        Ingredients,
         Foodcharge: foodChargePrice,
-        VendorLocation:Location,
-        totalpayment:foodChargePrice,
+        orderstatus: "Processing",
+        totalpayment: foodChargePrice,
         Userid: user,
         OrderDate: currentDate,
         Payment: paymentAmount,
-        bookingDate:selectedDate,
-        noofthalli:foodChargeNoOfThalli,
-        pincode:pincode,
-       
-      });
-      router.push(`/arenechefdetails?orderId=${orderId}`);
+        bookingDate: bookingDateStr,
+        noofthalli: foodChargeNoOfThalli,
+        availablethalli: foodChargeNoOfThalli,
+        pincode,
+        Deliveryinfo: deliveryInfoArray // Add the Deliveryinfo array to the document
+      };
+  
+      // Log the orderData object to the console
+      console.log('Order Data:', orderData);
+  
+      await firebase.firestore().collection('kitchenorder').add(orderData);
       toast.success('Booking Successful!');
+      router.push(`/arenechefdetails?orderId=${orderId}`);
+  
     } catch (error) {
       console.error('Error submitting booking data:', error);
       toast.error('Failed to submit booking data. Please try again later.');
     }
   };
   
+  
+  
+  
 
   const initiatePayment = async () => {
+    if (!firstName || !lastName || !email || !mobilenumber || !address || !pincode ||!selectedDate.checkIn) {
+      toast.error('All fields are required.');
+      return;
+    }
+
     try {
       setLoading(true);
       let paymentAmount;
@@ -159,12 +197,8 @@ const test = () => {
       } else if (paymentOption === 'allday') {
         paymentAmount = Foodcharge && JSON.parse(Foodcharge)[0]?.price;
       } else {
-        // Default to full payment if no option selected
         paymentAmount = Foodcharge && JSON.parse(Foodcharge)[0]?.price;
       }
-  
-      // Pass paymentAmount to submitBookingData function
-     
 
       const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
       if (!res) {
@@ -183,12 +217,10 @@ const test = () => {
         image: 'https://www.areneservices.in/public/front/images/property-logo.png',
         handler: async function (response) {
           console.log('Payment Successful:', response);
-         
           await submitBookingData(paymentAmount);
-         
           await axios.post('/api/sendEmail', {
             Foodcharge,
-            location,
+            location: Location,
             email,
             firstName,
             lastName,
@@ -197,8 +229,8 @@ const test = () => {
         },
         prefill: {
           name: `${firstName} ${lastName}`,
-          email: email,
-        },
+          email
+        }
       };
 
       const paymentObject = new window.Razorpay(options);
@@ -210,19 +242,33 @@ const test = () => {
       setLoading(false);
     }
   };
-console.log("thaliname","vendordata",thaliname,vendorData)
 
   const checkAvailabilityAndInitiatePayment = async () => {
-    const matchedVendor = vendorData.find(vendor => vendor.pincode === pincode);
+    if (!pincode) {
+      toast.error('Please enter a valid pin code.');
+      return;
+    }
+  
+    let matchedVendor = null;
+    if (vendorData) {
+      for (const vendor of vendorData) {
+        console.log('Vendor Pincode:', vendor.pincode);
+        console.log('Pincode:', pincode);
+        if (vendor.pincode === pincode) {
+          matchedVendor = vendor;
+          break;
+        }
+      }
+    }
+  
     if (matchedVendor) {
-      // Pin code match found, proceed with payment initiation
       initiatePayment();
     } else {
-      // No match found, display toast message
       toast.error('We do not provide service at this pin code.');
+      console.log(error)
     }
   };
-
+  
 
   return (
     <div>
@@ -281,7 +327,7 @@ console.log("thaliname","vendordata",thaliname,vendorData)
           value={selectedDate.checkIn ? dayjs(selectedDate.checkIn) : null}
           onChange={handleCheckInChange}
           format="YYYY-MM-DD"
-          placeholder="Starting Date"
+          placeholder="Delivery Date || Starting Date"
           style={{ marginRight: "10px" }}
           
         />
@@ -307,7 +353,11 @@ console.log("thaliname","vendordata",thaliname,vendorData)
         <div class="flex flex-wrap items-start pb-4 mb-10 border-b border-gray-200 dark:border-gray-700">
             <div class="w-full px-4 mb-4 md:w-1/2">
                 <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Thaliname:</p>
-                <p class="text-base leading-6 text-gray-800 dark:text-gray-400">{thaliname}</p>
+                <p class="text-base leading-6 text-gray-800 dark:text-gray-400 uppercase">{thaliname}</p>
+            </div>
+            <div class="w-full px-4 mb-4 md:w-1/2">
+                <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Foodname:</p>
+                <p class="text-base leading-6 text-gray-800 dark:text-gray-400 uppercase">{Foodname}</p>
             </div>
             {/* <div class="w-full px-4 mb-4 md:w-1/2">
                 <p class="mb-1 text-sm font-semibold leading-5 text-gray-600 dark:text-gray-400">Location:</p>
@@ -321,9 +371,9 @@ console.log("thaliname","vendordata",thaliname,vendorData)
             <ul>
             {Foodcharge && JSON.parse(Foodcharge).map((food, index) => (
               <li key={index}>
-                <p>Tenure: {food.tenure}</p>
-                <p>Price: {food.price}</p>
-                <p>Thalli Qty.: {food.noofthalli}</p>
+                <p className='uppercase' >Tenure: {food.tenure}</p>
+                <p className='uppercase' >Price: {food.price}</p>
+                <p className='uppercase' >Thalli/Plate Qty: {food.noofthalli}</p>
               </li>
             ))}
           </ul>

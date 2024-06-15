@@ -222,7 +222,19 @@ const HomePage = () => {
   
   return (
     <div  >
-         <div  className=" px-4 md:mt-12 mt-32">
+         <div  className=" bg-white px-2 mb-8 md:mt-12 mt-32">
+         <div className="flex items-center justify-start gap-5">
+
+<button className="flex items-center rounded-full h-10 px-3 text-red-600 bg-white font-bold capitalize border-2 border-white  hover:scale-95 transition-all duration-300">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide mr-4 text-red-600 font-bold lucide-map-pin">
+<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z">
+</path>
+<circle cx="12" cy="10" r="3">
+</circle>
+</svg>
+<span className="sr-only">Location Icon</span>
+  {locations}</button>
+</div>
         {/* Left Column - Image Slider */}
         <div  >
           <div className="lg:pr-1   lg:py-4 ">
@@ -239,78 +251,88 @@ const HomePage = () => {
           ))}
         </div>
       </div>
-      <section className="relative w-full h-full bg-neutral-50 mt-12">
+      <section className="relative w-full h-full bg-white mt-4 mb-4">
+   
+      <div className="w-full h-32 rounded-5xl md:px-32  ">
 
-      <div className="w-full h-32 rounded-5xl  ">
-      <div className="h-8 grid grid-cols-8 w-full">
+
         
-        <button
-          className={`flex  items-center gap-1 justify-center text-sm ${
-            activeTab === 'pg' ? 'bg-emerald-500  text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
-          }`}
-          onClick={() => handleTabClick('pg')}
-        >
-           ARENE PG
-        </button>
-        <button
-          className={`flex  items-center gap-2 justify-center text-sm ${
-            activeTab === 'buy' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
-          }`}
-          onClick={() => handleTabClick('buy')}
-        >
-           Buy
-        </button>
-        <button
-          className={`flex  items-center gap-2 justify-center text-sm ${
-            activeTab === 'rent' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
-          }`}
-          onClick={() => handleTabClick('rent')}
-        >
-           Rent
-        </button>
-        <button
-          className={`flex  items-center gap-2 justify-center text-sm ${
-            activeTab === 'hotel' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
-          }`}
-          onClick={() => handleTabClick('hotel')}
-        >
-           Hotel
-        </button>
-        <button
-          className={`flex  items-center gap-2 justify-center text-xs ${
-            activeTab === 'BanqueetHall' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
-          }`}
-          onClick={() => handleTabClick('BanqueetHall')}
-        >
-           Banquet Hall
-        </button>
-        <button
-          className={`flex  items-center gap-2 justify-center text-sm ${
-            activeTab === 'Resort' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
-          }`}
-          onClick={() => handleTabClick('Resort')}
-        >
-           Resort
-        </button>
-        <button
-          className={`flex  items-center gap-2 justify-center text-sm ${
-            activeTab === 'Laundry' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
-          }`}
-          onClick={() => handleTabClick('Laundry')}
-        >
-          Arene Laundry
-        </button>
-        <button
-          className={`flex  items-center gap-2 justify-center text-xs ${
-            activeTab === 'CloudKitchen' ? 'bg-emerald-500 text-white font-bold text-xs' : 'font-semibold text-xs bg-neutral-100'
-          }`}
-          onClick={() => handleTabClick('CloudKitchen')}
-        >
-           Arene Chef
-        </button>
-       
-      </div>
-      <div className="h-20 bg-white rounded-b-3xl shadow-md lg:px-5 py-3 grid grid-cols-3 gap-5">
+      <div className="md:h-10 h-16 grid grid-cols-4 md:grid-cols-8 w-full gap-0">
+  <button
+    className={`flex items-center justify-center text-sm border border-gray-300 ${
+      activeTab === 'pg' ? 'bg-emerald-500 text-white font-bold text-md border-emerald-500' : 'font-bold text-sm bg-neutral-100 border-gray-300'
+    }`}
+    onClick={() => handleTabClick('pg')}
+  >
+    ARENE PG
+  </button>
+  <button
+    className={`flex items-center justify-center text-sm border border-gray-300 ${
+      activeTab === 'buy' ? 'bg-emerald-500 text-white font-bold text-xs border-emerald-500' : 'font-semibold text-xs bg-neutral-100 border-gray-300'
+    }`}
+    onClick={() => handleTabClick('buy')}
+  >
+    Buy
+  </button>
+  <button
+    className={`flex items-center justify-center text-sm border border-gray-300 ${
+      activeTab === 'rent' ? 'bg-emerald-500 text-white font-bold text-xs border-emerald-500' : 'font-semibold text-xs bg-neutral-100 border-gray-300'
+    }`}
+    onClick={() => handleTabClick('rent')}
+  >
+    Rent
+  </button>
+  <button
+    className={`flex items-center justify-center text-sm border border-gray-300 ${
+      activeTab === 'hotel' ? 'bg-emerald-500 text-white font-bold text-xs border-emerald-500' : 'font-semibold text-xs bg-neutral-100 border-gray-300'
+    }`}
+    onClick={() => handleTabClick('hotel')}
+  >
+    Hotel
+  </button>
+  <button
+    className={`flex items-center justify-center text-xs border border-gray-300 ${
+      activeTab === 'BanqueetHall' ? 'bg-emerald-500 text-white font-bold text-xs border-emerald-500' : 'font-semibold text-xs bg-neutral-100 border-gray-300'
+    }`}
+    onClick={() => handleTabClick('BanqueetHall')}
+  >
+    Banquet Hall
+  </button>
+  <button
+    className={`flex items-center justify-center text-sm border border-gray-300 ${
+      activeTab === 'Resort' ? 'bg-emerald-500 text-white font-bold text-xs border-emerald-500' : 'font-semibold text-xs bg-neutral-100 border-gray-300'
+    }`}
+    onClick={() => handleTabClick('Resort')}
+  >
+    Resort
+  </button>
+  <button
+    className={`flex items-center justify-center text-sm border border-gray-300 ${
+      activeTab === 'Laundry' ? 'bg-emerald-500 text-white font-bold text-xs border-emerald-500' : 'font-semibold text-xs bg-neutral-100 border-gray-300'
+    }`}
+    onClick={() => handleTabClick('Laundry')}
+  >
+    Arene Laundry
+  </button>
+  <button
+    className={`flex items-center justify-center text-xs border border-gray-300 ${
+      activeTab === 'CloudKitchen' ? 'bg-emerald-500 text-white font-bold text-xs border-emerald-500' : 'font-semibold text-xs bg-neutral-100 border-gray-300'
+    }`}
+    onClick={() => handleTabClick('CloudKitchen')}
+  >
+    Arene Chef
+  </button>
+</div>
+
+
+
+
+
+
+
+
+
+      <div className="h-20 bg-white rounded-b-sm shadow-md lg:px-5 py-3 grid grid-cols-3 gap-5">
      
         {activeTab === 'pg' && (
          <>
@@ -343,6 +365,7 @@ const HomePage = () => {
            </select>
          </div>
          <button  onClick={handlePGSearch} className="text-white bg-emerald-500 font-bold text-xs  px-5 py-1 h-10 col-span-3">Search</button>
+         
        </>
         )}
         {activeTab === 'buy' && (
@@ -434,7 +457,7 @@ const HomePage = () => {
               </select>
             </div>
             <div className="h-full w-full" >
-            <button  onClick={handleHotelSearch} className="text-white md:w-full  bg-emerald-500 font-bold text-xs  px-5 py-1 h-8 col-span-3">Search</button>
+            <button  onClick={handleHotelSearch} className="text-white md:w-full bg-emerald-500 font-bold text-xs  px-4 py-1 h-8 col-span-3">Search</button>
             </div>
 
           </>
@@ -462,7 +485,7 @@ const HomePage = () => {
               </select>
             </div>
             <div className="h-full w-full" >
-            <button  onClick={handleBanqueetHallSearch} className="text-white bg-emerald-500 md:w-full font-bold text-xs  px-4 py-1 h-8 col-span-3">Search</button>
+            <button  onClick={handleBanqueetHallSearch} className="text-white md:w-full bg-emerald-500 font-bold text-xs  px-4 py-1 h-8 col-span-3">Search</button>
             </div>
 
           </>
@@ -561,7 +584,8 @@ const HomePage = () => {
 
       </div>
     </div>
-<h1 className="text-xl lg:text-xl lg:text-xl text-center font-extrabold py-2.5 text-[#10b981]  ">Your location {locations}</h1>
+  
+
 </section>
     </div>
   )

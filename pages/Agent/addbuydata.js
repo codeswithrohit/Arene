@@ -284,6 +284,7 @@ const Index = () => {
   return (
     <div className=''>
       <AgentNav/>
+      <h1 className="text-center text-3xl py-2 font-bold text-emerald-500">Buy/Sell Property</h1>
        <div className="">
         {isLoading ? ( // Display loading message while isLoading is true
           <div className=" text-center p-8 bg-white dark:bg-white">
@@ -502,124 +503,95 @@ const Index = () => {
     <AddBuy handleCloseAllInputFormats={handleCloseAllInputFormats}/>
       ) : (
         // Display the add PG Detail button when isEditing is false and showAllInputFormats is false
-        <div className=''>
-        <button onClick={handleShowAllInputFormats} className=" mt-32 lg:mt-8 w-full p-2 bg-blue-500  text-white rounded-md">
-          Add Property Detail
-        </button>
-        </div>
+        <div className="flex items-end justify-end">
+  <button
+    onClick={handleShowAllInputFormats}
+    className=" w-48 p-2 bg-blue-500 text-white rounded-md"
+  >
+    ✚ Add Buy/Sell Property
+  </button>
+</div>
+
+      
       )}
-      <div>
-      <h1 className='text-center text-emerald-500 font-bold mt-4 text-2xl' > Buy Data</h1>
-      {propertydata.length > 0 ? (
-      <div className=" flex flex-wrap justify-center">
-        <div className=" p-16 bg-white grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {propertydata
-            .map((item, index) => (
-              <div key={item.id} className="relative mx-auto w-full">
-                <Link
-                  href={`/buydetail?id=${item.id}`}
-                  className="relative inline-block w-full transform transition-transform duration-300 ease-in-out hover:-translate-y-2"
-                >
-                  <div className="rounded-lg bg-white p-4 shadow">
-                    <div className="relative flex justify-center overflow-hidden rounded-lg">
-                      <Carousel showThumbs={false} autoPlay>
-                        {item.imgSrc.map((image, index) => (
-                          <div key={index}>
-                            <img
-                              src={image}
-                              alt={`Image ${index}`}
-                             className='h-48 w-96'
-                            />
-                          </div>
-                        ))}
-                      </Carousel>
-                    </div>
-
-                    <div className="mt-4 text-start">
-                      <h2 className="line-clamp-1   text-xl font-medium text-gray-800 md:text-sm" title="location">
-                        {item.location}
-                      </h2>
-
-                      <p className="text-primary  mt-2  rounded-xl font-semibold ">
-                        <span className="text-xs">{item.Propertyname}</span>
-                      </p>
-                    </div>
-                    <div className="mt-4">
-                      <p className="line-clamp-1 mt-2 text-lg text-gray-800">{item.description}</p>
-                    </div>
-                    <div className="justify-center">
-                      <div className="mt-4 flex space-x-3 overflow-hidden rounded-lg px-1 py-1">
-                        <p className="flex items-center font-medium text-gray-800">
-                          <FaBed className="mr-2 text-blue-900" />
-                          {item.bed}
-                        </p>
-                        <p className="flex items-center font-medium text-gray-800">
-                          <FaPersonCircleCheck className="mr-2 text-blue-900" />
-                          {item.bed}
-                        </p>
-                        <p className="flex items-center font-medium text-gray-800">
-                          <FaHome className="mr-2 text-blue-900" />
-                          {item.bed}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-8 grid grid-cols-2">
-                      <div className="flex items-center">
-                        <div className="relative">
-                          <div className="h-6 w-6 rounded-full bg-gray-200 md:h-8 md:w-8"></div>
-                          <span className="bg-primary-red absolute top-0 right-0 inline-block h-3 w-3 rounded-full"></span>
-                        </div>
-
-                        <p className="line-clamp-1 ml-2 text-gray-800">{item.Owner}</p>
-                      </div>
-
-                      <div className="flex justify-end">
-                        <button>
-                          <FaSms className="mr-2 text-2xl text-red-300" />
-                        </button>
-                        <button>
-                          <FaPhone className="ml-4 text-2xl text-red-300" />
-                        </button>
-                      </div>
-                  
-                    </div>
+    <div className="container mx-auto px-4 py-8">
+  
+  {propertydata.length > 0 ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      {propertydata.map((item) => (
+        <div key={item.id} className="rounded-lg shadow-md bg-white">
+          <a href={`/buydetail?id=${item.id}`} >
+            <div className="relative overflow-hidden rounded-t-lg">
+              <Carousel showThumbs={false} autoPlay>
+                {item.imgSrc.map((image, index) => (
+                  <div key={index}>
+                    <img
+                      src={image}
+                      alt={`Image ${index}`}
+                      className="h-48 w-full object-cover"
+                    />
                   </div>
-                </Link>
-                 <div className="flex items-center justify-between mt-4">
-                
-                      <button onClick={() => handleEdit(item.id)} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                ))}
+              </Carousel>
+            </div>
+
+            <div className="p-4">
+              <h2 className="text-xl font-semibold text-gray-800 line-clamp-1" title="location">
+                {item.location}
+              </h2>
+              <p className="text-primary text-sm mt-2 font-semibold">{item.Propertyname}</p>
+              <p className="text-gray-800 text-sm mt-2 line-clamp-3">{item.description}</p>
+              <div className="mt-4 flex space-x-3">
+                <div className="flex items-center">
+                  <FaBed className="text-blue-900 mr-2" />
+                  <span className="font-medium text-gray-800">{item.bed}</span>
+                </div>
+                <div className="flex items-center">
+                  <FaPersonCircleCheck className="text-blue-900 mr-2" />
+                  <span className="font-medium text-gray-800">{item.bed}</span>
+                </div>
+                <div className="flex items-center">
+                  <FaHome className="text-blue-900 mr-2" />
+                  <span className="font-medium text-gray-800">{item.bed}</span>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between">
+                <p className="text-gray-800">{item.Owner}</p>
+                <div className="flex space-x-2">
+                  <button className="text-red-300">
+                    <FaSms className="text-2xl" />
+                  </button>
+                  <button className="text-red-300">
+                    <FaPhone className="text-2xl ml-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </a>
+          <div className="p-4 flex justify-between">
+            <button
+              onClick={() => handleEdit(item.id)}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            >
               Edit
             </button>
-               
-           
-                 <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+            <button
+              onClick={() => handleDelete(item.id)}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            >
               Delete
             </button>
-              
-              </div>
-              </div>
-            ))}
+          </div>
         </div>
-      </div>
-    ) : (
-      <div className=" bg-white text-center">
-        <div className="px-4 py-12">
-          <div className="rounded relative">
-            <div>
-              <div className="flex justify-center items-center bg-white py-12">
-               
-        <div>
-          <p className="text-indigo-700 font-semibold text-6xl text-center tracking-wide">
-           No Data Please Upload
-          </p>
-        </div>
-      </div>
+      ))}
     </div>
-  </div>
+  ) : (
+    <div className="bg-white rounded-lg shadow-md text-center p-8">
+      <p className="text-6xl text-indigo-700 font-semibold tracking-wide">No Data Please Upload</p>
+    </div>
+  )}
 </div>
-</div>
-    )}
-      </div>
+
      <ToastContainer />
     </div>
         )}
